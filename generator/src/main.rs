@@ -2318,13 +2318,6 @@ fn gen(
         a(r#"#[cfg_attr(docsrs, doc(cfg(feature = "httpcache")))]"#);
         a("pub mod http_cache;");
     }
-    if proper_name == "Google Drive"
-        || proper_name == "Google Sheets"
-        || proper_name == "SendGrid"
-        || proper_name == "Rev.ai"
-    {
-        a("pub mod traits;");
-    }
     a("#[cfg(test)]");
     a("mod tests;");
     // Hopefully there is never a "tag" named after these reserved libs.
@@ -3220,8 +3213,6 @@ fn main() -> Result<()> {
             if proper_name != "GitHub" {
                 uuid_lib = r#"
 bytes = { version = "1", features = ["serde"] }
-async-trait = "^0.1.51"
-urlencoding = "^1.3.3"
 uuid = { version = "^0.8", features = ["serde", "v4"] }"#
                     .to_string();
             }
@@ -3248,12 +3239,10 @@ license = "MIT"
 
 [dependencies]
 anyhow = "1"
-async-recursion = "^0.3.2"
 chrono = {{ version = "0.4", features = ["serde"] }}
 dirs = {{ version = "^3.0.2", optional = true }}
 http = "^0.2.4"
 hyperx = "1"
-jsonwebtoken = "7"
 log = {{ version = "^0.4", features = ["serde"] }}
 mime = "0.3"
 percent-encoding = "2.1"
