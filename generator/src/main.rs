@@ -3286,6 +3286,7 @@ rustdoc-args = ["--cfg", "docsrs"]
                 || proper_name == "Giphy"
                 || proper_name == "Rev.ai"
                 || proper_name == "Okta"
+                || proper_name == "Oxide"
             {
                 template::generate_docs_generic_api_key(
                     &api,
