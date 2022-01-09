@@ -32,7 +32,7 @@ impl Hardware {
         limit: u32,
         page_token: &str,
         sort_by: crate::types::IdSortModeAscending,
-    ) -> Result<crate::types::RackResultsPage> {
+    ) -> Result<Vec<crate::types::Rack>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -46,7 +46,60 @@ impl Hardware {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!("/hardware/racks?{}", query_);
 
-        self.client.get(&url, None).await
+        let resp: crate::types::RackResultsPage = self.client.get(&url, None).await?;
+
+        // Return our response data.
+        Ok(resp.items)
+    }
+
+    /**
+     * This function performs a `GET` to the `/hardware/racks` endpoint.
+     *
+     * As opposed to `racks_get`, this function returns all the pages of the request at once.
+     *
+     * List racks in the system.
+     */
+    pub async fn racks_get_all(
+        &self,
+        sort_by: crate::types::IdSortModeAscending,
+    ) -> Result<Vec<crate::types::Rack>> {
+        let mut query_args: Vec<(String, String)> = Default::default();
+        if !sort_by.to_string().is_empty() {
+            query_args.push(("sort_by".to_string(), sort_by.to_string()));
+        }
+        let query_ = serde_urlencoded::to_string(&query_args).unwrap();
+        let url = format!("/hardware/racks?{}", query_);
+
+        let mut resp: crate::types::RackResultsPage = self.client.get(&url, None).await?;
+
+        let mut items = resp.items;
+        let mut page = resp.next_page;
+
+        // Paginate if we should.
+        while !page.is_empty() {
+            if !url.contains('?') {
+                resp = self
+                    .client
+                    .get(&format!("{}?page={}", url, page), None)
+                    .await?;
+            } else {
+                resp = self
+                    .client
+                    .get(&format!("{}&page={}", url, page), None)
+                    .await?;
+            }
+
+            items.append(&mut resp.items);
+
+            if !resp.next_page.is_empty() && resp.next_page != page {
+                page = resp.next_page.to_string();
+            } else {
+                page = "".to_string();
+            }
+        }
+
+        // Return our response data.
+        Ok(items)
     }
 
     /**
@@ -87,7 +140,7 @@ impl Hardware {
         limit: u32,
         page_token: &str,
         sort_by: crate::types::IdSortModeAscending,
-    ) -> Result<crate::types::SledResultsPage> {
+    ) -> Result<Vec<crate::types::Sled>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -101,7 +154,60 @@ impl Hardware {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!("/hardware/sleds?{}", query_);
 
-        self.client.get(&url, None).await
+        let resp: crate::types::SledResultsPage = self.client.get(&url, None).await?;
+
+        // Return our response data.
+        Ok(resp.items)
+    }
+
+    /**
+     * This function performs a `GET` to the `/hardware/sleds` endpoint.
+     *
+     * As opposed to `sleds_get`, this function returns all the pages of the request at once.
+     *
+     * List sleds in the system.
+     */
+    pub async fn sleds_get_all(
+        &self,
+        sort_by: crate::types::IdSortModeAscending,
+    ) -> Result<Vec<crate::types::Sled>> {
+        let mut query_args: Vec<(String, String)> = Default::default();
+        if !sort_by.to_string().is_empty() {
+            query_args.push(("sort_by".to_string(), sort_by.to_string()));
+        }
+        let query_ = serde_urlencoded::to_string(&query_args).unwrap();
+        let url = format!("/hardware/sleds?{}", query_);
+
+        let mut resp: crate::types::SledResultsPage = self.client.get(&url, None).await?;
+
+        let mut items = resp.items;
+        let mut page = resp.next_page;
+
+        // Paginate if we should.
+        while !page.is_empty() {
+            if !url.contains('?') {
+                resp = self
+                    .client
+                    .get(&format!("{}?page={}", url, page), None)
+                    .await?;
+            } else {
+                resp = self
+                    .client
+                    .get(&format!("{}&page={}", url, page), None)
+                    .await?;
+            }
+
+            items.append(&mut resp.items);
+
+            if !resp.next_page.is_empty() && resp.next_page != page {
+                page = resp.next_page.to_string();
+            } else {
+                page = "".to_string();
+            }
+        }
+
+        // Return our response data.
+        Ok(items)
     }
 
     /**

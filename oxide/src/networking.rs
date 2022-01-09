@@ -36,7 +36,7 @@ impl Networking {
         sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
         project_name: &str,
-    ) -> Result<crate::types::VpcResultsPage> {
+    ) -> Result<Vec<crate::types::Vpc>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -55,7 +55,67 @@ impl Networking {
             query_
         );
 
-        self.client.get(&url, None).await
+        let resp: crate::types::VpcResultsPage = self.client.get(&url, None).await?;
+
+        // Return our response data.
+        Ok(resp.items)
+    }
+
+    /**
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs` endpoint.
+     *
+     * As opposed to `project_vpcs_get`, this function returns all the pages of the request at once.
+     *
+     * List VPCs in a project.
+     */
+    pub async fn project_vpcs_get_all(
+        &self,
+        sort_by: crate::types::NameSortModeAscending,
+        organization_name: &str,
+        project_name: &str,
+    ) -> Result<Vec<crate::types::Vpc>> {
+        let mut query_args: Vec<(String, String)> = Default::default();
+        if !sort_by.to_string().is_empty() {
+            query_args.push(("sort_by".to_string(), sort_by.to_string()));
+        }
+        let query_ = serde_urlencoded::to_string(&query_args).unwrap();
+        let url = format!(
+            "/organizations/{}/projects/{}/vpcs?{}",
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            query_
+        );
+
+        let mut resp: crate::types::VpcResultsPage = self.client.get(&url, None).await?;
+
+        let mut items = resp.items;
+        let mut page = resp.next_page;
+
+        // Paginate if we should.
+        while !page.is_empty() {
+            if !url.contains('?') {
+                resp = self
+                    .client
+                    .get(&format!("{}?page={}", url, page), None)
+                    .await?;
+            } else {
+                resp = self
+                    .client
+                    .get(&format!("{}&page={}", url, page), None)
+                    .await?;
+            }
+
+            items.append(&mut resp.items);
+
+            if !resp.next_page.is_empty() && resp.next_page != page {
+                page = resp.next_page.to_string();
+            } else {
+                page = "".to_string();
+            }
+        }
+
+        // Return our response data.
+        Ok(items)
     }
 
     /**
@@ -195,7 +255,7 @@ impl Networking {
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-    ) -> Result<crate::types::VpcFirewallRuleResultsPage> {
+    ) -> Result<Vec<crate::types::VpcFirewallRule>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -215,7 +275,70 @@ impl Networking {
             query_
         );
 
-        self.client.get(&url, None).await
+        let resp: crate::types::VpcFirewallRuleResultsPage = self.client.get(&url, None).await?;
+
+        // Return our response data.
+        Ok(resp.items)
+    }
+
+    /**
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/firewall/rules` endpoint.
+     *
+     * As opposed to `vpc_firewall_rules_get`, this function returns all the pages of the request at once.
+     *
+     * List firewall rules for a VPC.
+     */
+    pub async fn vpc_firewall_rules_get_all(
+        &self,
+        sort_by: crate::types::NameSortModeAscending,
+        organization_name: &str,
+        project_name: &str,
+        vpc_name: &str,
+    ) -> Result<Vec<crate::types::VpcFirewallRule>> {
+        let mut query_args: Vec<(String, String)> = Default::default();
+        if !sort_by.to_string().is_empty() {
+            query_args.push(("sort_by".to_string(), sort_by.to_string()));
+        }
+        let query_ = serde_urlencoded::to_string(&query_args).unwrap();
+        let url = format!(
+            "/organizations/{}/projects/{}/vpcs/{}/firewall/rules?{}",
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            query_
+        );
+
+        let mut resp: crate::types::VpcFirewallRuleResultsPage =
+            self.client.get(&url, None).await?;
+
+        let mut items = resp.items;
+        let mut page = resp.next_page;
+
+        // Paginate if we should.
+        while !page.is_empty() {
+            if !url.contains('?') {
+                resp = self
+                    .client
+                    .get(&format!("{}?page={}", url, page), None)
+                    .await?;
+            } else {
+                resp = self
+                    .client
+                    .get(&format!("{}&page={}", url, page), None)
+                    .await?;
+            }
+
+            items.append(&mut resp.items);
+
+            if !resp.next_page.is_empty() && resp.next_page != page {
+                page = resp.next_page.to_string();
+            } else {
+                page = "".to_string();
+            }
+        }
+
+        // Return our response data.
+        Ok(items)
     }
 
     /**
@@ -274,7 +397,7 @@ impl Networking {
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-    ) -> Result<crate::types::VpcRouterResultsPage> {
+    ) -> Result<Vec<crate::types::VpcRouter>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -294,7 +417,69 @@ impl Networking {
             query_
         );
 
-        self.client.get(&url, None).await
+        let resp: crate::types::VpcRouterResultsPage = self.client.get(&url, None).await?;
+
+        // Return our response data.
+        Ok(resp.items)
+    }
+
+    /**
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers` endpoint.
+     *
+     * As opposed to `vpc_routers_get`, this function returns all the pages of the request at once.
+     *
+     * List VPC Custom and System Routers
+     */
+    pub async fn vpc_routers_get_all(
+        &self,
+        sort_by: crate::types::NameSortModeAscending,
+        organization_name: &str,
+        project_name: &str,
+        vpc_name: &str,
+    ) -> Result<Vec<crate::types::VpcRouter>> {
+        let mut query_args: Vec<(String, String)> = Default::default();
+        if !sort_by.to_string().is_empty() {
+            query_args.push(("sort_by".to_string(), sort_by.to_string()));
+        }
+        let query_ = serde_urlencoded::to_string(&query_args).unwrap();
+        let url = format!(
+            "/organizations/{}/projects/{}/vpcs/{}/routers?{}",
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            query_
+        );
+
+        let mut resp: crate::types::VpcRouterResultsPage = self.client.get(&url, None).await?;
+
+        let mut items = resp.items;
+        let mut page = resp.next_page;
+
+        // Paginate if we should.
+        while !page.is_empty() {
+            if !url.contains('?') {
+                resp = self
+                    .client
+                    .get(&format!("{}?page={}", url, page), None)
+                    .await?;
+            } else {
+                resp = self
+                    .client
+                    .get(&format!("{}&page={}", url, page), None)
+                    .await?;
+            }
+
+            items.append(&mut resp.items);
+
+            if !resp.next_page.is_empty() && resp.next_page != page {
+                page = resp.next_page.to_string();
+            } else {
+                page = "".to_string();
+            }
+        }
+
+        // Return our response data.
+        Ok(items)
     }
 
     /**
@@ -448,7 +633,7 @@ impl Networking {
         project_name: &str,
         router_name: &str,
         vpc_name: &str,
-    ) -> Result<crate::types::RouterRouteResultsPage> {
+    ) -> Result<Vec<crate::types::RouterRoute>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -469,7 +654,71 @@ impl Networking {
             query_
         );
 
-        self.client.get(&url, None).await
+        let resp: crate::types::RouterRouteResultsPage = self.client.get(&url, None).await?;
+
+        // Return our response data.
+        Ok(resp.items)
+    }
+
+    /**
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes` endpoint.
+     *
+     * As opposed to `routers_routes_get`, this function returns all the pages of the request at once.
+     *
+     * List a Router's routes
+     */
+    pub async fn routers_routes_get_all(
+        &self,
+        sort_by: crate::types::NameSortModeAscending,
+        organization_name: &str,
+        project_name: &str,
+        router_name: &str,
+        vpc_name: &str,
+    ) -> Result<Vec<crate::types::RouterRoute>> {
+        let mut query_args: Vec<(String, String)> = Default::default();
+        if !sort_by.to_string().is_empty() {
+            query_args.push(("sort_by".to_string(), sort_by.to_string()));
+        }
+        let query_ = serde_urlencoded::to_string(&query_args).unwrap();
+        let url = format!(
+            "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes?{}",
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&router_name.to_string()),
+            query_
+        );
+
+        let mut resp: crate::types::RouterRouteResultsPage = self.client.get(&url, None).await?;
+
+        let mut items = resp.items;
+        let mut page = resp.next_page;
+
+        // Paginate if we should.
+        while !page.is_empty() {
+            if !url.contains('?') {
+                resp = self
+                    .client
+                    .get(&format!("{}?page={}", url, page), None)
+                    .await?;
+            } else {
+                resp = self
+                    .client
+                    .get(&format!("{}&page={}", url, page), None)
+                    .await?;
+            }
+
+            items.append(&mut resp.items);
+
+            if !resp.next_page.is_empty() && resp.next_page != page {
+                page = resp.next_page.to_string();
+            } else {
+                page = "".to_string();
+            }
+        }
+
+        // Return our response data.
+        Ok(items)
     }
 
     /**
@@ -633,7 +882,7 @@ impl Networking {
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-    ) -> Result<crate::types::VpcSubnetResultsPage> {
+    ) -> Result<Vec<crate::types::VpcSubnet>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -653,7 +902,69 @@ impl Networking {
             query_
         );
 
-        self.client.get(&url, None).await
+        let resp: crate::types::VpcSubnetResultsPage = self.client.get(&url, None).await?;
+
+        // Return our response data.
+        Ok(resp.items)
+    }
+
+    /**
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets` endpoint.
+     *
+     * As opposed to `vpc_subnets_get`, this function returns all the pages of the request at once.
+     *
+     * List subnets in a VPC.
+     */
+    pub async fn vpc_subnets_get_all(
+        &self,
+        sort_by: crate::types::NameSortModeAscending,
+        organization_name: &str,
+        project_name: &str,
+        vpc_name: &str,
+    ) -> Result<Vec<crate::types::VpcSubnet>> {
+        let mut query_args: Vec<(String, String)> = Default::default();
+        if !sort_by.to_string().is_empty() {
+            query_args.push(("sort_by".to_string(), sort_by.to_string()));
+        }
+        let query_ = serde_urlencoded::to_string(&query_args).unwrap();
+        let url = format!(
+            "/organizations/{}/projects/{}/vpcs/{}/subnets?{}",
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            query_
+        );
+
+        let mut resp: crate::types::VpcSubnetResultsPage = self.client.get(&url, None).await?;
+
+        let mut items = resp.items;
+        let mut page = resp.next_page;
+
+        // Paginate if we should.
+        while !page.is_empty() {
+            if !url.contains('?') {
+                resp = self
+                    .client
+                    .get(&format!("{}?page={}", url, page), None)
+                    .await?;
+            } else {
+                resp = self
+                    .client
+                    .get(&format!("{}&page={}", url, page), None)
+                    .await?;
+            }
+
+            items.append(&mut resp.items);
+
+            if !resp.next_page.is_empty() && resp.next_page != page {
+                page = resp.next_page.to_string();
+            } else {
+                page = "".to_string();
+            }
+        }
+
+        // Return our response data.
+        Ok(items)
     }
 
     /**
@@ -807,7 +1118,7 @@ impl Networking {
         project_name: &str,
         subnet_name: &str,
         vpc_name: &str,
-    ) -> Result<crate::types::NetworkInterfaceResultsPage> {
+    ) -> Result<Vec<crate::types::NetworkInterface>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -828,6 +1139,71 @@ impl Networking {
             query_
         );
 
-        self.client.get(&url, None).await
+        let resp: crate::types::NetworkInterfaceResultsPage = self.client.get(&url, None).await?;
+
+        // Return our response data.
+        Ok(resp.items)
+    }
+
+    /**
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}/ips` endpoint.
+     *
+     * As opposed to `subnets_ips_get`, this function returns all the pages of the request at once.
+     *
+     * List IP addresses on a VPC subnet.
+     */
+    pub async fn subnets_ips_get_all(
+        &self,
+        sort_by: crate::types::NameSortModeAscending,
+        organization_name: &str,
+        project_name: &str,
+        subnet_name: &str,
+        vpc_name: &str,
+    ) -> Result<Vec<crate::types::NetworkInterface>> {
+        let mut query_args: Vec<(String, String)> = Default::default();
+        if !sort_by.to_string().is_empty() {
+            query_args.push(("sort_by".to_string(), sort_by.to_string()));
+        }
+        let query_ = serde_urlencoded::to_string(&query_args).unwrap();
+        let url = format!(
+            "/organizations/{}/projects/{}/vpcs/{}/subnets/{}/ips?{}",
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&subnet_name.to_string()),
+            query_
+        );
+
+        let mut resp: crate::types::NetworkInterfaceResultsPage =
+            self.client.get(&url, None).await?;
+
+        let mut items = resp.items;
+        let mut page = resp.next_page;
+
+        // Paginate if we should.
+        while !page.is_empty() {
+            if !url.contains('?') {
+                resp = self
+                    .client
+                    .get(&format!("{}?page={}", url, page), None)
+                    .await?;
+            } else {
+                resp = self
+                    .client
+                    .get(&format!("{}&page={}", url, page), None)
+                    .await?;
+            }
+
+            items.append(&mut resp.items);
+
+            if !resp.next_page.is_empty() && resp.next_page != page {
+                page = resp.next_page.to_string();
+            } else {
+                page = "".to_string();
+            }
+        }
+
+        // Return our response data.
+        Ok(items)
     }
 }

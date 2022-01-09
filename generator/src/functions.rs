@@ -506,6 +506,26 @@ fn get_response_type_from_object(
             }
         }
 
+        // For Oxide, the pagination values are passed _in_ the resulting
+        // struct, so we want to ignore them and just get the data.
+        if let Some(pid) = p.get("next_page") {
+            let rt = ts.render_type(pid, false)?;
+            if rt == "String" {
+                if let Some(did) = p.get("items") {
+                    let rt = ts.render_type(did, false)?;
+                    return Ok((og_rt, did.clone(), rt, "items".to_string()));
+                } else {
+                    for (n, id) in p {
+                        // Now we must find the property with the vector for this struct.
+                        let rt = ts.render_type(id, false)?;
+                        if rt.starts_with("Vec<") {
+                            return Ok((og_rt, id.clone(), rt, to_snake_case(n)));
+                        }
+                    }
+                }
+            }
+        }
+
         // For Google, the pagination values are passed _in_ the resulting
         // struct, so we want to ignore them and just get the data.
         if let Some(pid) = p.get("nextPageToken") {
@@ -788,6 +808,49 @@ fn get_fn_inner(
 
     if all_pages && pagination_property.is_empty() {
         return Ok(format!("self.client.get_all_pages(&url, {}).await", body));
+    } else if all_pages && proper_name == "Oxide" {
+        // We will do a custom function here.
+        let inner = format!(
+            r#"let mut resp: {} = self.client.{}(&url, {}).await?;
+
+            let mut {} = resp.{};
+            let mut page = resp.next_page;
+
+            // Paginate if we should.
+            while !page.is_empty() {{
+                if !url.contains('?') {{
+                    resp = self.client.{}(&format!("{{}}?page={{}}", url, page), {}).await?;
+                }} else {{
+                    resp = self.client.{}(&format!("{{}}&page={{}}", url, page), {}).await?;
+                }}
+
+
+                {}.append(&mut resp.{});
+
+                if !resp.next_page.is_empty() && resp.next_page != page {{
+                    page = resp.next_page.to_string();
+                }} else {{
+                    page = "".to_string();
+                }}
+            }}
+
+            // Return our response data.
+            Ok({})"#,
+            response_type,
+            m.to_lowercase(),
+            body,
+            pagination_property,
+            pagination_property,
+            m.to_lowercase(),
+            body,
+            m.to_lowercase(),
+            body,
+            pagination_property,
+            pagination_property,
+            pagination_property,
+        );
+
+        return Ok(inner);
     } else if all_pages && proper_name.starts_with("Google") {
         // We will do a custom function here.
         let inner = format!(
@@ -1148,6 +1211,7 @@ fn is_page_param(s: &str, proper_name: &str) -> bool {
         || s == "page_size"
         || s == "size"
         || s == "next_page_token"
+        || s == "next_page"
         || s == "page_token"
         || s == "max_results"
         || s == "page_number"
