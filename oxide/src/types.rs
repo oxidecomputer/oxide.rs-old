@@ -133,7 +133,7 @@ pub struct Disk {
     )]
     pub snapshot_id: String,
     #[serde()]
-    pub state: DiskStateOneOf,
+    pub state: DiskState,
     /**
      * timestamp when this resource was created
      */
@@ -238,402 +238,16 @@ pub struct DiskResultsPage {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum StateCreating {
-    #[serde(rename = "creating")]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "state", content = "instance")]
+pub enum DiskState {
     Creating,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for StateCreating {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            StateCreating::Creating => "creating",
-            StateCreating::Noop => "",
-            StateCreating::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for StateCreating {
-    fn default() -> StateCreating {
-        StateCreating::Noop
-    }
-}
-impl StateCreating {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, StateCreating::Noop)
-    }
-}
-
-/// Disk is being initialized
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct DiskState {
-    #[serde(default, skip_serializing_if = "StateCreating::is_noop")]
-    pub state: StateCreating,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum StateDetached {
-    #[serde(rename = "detached")]
     Detached,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for StateDetached {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            StateDetached::Detached => "detached",
-            StateDetached::Noop => "",
-            StateDetached::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for StateDetached {
-    fn default() -> StateDetached {
-        StateDetached::Noop
-    }
-}
-impl StateDetached {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, StateDetached::Noop)
-    }
-}
-
-/// Disk is ready but detached from any Instance
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct DiskStateData {
-    #[serde(default, skip_serializing_if = "StateDetached::is_noop")]
-    pub state: StateDetached,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum StateAttaching {
-    #[serde(rename = "attaching")]
-    Attaching,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for StateAttaching {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            StateAttaching::Attaching => "attaching",
-            StateAttaching::Noop => "",
-            StateAttaching::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for StateAttaching {
-    fn default() -> StateAttaching {
-        StateAttaching::Noop
-    }
-}
-impl StateAttaching {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, StateAttaching::Noop)
-    }
-}
-
-/// Disk is being attached to the given Instance
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct DiskStateDataType {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub instance: String,
-    #[serde(default, skip_serializing_if = "StateAttaching::is_noop")]
-    pub state: StateAttaching,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum StateAttached {
-    #[serde(rename = "attached")]
-    Attached,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for StateAttached {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            StateAttached::Attached => "attached",
-            StateAttached::Noop => "",
-            StateAttached::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for StateAttached {
-    fn default() -> StateAttached {
-        StateAttached::Noop
-    }
-}
-impl StateAttached {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, StateAttached::Noop)
-    }
-}
-
-/// Disk is attached to the given Instance
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct DiskStateDataTypeLinks {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub instance: String,
-    #[serde(default, skip_serializing_if = "StateAttached::is_noop")]
-    pub state: StateAttached,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum StateDetaching {
-    #[serde(rename = "detaching")]
-    Detaching,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for StateDetaching {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            StateDetaching::Detaching => "detaching",
-            StateDetaching::Noop => "",
-            StateDetaching::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for StateDetaching {
-    fn default() -> StateDetaching {
-        StateDetaching::Noop
-    }
-}
-impl StateDetaching {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, StateDetaching::Noop)
-    }
-}
-
-/// Disk is being detached from the given Instance
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct DiskStateDataTypeLinksObject {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub instance: String,
-    #[serde(default, skip_serializing_if = "StateDetaching::is_noop")]
-    pub state: StateDetaching,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum StateDestroyed {
-    #[serde(rename = "destroyed")]
+    Attaching(String),
+    Attached(String),
+    Detaching(String),
     Destroyed,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for StateDestroyed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            StateDestroyed::Destroyed => "destroyed",
-            StateDestroyed::Noop => "",
-            StateDestroyed::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for StateDestroyed {
-    fn default() -> StateDestroyed {
-        StateDestroyed::Noop
-    }
-}
-impl StateDestroyed {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, StateDestroyed::Noop)
-    }
-}
-
-/// Disk has been destroyed
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct DiskStateDataTypeLinksObjectBlah {
-    #[serde(default, skip_serializing_if = "StateDestroyed::is_noop")]
-    pub state: StateDestroyed,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum StateFaulted {
-    #[serde(rename = "faulted")]
     Faulted,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for StateFaulted {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            StateFaulted::Faulted => "faulted",
-            StateFaulted::Noop => "",
-            StateFaulted::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for StateFaulted {
-    fn default() -> StateFaulted {
-        StateFaulted::Noop
-    }
-}
-impl StateFaulted {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, StateFaulted::Noop)
-    }
-}
-
-/// Disk is unavailable
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct DiskStateDataTypeLinksObjectBlahFoo {
-    #[serde(default, skip_serializing_if = "StateFaulted::is_noop")]
-    pub state: StateFaulted,
-}
-
-/// All of the following types:
-///
-/// - `DiskState`
-/// - `DiskStateData`
-/// - `DiskStateDataType`
-/// - `DiskStateDataTypeLinks`
-/// - `DiskStateDataTypeLinksObject`
-/// - `DiskStateDataTypeLinksObjectBlah`
-/// - `DiskStateDataTypeLinksObjectBlahFoo`
-///
-/// You can easily convert this enum to the inner value with `From` and `Into`, as both are implemented for each type.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(untagged)]
-pub enum DiskStateOneOf {
-    /**
-     * Disk is being initialized
-     */
-    DiskState(DiskState),
-    /**
-     * Disk is ready but detached from any Instance
-     */
-    DiskStateData(DiskStateData),
-    /**
-     * Disk is being attached to the given Instance
-     */
-    DiskStateDataType(DiskStateDataType),
-    /**
-     * Disk is attached to the given Instance
-     */
-    DiskStateDataTypeLinks(DiskStateDataTypeLinks),
-    /**
-     * Disk is being detached from the given Instance
-     */
-    DiskStateDataTypeLinksObject(DiskStateDataTypeLinksObject),
-    /**
-     * Disk has been destroyed
-     */
-    DiskStateDataTypeLinksObjectBlah(DiskStateDataTypeLinksObjectBlah),
-    /**
-     * Disk is unavailable
-     */
-    DiskStateDataTypeLinksObjectBlahFoo(DiskStateDataTypeLinksObjectBlahFoo),
-}
-
-impl DiskStateOneOf {
-    pub fn disk_state(&self) -> Option<&DiskState> {
-        if let DiskStateOneOf::DiskState(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn disk_state_data(&self) -> Option<&DiskStateData> {
-        if let DiskStateOneOf::DiskStateData(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn disk_state_data_type(&self) -> Option<&DiskStateDataType> {
-        if let DiskStateOneOf::DiskStateDataType(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn disk_state_data_type_links(&self) -> Option<&DiskStateDataTypeLinks> {
-        if let DiskStateOneOf::DiskStateDataTypeLinks(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn disk_state_data_type_links_object(&self) -> Option<&DiskStateDataTypeLinksObject> {
-        if let DiskStateOneOf::DiskStateDataTypeLinksObject(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn disk_state_data_type_links_object_blah(
-        &self,
-    ) -> Option<&DiskStateDataTypeLinksObjectBlah> {
-        if let DiskStateOneOf::DiskStateDataTypeLinksObjectBlah(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn disk_state_data_type_links_object_blah_foo(
-        &self,
-    ) -> Option<&DiskStateDataTypeLinksObjectBlahFoo> {
-        if let DiskStateOneOf::DiskStateDataTypeLinksObjectBlahFoo(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
 }
 
 /// The name and type information for a field of a timeseries schema.
@@ -1387,347 +1001,30 @@ pub struct RoleResultsPage {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum TypeIp {
-    #[serde(rename = "ip")]
-    Ip,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for TypeIp {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            TypeIp::Ip => "ip",
-            TypeIp::Noop => "",
-            TypeIp::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for TypeIp {
-    fn default() -> TypeIp {
-        TypeIp::Noop
-    }
-}
-impl TypeIp {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, TypeIp::Noop)
-    }
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "type", content = "value")]
+pub enum RouteDestination {
+    Ip(String),
+    Vpc(String),
+    Subnet(String),
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct RouteTarget {
-    #[serde(default, skip_serializing_if = "TypeIp::is_noop", rename = "type")]
-    pub type_: TypeIp,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub value: String,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum TypeVpc {
-    #[serde(rename = "vpc")]
-    Vpc,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for TypeVpc {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            TypeVpc::Vpc => "vpc",
-            TypeVpc::Noop => "",
-            TypeVpc::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for TypeVpc {
-    fn default() -> TypeVpc {
-        TypeVpc::Noop
-    }
-}
-impl TypeVpc {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, TypeVpc::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct RouteDestinationData {
-    #[serde(default, skip_serializing_if = "TypeVpc::is_noop", rename = "type")]
-    pub type_: TypeVpc,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub value: String,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum TypeSubnet {
-    #[serde(rename = "subnet")]
-    Subnet,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for TypeSubnet {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            TypeSubnet::Subnet => "subnet",
-            TypeSubnet::Noop => "",
-            TypeSubnet::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for TypeSubnet {
-    fn default() -> TypeSubnet {
-        TypeSubnet::Noop
-    }
-}
-impl TypeSubnet {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, TypeSubnet::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct VpcFirewallRuleTarget {
-    #[serde(default, skip_serializing_if = "TypeSubnet::is_noop", rename = "type")]
-    pub type_: TypeSubnet,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub value: String,
-}
-
-/// All of the following types:
-///
-/// - `RouteTarget`
-/// - `RouteDestinationData`
-/// - `VpcFirewallRuleTarget`
-///
-/// You can easily convert this enum to the inner value with `From` and `Into`, as both are implemented for each type.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(untagged)]
-pub enum RouteDestinationOneOf {
-    RouteTarget(RouteTarget),
-    RouteDestinationData(RouteDestinationData),
-    VpcFirewallRuleTarget(VpcFirewallRuleTarget),
-}
-
-impl RouteDestinationOneOf {
-    pub fn route_destination_data(&self) -> Option<&RouteDestinationData> {
-        if let RouteDestinationOneOf::RouteDestinationData(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn route_target(&self) -> Option<&RouteTarget> {
-        if let RouteDestinationOneOf::RouteTarget(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn vpc_firewall_rule_target(&self) -> Option<&VpcFirewallRuleTarget> {
-        if let RouteDestinationOneOf::VpcFirewallRuleTarget(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum TypeInstance {
-    #[serde(rename = "instance")]
-    Instance,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for TypeInstance {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            TypeInstance::Instance => "instance",
-            TypeInstance::Noop => "",
-            TypeInstance::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for TypeInstance {
-    fn default() -> TypeInstance {
-        TypeInstance::Noop
-    }
-}
-impl TypeInstance {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, TypeInstance::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct RouteTargetData {
-    #[serde(
-        default,
-        skip_serializing_if = "TypeInstance::is_noop",
-        rename = "type"
-    )]
-    pub type_: TypeInstance,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub value: String,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum TypeInternetGateway {
-    #[serde(rename = "internetGateway")]
-    InternetGateway,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for TypeInternetGateway {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            TypeInternetGateway::InternetGateway => "internetGateway",
-            TypeInternetGateway::Noop => "",
-            TypeInternetGateway::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for TypeInternetGateway {
-    fn default() -> TypeInternetGateway {
-        TypeInternetGateway::Noop
-    }
-}
-impl TypeInternetGateway {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, TypeInternetGateway::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct RouteTargetDataType {
-    #[serde(
-        default,
-        skip_serializing_if = "TypeInternetGateway::is_noop",
-        rename = "type"
-    )]
-    pub type_: TypeInternetGateway,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub value: String,
-}
-
-/// All of the following types:
-///
-/// - `RouteTarget`
-/// - `RouteDestinationData`
-/// - `VpcFirewallRuleTarget`
-/// - `RouteTargetData`
-/// - `RouteTargetDataType`
-///
-/// You can easily convert this enum to the inner value with `From` and `Into`, as both are implemented for each type.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(untagged)]
-pub enum RouteTargetOneOf {
-    RouteTarget(RouteTarget),
-    RouteDestinationData(RouteDestinationData),
-    VpcFirewallRuleTarget(VpcFirewallRuleTarget),
-    RouteTargetData(RouteTargetData),
-    RouteTargetDataType(RouteTargetDataType),
-}
-
-impl RouteTargetOneOf {
-    pub fn route_destination_data(&self) -> Option<&RouteDestinationData> {
-        if let RouteTargetOneOf::RouteDestinationData(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn route_target(&self) -> Option<&RouteTarget> {
-        if let RouteTargetOneOf::RouteTarget(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn route_target_data(&self) -> Option<&RouteTargetData> {
-        if let RouteTargetOneOf::RouteTargetData(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn route_target_data_type(&self) -> Option<&RouteTargetDataType> {
-        if let RouteTargetOneOf::RouteTargetDataType(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn vpc_firewall_rule_target(&self) -> Option<&VpcFirewallRuleTarget> {
-        if let RouteTargetOneOf::VpcFirewallRuleTarget(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "type", content = "value")]
+pub enum RouteTarget {
+    Ip(String),
+    Vpc(String),
+    Subnet(String),
+    Instance(String),
+    InternetGateway(String),
 }
 
 /// A route defines a rule that governs where traffic should be sent based on its destination.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct RouterRoute {
     #[serde()]
-    pub destination: RouteDestinationOneOf,
+    pub destination: RouteDestination,
     /**
      * Client view of a [`User`]
      */
@@ -1750,7 +1047,7 @@ pub struct RouterRoute {
     )]
     pub router_id: String,
     #[serde()]
-    pub target: RouteTargetOneOf,
+    pub target: RouteTarget,
 }
 
 /// Create-time parameters for a [`RouterRoute`]
@@ -1766,7 +1063,7 @@ pub struct RouterRouteCreateParams {
     )]
     pub description: String,
     #[serde()]
-    pub destination: RouteDestinationOneOf,
+    pub destination: RouteDestination,
     /**
      * human-readable free-form text about a resource
      */
@@ -1777,7 +1074,7 @@ pub struct RouterRouteCreateParams {
     )]
     pub name: String,
     #[serde()]
-    pub target: RouteTargetOneOf,
+    pub target: RouteTarget,
 }
 
 /**
@@ -1862,7 +1159,7 @@ pub struct RouterRouteUpdateParams {
     )]
     pub description: String,
     #[serde()]
-    pub destination: RouteDestinationOneOf,
+    pub destination: RouteDestination,
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1870,7 +1167,7 @@ pub struct RouterRouteUpdateParams {
     )]
     pub name: String,
     #[serde()]
-    pub target: RouteTargetOneOf,
+    pub target: RouteTarget,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
@@ -1885,284 +1182,18 @@ pub struct Saga {
     )]
     pub id: String,
     #[serde()]
-    pub state: SagaStateOneOf,
+    pub state: SagaState,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum ErrorActionFailed {
-    #[serde(rename = "actionFailed")]
-    ActionFailed,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for ErrorActionFailed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            ErrorActionFailed::ActionFailed => "actionFailed",
-            ErrorActionFailed::Noop => "",
-            ErrorActionFailed::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for ErrorActionFailed {
-    fn default() -> ErrorActionFailed {
-        ErrorActionFailed::Noop
-    }
-}
-impl ErrorActionFailed {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, ErrorActionFailed::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct SagaErrorInfo {
-    #[serde(default, skip_serializing_if = "ErrorActionFailed::is_noop")]
-    pub error: ErrorActionFailed,
-    #[serde()]
-    pub source_error: serde_json::Value,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum ErrorDeserializeFailed {
-    #[serde(rename = "deserializeFailed")]
-    DeserializeFailed,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for ErrorDeserializeFailed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            ErrorDeserializeFailed::DeserializeFailed => "deserializeFailed",
-            ErrorDeserializeFailed::Noop => "",
-            ErrorDeserializeFailed::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for ErrorDeserializeFailed {
-    fn default() -> ErrorDeserializeFailed {
-        ErrorDeserializeFailed::Noop
-    }
-}
-impl ErrorDeserializeFailed {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, ErrorDeserializeFailed::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct SagaErrorInfoData {
-    #[serde(default, skip_serializing_if = "ErrorDeserializeFailed::is_noop")]
-    pub error: ErrorDeserializeFailed,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub message: String,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum ErrorInjected {
-    #[serde(rename = "injectedError")]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "error", content = "message")]
+pub enum SagaErrorInfo {
+    ActionFailed(serde_json::Value),
+    DeserializeFailed(String),
     InjectedError,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for ErrorInjected {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            ErrorInjected::InjectedError => "injectedError",
-            ErrorInjected::Noop => "",
-            ErrorInjected::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for ErrorInjected {
-    fn default() -> ErrorInjected {
-        ErrorInjected::Noop
-    }
-}
-impl ErrorInjected {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, ErrorInjected::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct SagaErrorInfoDataType {
-    #[serde(default, skip_serializing_if = "ErrorInjected::is_noop")]
-    pub error: ErrorInjected,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum ErrorSerializeFailed {
-    #[serde(rename = "serializeFailed")]
-    SerializeFailed,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for ErrorSerializeFailed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            ErrorSerializeFailed::SerializeFailed => "serializeFailed",
-            ErrorSerializeFailed::Noop => "",
-            ErrorSerializeFailed::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for ErrorSerializeFailed {
-    fn default() -> ErrorSerializeFailed {
-        ErrorSerializeFailed::Noop
-    }
-}
-impl ErrorSerializeFailed {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, ErrorSerializeFailed::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct SagaErrorInfoDataTypeLinks {
-    #[serde(default, skip_serializing_if = "ErrorSerializeFailed::is_noop")]
-    pub error: ErrorSerializeFailed,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub message: String,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum ErrorSubsagaCreateFailed {
-    #[serde(rename = "subsagaCreateFailed")]
-    SubsagaCreateFailed,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for ErrorSubsagaCreateFailed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            ErrorSubsagaCreateFailed::SubsagaCreateFailed => "subsagaCreateFailed",
-            ErrorSubsagaCreateFailed::Noop => "",
-            ErrorSubsagaCreateFailed::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for ErrorSubsagaCreateFailed {
-    fn default() -> ErrorSubsagaCreateFailed {
-        ErrorSubsagaCreateFailed::Noop
-    }
-}
-impl ErrorSubsagaCreateFailed {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, ErrorSubsagaCreateFailed::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct SagaErrorInfoDataTypeLinksObject {
-    #[serde(default, skip_serializing_if = "ErrorSubsagaCreateFailed::is_noop")]
-    pub error: ErrorSubsagaCreateFailed,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub message: String,
-}
-
-/// All of the following types:
-///
-/// - `SagaErrorInfo`
-/// - `SagaErrorInfoData`
-/// - `SagaErrorInfoDataType`
-/// - `SagaErrorInfoDataTypeLinks`
-/// - `SagaErrorInfoDataTypeLinksObject`
-///
-/// You can easily convert this enum to the inner value with `From` and `Into`, as both are implemented for each type.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(untagged)]
-pub enum SagaErrorInfoOneOf {
-    SagaErrorInfo(SagaErrorInfo),
-    SagaErrorInfoData(SagaErrorInfoData),
-    SagaErrorInfoDataType(SagaErrorInfoDataType),
-    SagaErrorInfoDataTypeLinks(SagaErrorInfoDataTypeLinks),
-    SagaErrorInfoDataTypeLinksObject(SagaErrorInfoDataTypeLinksObject),
-}
-
-impl SagaErrorInfoOneOf {
-    pub fn saga_error_info(&self) -> Option<&SagaErrorInfo> {
-        if let SagaErrorInfoOneOf::SagaErrorInfo(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn saga_error_info_data(&self) -> Option<&SagaErrorInfoData> {
-        if let SagaErrorInfoOneOf::SagaErrorInfoData(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn saga_error_info_data_type(&self) -> Option<&SagaErrorInfoDataType> {
-        if let SagaErrorInfoOneOf::SagaErrorInfoDataType(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn saga_error_info_data_type_links(&self) -> Option<&SagaErrorInfoDataTypeLinks> {
-        if let SagaErrorInfoOneOf::SagaErrorInfoDataTypeLinks(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn saga_error_info_data_type_links_object(
-        &self,
-    ) -> Option<&SagaErrorInfoDataTypeLinksObject> {
-        if let SagaErrorInfoOneOf::SagaErrorInfoDataTypeLinksObject(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
+    SerializeFailed(String),
+    SubsagaCreateFailed(String),
 }
 
 /// A single page of results
@@ -2189,166 +1220,12 @@ pub struct SagaResultsPage {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum StateRunning {
-    #[serde(rename = "running")]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "state", content = "error_node_name")]
+pub enum SagaState {
     Running,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for StateRunning {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            StateRunning::Running => "running",
-            StateRunning::Noop => "",
-            StateRunning::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for StateRunning {
-    fn default() -> StateRunning {
-        StateRunning::Noop
-    }
-}
-impl StateRunning {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, StateRunning::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct SagaState {
-    #[serde(default, skip_serializing_if = "StateRunning::is_noop")]
-    pub state: StateRunning,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum StateSucceeded {
-    #[serde(rename = "succeeded")]
     Succeeded,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for StateSucceeded {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            StateSucceeded::Succeeded => "succeeded",
-            StateSucceeded::Noop => "",
-            StateSucceeded::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for StateSucceeded {
-    fn default() -> StateSucceeded {
-        StateSucceeded::Noop
-    }
-}
-impl StateSucceeded {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, StateSucceeded::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct SagaStateData {
-    #[serde(default, skip_serializing_if = "StateSucceeded::is_noop")]
-    pub state: StateSucceeded,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum StateFailed {
-    #[serde(rename = "failed")]
-    Failed,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for StateFailed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            StateFailed::Failed => "failed",
-            StateFailed::Noop => "",
-            StateFailed::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for StateFailed {
-    fn default() -> StateFailed {
-        StateFailed::Noop
-    }
-}
-impl StateFailed {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, StateFailed::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct SagaStateDataType {
-    #[serde()]
-    pub error_info: SagaErrorInfoOneOf,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub error_node_name: String,
-    #[serde(default, skip_serializing_if = "StateFailed::is_noop")]
-    pub state: StateFailed,
-}
-
-/// All of the following types:
-///
-/// - `SagaState`
-/// - `SagaStateData`
-/// - `SagaStateDataType`
-///
-/// You can easily convert this enum to the inner value with `From` and `Into`, as both are implemented for each type.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(untagged)]
-pub enum SagaStateOneOf {
-    SagaState(SagaState),
-    SagaStateData(SagaStateData),
-    SagaStateDataType(SagaStateDataType),
-}
-
-impl SagaStateOneOf {
-    pub fn saga_state(&self) -> Option<&SagaState> {
-        if let SagaStateOneOf::SagaState(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn saga_state_data(&self) -> Option<&SagaStateData> {
-        if let SagaStateOneOf::SagaStateData(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn saga_state_data_type(&self) -> Option<&SagaStateDataType> {
-        if let SagaStateOneOf::SagaStateDataType(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
+    Failed(SagaErrorInfo, String),
 }
 
 /// Client view of currently authed user.
@@ -2685,7 +1562,7 @@ pub struct VpcFirewallRule {
         skip_serializing_if = "Vec::is_empty",
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
-    pub targets: Vec<VpcFirewallRuleTargetOneOf>,
+    pub targets: Vec<VpcFirewallRuleTarget>,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
@@ -2769,7 +1646,7 @@ pub struct VpcFirewallRuleFilter {
         skip_serializing_if = "Vec::is_empty",
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
-    pub hosts: Vec<RouteTargetOneOf>,
+    pub hosts: Vec<VpcFirewallRuleHostFilter>,
     /**
      * If present, the destination ports this rule applies to.
      */
@@ -2788,6 +1665,17 @@ pub struct VpcFirewallRuleFilter {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     pub protocols: Vec<VpcFirewallRuleProtocol>,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "type", content = "value")]
+pub enum VpcFirewallRuleHostFilter {
+    Ip(String),
+    Vpc(String),
+    Subnet(String),
+    Instance(String),
+    InternetGateway(String),
 }
 
 /**
@@ -2889,42 +1777,13 @@ impl VpcFirewallRuleStatus {
     }
 }
 
-/// All of the following types:
-///
-/// - `RouteDestinationData`
-/// - `VpcFirewallRuleTarget`
-/// - `RouteTargetData`
-///
-/// You can easily convert this enum to the inner value with `From` and `Into`, as both are implemented for each type.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(untagged)]
-pub enum VpcFirewallRuleTargetOneOf {
-    RouteDestinationData(RouteDestinationData),
-    VpcFirewallRuleTarget(VpcFirewallRuleTarget),
-    RouteTargetData(RouteTargetData),
-}
-
-impl VpcFirewallRuleTargetOneOf {
-    pub fn route_destination_data(&self) -> Option<&RouteDestinationData> {
-        if let VpcFirewallRuleTargetOneOf::RouteDestinationData(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn route_target_data(&self) -> Option<&RouteTargetData> {
-        if let VpcFirewallRuleTargetOneOf::RouteTargetData(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
-
-    pub fn vpc_firewall_rule_target(&self) -> Option<&VpcFirewallRuleTarget> {
-        if let VpcFirewallRuleTargetOneOf::VpcFirewallRuleTarget(ref_) = self {
-            return Some(ref_);
-        }
-        None
-    }
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "type", content = "value")]
+pub enum VpcFirewallRuleTarget {
+    Vpc(String),
+    Subnet(String),
+    Instance(String),
 }
 
 /// A single rule in a VPC firewall
@@ -2969,7 +1828,7 @@ pub struct VpcFirewallRuleUpdate {
         skip_serializing_if = "Vec::is_empty",
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
-    pub targets: Vec<VpcFirewallRuleTargetOneOf>,
+    pub targets: Vec<VpcFirewallRuleTarget>,
 }
 
 /// A single page of results

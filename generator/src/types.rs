@@ -280,7 +280,11 @@ pub fn generate_types(ts: &mut TypeSpace, proper_name: &str) -> Result<String> {
     Ok(out.to_string())
 }
 
-fn do_of_type(ts: &mut TypeSpace, omap: &[crate::TypeId], sn: String) -> String {
+fn do_of_type(
+    ts: &mut TypeSpace,
+    one_of: &[openapiv3::ReferenceOr<openapiv3::Schema>],
+    sn: String,
+) -> String {
     let mut out = String::new();
 
     let mut a = |s: &str| {
@@ -288,180 +292,90 @@ fn do_of_type(ts: &mut TypeSpace, omap: &[crate::TypeId], sn: String) -> String 
         out.push('\n');
     };
 
-    // Get the description.
-    let mut description = "All of the following types:\n\n".to_string();
+    let mut tag = "";
+    let mut content = "";
+    let mut omap: Vec<crate::TypeId> = Default::default();
+    for one in one_of {
+        let itid = ts.select(Some(&sn), one, "").unwrap();
+        omap.push(itid);
+    }
 
-    let mut flatten = true;
-    for (i, itid) in omap.iter().enumerate() {
-        let rt = ts.render_type(itid, true).unwrap();
-        description.push_str(&format!("- `{}`\n", rt));
+    omap.sort_unstable();
+    omap.dedup();
 
+    for itid in omap.iter() {
         // Determine if we can do anything fancy with the resulting enum and flatten it.
         let et = ts.id_to_entry.get(itid).unwrap();
 
-        if i == 0 && !et.details.is_enum() {
-            // If we don't have an enum for the first type we can't do anything
-            // fancy and flatten the enum.
-            flatten = false;
-        } else if let TypeDetails::Object(o, _) = &et.details {
-            if o.is_empty() || o.len() > 1 {
-                // We don't have a unit struct so we can't do anything fancy.
-                flatten = false;
+        if let TypeDetails::Object(o, _) = &et.details {
+            // Iterate over the properties of the object and try to find a tag.
+            for (name, prop) in o.iter() {
+                let pet = ts.id_to_entry.get(prop).unwrap();
+                // Check if we have an enum of one.
+                if let TypeDetails::Enum(e, _) = &pet.details {
+                    if e.len() == 1 {
+                        // We have an enum of one so we can use that as the tag.
+                        tag = name;
+                        continue;
+                    }
+                } else {
+                    if o.len() == 2 {
+                        content = name;
+                    }
+                }
             }
-        } else {
-            // We don't have an object so let's just call it not fancy.
-            flatten = false;
         }
     }
-    description.push_str(
-        "\nYou can easily convert this enum to the inner value with `From` and `Into`, as both \
-         are implemented for each type.\n",
-    );
-    description = format!("/// {}", description.replace('\n', "\n/// "));
-    a(&description);
 
     a("#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]");
-    if !flatten {
-        a("#[serde(untagged)]");
+    if !tag.is_empty() {
+        a("#[serde(rename_all = \"lowercase\")]");
+        a(&format!("#[serde(tag = \"{}\"", tag));
+        if !content.is_empty() {
+            a(&format!(", content = \"{}\"", content));
+        }
+        a(")]");
     }
     a(&format!("pub enum {} {{", sn));
-    let mut name_map: BTreeMap<String, String> = Default::default();
-    // Becasue we have so many defaults set on our serde types these enums
-    // sometimes parse the wrong value. It's better to instead use the functions we
-    // inject that force the value to a specific type.
-    let mut fns: Vec<String> = Default::default();
+
     for tid in omap.iter() {
-        let name = ts.render_type(tid, true).unwrap();
+        let et = ts.id_to_entry.get(tid).unwrap();
+        if let TypeDetails::Object(o, _) = &et.details {
+            for (_, prop) in o.iter() {
+                let pet = ts.id_to_entry.get(prop).unwrap();
+                // Check if we have an enum of one.
+                if let TypeDetails::Enum(e, _) = &pet.details {
+                    if e.len() == 1 {
+                        // We have an enum of one so we can use that as the tag.
+                        if o.len() == 1 {
+                            a(&format!("{},", struct_name(&e[0])));
+                        } else {
+                            a(&format!("{}(", struct_name(&e[0])));
+                        }
+                        break;
+                    }
+                }
+            }
+            for (_, prop) in o.iter() {
+                let pet = ts.id_to_entry.get(prop).unwrap();
+                // Check if we have an enum of one.
+                if let TypeDetails::Enum(e, _) = &pet.details {
+                    if e.len() == 1 {
+                        continue;
+                    }
+                }
 
-        let fn_name = if name.starts_with("Vec<") {
-            format!(
-                "{}Vector",
-                name.trim_start_matches("Vec<")
-                    .trim_end_matches('>')
-                    .replace("serde_json::", "")
-            )
-        } else if name.starts_with("serde_json") {
-            "Value".to_string()
-        } else {
-            struct_name(&name)
-        };
-
-        if !fns.contains(&fn_name) {
-            // Try to render the docs.
-            let p = ts.render_docs(tid);
-            if !p.is_empty() && p != description {
-                a("/**");
-                a(&p);
-                a("*/");
+                a(&format!("{},", ts.render_type(prop, true).unwrap()));
             }
 
-            a(&format!("{}({}),", fn_name, name));
-            name_map.insert(fn_name.to_string(), name.to_string());
-            fns.push(fn_name);
+            if o.len() > 1 {
+                a("),");
+            }
         }
     }
+
     a("}");
     a("");
-
-    // Render the implementation to easily unpack these things for the end user.
-    a(&format!("impl {} {{", sn));
-    for (fn_name, name) in &name_map {
-        if name_map.len() > 1 {
-            a(&format!(
-                r#"pub fn {}(&self) -> Option<&{}> {{
-                            if let {}::{}(ref_) = self {{
-                                return Some(ref_);
-                            }}
-                            None
-                        }}"#,
-                to_snake_case(name)
-                    .replace("f_64", "f64")
-                    .replace("f_32", "f32")
-                    .replace("i_64", "i64")
-                    .replace("i_32", "i32"),
-                name,
-                sn,
-                fn_name,
-            ));
-        } else {
-            a(&format!(
-                r#"pub fn {}(&self) -> Option<&{}> {{
-                            let {}::{}(ref_) = self;
-                            Some(ref_)
-
-                        }}"#,
-                to_snake_case(name)
-                    .replace("f_64", "f64")
-                    .replace("f_32", "f32")
-                    .replace("i_64", "i64")
-                    .replace("i_32", "i32"),
-                name,
-                sn,
-                fn_name,
-            ));
-        }
-        a("");
-    }
-    a("}");
-    a("");
-
-    // TODO: Implement defaults for these then turn on defaults for
-    // the objects above.
-
-    // Render the implementation to easily unpack these things for the end user.
-    for (fn_name, name) in &name_map {
-        if name == "i64"
-            || name == "i32"
-            || name == "f64"
-            || name == "f32"
-            || name == "bool"
-            || name == "String"
-            || name.starts_with("Vec<")
-        {
-            a(&format!(
-                r#"impl std::convert::From<{}> for {} {{
-                                    fn from(f: {}) -> Self {{
-                                        {}::{}(f)
-                                    }}
-                            }}"#,
-                name, sn, name, sn, fn_name,
-            ));
-            a("");
-        }
-    }
-
-    for name in name_map.values() {
-        if name == "i64" || name == "i32" || name == "f64" || name == "f32" || name == "bool" {
-            a(&format!(
-                r#"impl std::convert::From<{}> for {} {{
-                                    fn from(f: {}) -> Self {{
-                                        *f.{}().unwrap()
-                                    }}
-                            }}"#,
-                sn,
-                name,
-                sn,
-                to_snake_case(name)
-                    .replace("f_64", "f64")
-                    .replace("f_32", "f32")
-                    .replace("i_64", "i64")
-                    .replace("i_32", "i32"),
-            ));
-        } else if name == "String" || name.starts_with("Vec<") {
-            a(&format!(
-                r#"impl std::convert::From<{}> for {} {{
-                                    fn from(f: {}) -> Self {{
-                                        f.{}().unwrap().clone()
-                                    }}
-                            }}"#,
-                sn,
-                name,
-                sn,
-                to_snake_case(name)
-            ));
-        }
-        a("");
-    }
 
     out
 }

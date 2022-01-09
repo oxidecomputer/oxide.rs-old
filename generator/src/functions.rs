@@ -223,7 +223,7 @@ pub fn generate_files(
             /*
              * Get the response type.
              */
-            let (mut response_type, tid, inner_response_type, pagination_property) =
+            let (mut response_type, _tid, inner_response_type, pagination_property) =
                 get_response_type(&od, ts, o)?;
 
             if proper_name == "GitHub" && response_type == "crate::types::Data" {
@@ -254,30 +254,6 @@ pub fn generate_files(
                     r#"self.client.request_with_accept_mime(reqwest::Method::GET, &url, &accept.to_string()).await"#
                         .to_string();
                 response_type = "String".to_string();
-            }
-
-            if let Some(te) = ts.id_to_entry.get(&tid) {
-                // If we have a one of, we can generate a few different subfunctions to
-                // help as well.
-                if let crate::TypeDetails::OneOf(one_of, _) = &te.details {
-                    for itid in one_of {
-                        let rt = ts.render_type(itid, false)?;
-                        print_fn(
-                            &docs,
-                            &bounds,
-                            &fn_params_str,
-                            &body_param,
-                            &rt,
-                            &template,
-                            &fn_inner,
-                            &to_snake_case(&struct_name(&format!(
-                                "{}_{}",
-                                oid.trim_start_matches(&tag).trim_start_matches('_'),
-                                to_snake_case(&rt.replace("crate::types::", ""))
-                            ))),
-                        );
-                    }
-                }
             }
 
             // Get the function without the function inners.

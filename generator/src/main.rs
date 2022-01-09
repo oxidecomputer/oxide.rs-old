@@ -534,7 +534,10 @@ pub enum TypeDetails {
      * order in the generated code.
      */
     Object(BTreeMap<String, TypeId>, openapiv3::SchemaData),
-    OneOf(Vec<TypeId>, openapiv3::SchemaData),
+    OneOf(
+        Vec<openapiv3::ReferenceOr<openapiv3::Schema>>,
+        openapiv3::SchemaData,
+    ),
     AnyOf(Vec<TypeId>, openapiv3::SchemaData),
     AllOf(Vec<TypeId>, openapiv3::SchemaData),
 }
@@ -1900,43 +1903,10 @@ impl TypeSpace {
                 if one_of_name.is_empty() {
                     bail!("one_of name cannot be empty!");
                 }
-                one_of_name.push_str(" one of");
-
-                let mut omap: Vec<TypeId> = Default::default();
-                for one in one_of {
-                    let itid = self.select(
-                        Some(one_of_name.trim_end_matches("one of").trim()),
-                        one,
-                        additional_description,
-                    )?;
-
-                    // If we only have one value let's just return that
-                    // value.
-                    if one_of.len() == 1 {
-                        if let Some(et) = self.id_to_entry.get(&itid) {
-                            if s.schema_data.nullable {
-                                return Ok((
-                                    Some(one_of_name.trim_end_matches("one of").trim().to_string()),
-                                    TypeDetails::Optional(itid, s.schema_data.clone()),
-                                ));
-                            } else {
-                                return Ok((
-                                    Some(one_of_name.trim_end_matches("one of").trim().to_string()),
-                                    et.details.clone(),
-                                ));
-                            }
-                        }
-                    }
-
-                    omap.push(itid);
-                }
-
-                omap.sort_unstable();
-                omap.dedup();
 
                 Ok((
                     Some(one_of_name),
-                    TypeDetails::OneOf(omap, Default::default()),
+                    TypeDetails::OneOf(one_of.clone(), Default::default()),
                 ))
             }
             openapiv3::SchemaKind::AnyOf { any_of } => {
