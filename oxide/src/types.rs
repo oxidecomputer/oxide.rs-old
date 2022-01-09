@@ -1221,11 +1221,14 @@ pub struct SagaResultsPage {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "lowercase")]
-#[serde(tag = "state", content = "error_node_name")]
+#[serde(tag = "state")]
 pub enum SagaState {
     Running,
     Succeeded,
-    Failed(SagaErrorInfo, String),
+    Failed {
+        error_info: SagaErrorInfo,
+        error_node_name: String,
+    },
 }
 
 /// Client view of currently authed user.

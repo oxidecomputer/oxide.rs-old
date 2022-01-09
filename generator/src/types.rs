@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::{cmp::Ordering, collections::BTreeMap};
 
 use anyhow::{bail, Result};
 use inflector::cases::snakecase::to_snake_case;
@@ -318,10 +318,8 @@ fn do_of_type(
                         tag = name;
                         continue;
                     }
-                } else {
-                    if o.len() == 2 {
-                        content = name;
-                    }
+                } else if o.len() == 2 {
+                    content = name;
                 }
             }
         }
@@ -349,14 +347,16 @@ fn do_of_type(
                         // We have an enum of one so we can use that as the tag.
                         if o.len() == 1 {
                             a(&format!("{},", struct_name(&e[0])));
-                        } else {
+                        } else if o.len() == 2 {
                             a(&format!("{}(", struct_name(&e[0])));
+                        } else if o.len() > 2 {
+                            a(&format!("{} {{", struct_name(&e[0])));
                         }
                         break;
                     }
                 }
             }
-            for (_, prop) in o.iter() {
+            for (name, prop) in o.iter() {
                 let pet = ts.id_to_entry.get(prop).unwrap();
                 // Check if we have an enum of one.
                 if let TypeDetails::Enum(e, _) = &pet.details {
@@ -365,11 +365,25 @@ fn do_of_type(
                     }
                 }
 
-                a(&format!("{},", ts.render_type(prop, true).unwrap()));
+                if o.len() <= 2 {
+                    a(&format!("{},", ts.render_type(prop, true).unwrap()));
+                } else {
+                    a(&format!(
+                        "{}: {},",
+                        name,
+                        ts.render_type(prop, true).unwrap()
+                    ));
+                }
             }
 
-            if o.len() > 1 {
-                a("),");
+            match o.len().cmp(&2) {
+                Ordering::Less => {}
+                Ordering::Equal => {
+                    a("),");
+                }
+                Ordering::Greater => {
+                    a("},");
+                }
             }
         }
     }
