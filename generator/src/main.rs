@@ -3215,7 +3215,7 @@ hyperx = "1"
 log = {{ version = "^0.4", features = ["serde"] }}
 mime = "0.3"
 percent-encoding = "2.1"
-reqwest = {{ version = "0.11", features = ["json", "multipart", "rustls-tls"] }}
+reqwest = {{ version = "0.11", default-features = false, features = ["json", "multipart", "rustls-tls"] }}
 schemars = {{ version = "0.8", features = ["bytes", "chrono", "url", "uuid"] }}
 serde = {{ version = "1", features = ["derive"] }}
 serde_json = "1"
