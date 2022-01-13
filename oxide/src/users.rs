@@ -114,7 +114,7 @@ impl Users {
     pub async fn get(&self, user_name: &str) -> Result<crate::types::User> {
         let url = format!(
             "/users/{}",
-            crate::progenitor_support::encode_path(user_name),
+            crate::progenitor_support::encode_path(&user_name.to_string()),
         );
 
         self.client.get(&url, None).await

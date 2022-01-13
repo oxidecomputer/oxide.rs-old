@@ -114,7 +114,7 @@ impl Hardware {
     pub async fn racks_get_rack(&self, rack_id: &str) -> Result<crate::types::Rack> {
         let url = format!(
             "/hardware/racks/{}",
-            crate::progenitor_support::encode_path(rack_id),
+            crate::progenitor_support::encode_path(&rack_id.to_string()),
         );
 
         self.client.get(&url, None).await
@@ -222,7 +222,7 @@ impl Hardware {
     pub async fn sleds_get_sled(&self, sled_id: &str) -> Result<crate::types::Sled> {
         let url = format!(
             "/hardware/sleds/{}",
-            crate::progenitor_support::encode_path(sled_id),
+            crate::progenitor_support::encode_path(&sled_id.to_string()),
         );
 
         self.client.get(&url, None).await

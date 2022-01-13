@@ -94,7 +94,7 @@ impl Roles {
     pub async fn get(&self, role_name: &str) -> Result<crate::types::Role> {
         let url = format!(
             "/roles/{}",
-            crate::progenitor_support::encode_path(role_name),
+            crate::progenitor_support::encode_path(&role_name.to_string()),
         );
 
         self.client.get(&url, None).await

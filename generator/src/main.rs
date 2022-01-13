@@ -3223,8 +3223,8 @@ serde_urlencoded = "^0.7"
 url = {{ version = "2", features = ["serde"] }}{}{}
 
 [dev-dependencies]
-base64 = "^0.12"
-dirs = "^3.0.2"
+base64 = "^0.13"
+dirs = "^4.0.0"
 nom_pem = "4"
 tokio = {{ version = "1.8.0", features = ["full"] }}
 

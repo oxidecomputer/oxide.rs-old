@@ -46,7 +46,7 @@ impl Projects {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects?{}",
-            crate::progenitor_support::encode_path(organization_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
             query_
         );
 
@@ -75,7 +75,7 @@ impl Projects {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects?{}",
-            crate::progenitor_support::encode_path(organization_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
             query_
         );
 
@@ -127,7 +127,7 @@ impl Projects {
     ) -> Result<crate::types::Project> {
         let url = format!(
             "/organizations/{}/projects",
-            crate::progenitor_support::encode_path(organization_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
         );
 
         self.client
@@ -152,8 +152,8 @@ impl Projects {
     ) -> Result<crate::types::Project> {
         let url = format!(
             "/organizations/{}/projects/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
         );
 
         self.client.get(&url, None).await
@@ -176,8 +176,8 @@ impl Projects {
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
         );
 
         self.client.delete(&url, None).await
@@ -221,8 +221,8 @@ impl Projects {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/disks?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
             query_
         );
 
@@ -252,8 +252,8 @@ impl Projects {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/disks?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
             query_
         );
 
@@ -308,8 +308,8 @@ impl Projects {
     ) -> Result<crate::types::Disk> {
         let url = format!(
             "/organizations/{}/projects/{}/disks",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
         );
 
         self.client
@@ -336,9 +336,9 @@ impl Projects {
     ) -> Result<crate::types::Disk> {
         let url = format!(
             "/organizations/{}/projects/{}/disks/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(disk_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&disk_name.to_string()),
         );
 
         self.client.get(&url, None).await
@@ -363,9 +363,9 @@ impl Projects {
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}/disks/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(disk_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&disk_name.to_string()),
         );
 
         self.client.delete(&url, None).await

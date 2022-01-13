@@ -50,8 +50,8 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
             query_
         );
 
@@ -81,8 +81,8 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
             query_
         );
 
@@ -136,8 +136,8 @@ impl Networking {
     ) -> Result<crate::types::Vpc> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
         );
 
         self.client
@@ -164,9 +164,9 @@ impl Networking {
     ) -> Result<crate::types::Vpc> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
         );
 
         self.client.get(&url, None).await
@@ -192,9 +192,9 @@ impl Networking {
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
         );
 
         self.client
@@ -221,9 +221,9 @@ impl Networking {
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
         );
 
         self.client.delete(&url, None).await
@@ -269,9 +269,9 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/firewall/rules?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
             query_
         );
 
@@ -302,9 +302,9 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/firewall/rules?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
             query_
         );
 
@@ -361,9 +361,9 @@ impl Networking {
     ) -> Result<crate::types::VpcFirewallRule> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/firewall/rules",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
         );
 
         self.client
@@ -411,9 +411,9 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
             query_
         );
 
@@ -444,9 +444,9 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
             query_
         );
 
@@ -502,9 +502,9 @@ impl Networking {
     ) -> Result<crate::types::VpcRouter> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
         );
 
         self.client
@@ -533,10 +533,10 @@ impl Networking {
     ) -> Result<crate::types::VpcRouter> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&router_name.to_string()),
         );
 
         self.client.get(&url, None).await
@@ -564,10 +564,10 @@ impl Networking {
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&router_name.to_string()),
         );
 
         self.client
@@ -596,10 +596,10 @@ impl Networking {
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&router_name.to_string()),
         );
 
         self.client.delete(&url, None).await
@@ -647,10 +647,10 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&router_name.to_string()),
             query_
         );
 
@@ -682,10 +682,10 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&router_name.to_string()),
             query_
         );
 
@@ -743,10 +743,10 @@ impl Networking {
     ) -> Result<crate::types::RouterRoute> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&router_name.to_string()),
         );
 
         self.client
@@ -777,11 +777,11 @@ impl Networking {
     ) -> Result<crate::types::RouterRoute> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
-            crate::progenitor_support::encode_path(route_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&router_name.to_string()),
+            crate::progenitor_support::encode_path(&route_name.to_string()),
         );
 
         self.client.get(&url, None).await
@@ -811,11 +811,11 @@ impl Networking {
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
-            crate::progenitor_support::encode_path(route_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&router_name.to_string()),
+            crate::progenitor_support::encode_path(&route_name.to_string()),
         );
 
         self.client
@@ -846,11 +846,11 @@ impl Networking {
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
-            crate::progenitor_support::encode_path(route_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&router_name.to_string()),
+            crate::progenitor_support::encode_path(&route_name.to_string()),
         );
 
         self.client.delete(&url, None).await
@@ -896,9 +896,9 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
             query_
         );
 
@@ -929,9 +929,9 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
             query_
         );
 
@@ -987,9 +987,9 @@ impl Networking {
     ) -> Result<crate::types::VpcSubnet> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
         );
 
         self.client
@@ -1018,10 +1018,10 @@ impl Networking {
     ) -> Result<crate::types::VpcSubnet> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(subnet_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&subnet_name.to_string()),
         );
 
         self.client.get(&url, None).await
@@ -1049,10 +1049,10 @@ impl Networking {
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(subnet_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&subnet_name.to_string()),
         );
 
         self.client
@@ -1081,10 +1081,10 @@ impl Networking {
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(subnet_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&subnet_name.to_string()),
         );
 
         self.client.delete(&url, None).await
@@ -1132,10 +1132,10 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets/{}/ips?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(subnet_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&subnet_name.to_string()),
             query_
         );
 
@@ -1167,10 +1167,10 @@ impl Networking {
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets/{}/ips?{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(subnet_name),
+            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(&vpc_name.to_string()),
+            crate::progenitor_support::encode_path(&subnet_name.to_string()),
             query_
         );
 
