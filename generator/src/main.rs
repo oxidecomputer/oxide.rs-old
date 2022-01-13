@@ -863,7 +863,7 @@ impl TypeSpace {
             if let Some(description) = &s.description {
                 a(&format!(
                     "* {}",
-                    description.replace('*', "\\*").replace("\n", "\n*  ")
+                    description.replace('*', "\\*").replace('\n', "\n*  ")
                 ));
             }
             if let Some(external_docs) = &s.external_docs {
@@ -2169,7 +2169,7 @@ fn render_param(
 
     if !description.is_empty() {
         a("/**");
-        a(&format!("* {}", description.replace("\n", "\n*   ")));
+        a(&format!("* {}", description.replace('\n', "\n*   ")));
         a("*/");
     }
 
@@ -2319,7 +2319,7 @@ fn gen(
         docs = docs.trim().to_string();
 
         if !docs.is_empty() {
-            a(&format!("/// {}", docs.replace("\n", "\n///"),));
+            a(&format!("/// {}", docs.replace('\n', "\n///"),));
         }
         a(&format!(
             "pub mod {};",
@@ -2448,7 +2448,7 @@ fn gen(
                pub fn {}(&self) -> {}::{} {{
                     {}::{}::new(self.clone())
                }}"#,
-            docs.replace("\n", "\n///"),
+            docs.replace('\n', "\n///"),
             to_snake_case(&clean_name(&tag.name)),
             to_snake_case(&clean_name(&tag.name)),
             struct_name(&tag.name),
@@ -2500,7 +2500,7 @@ pub fn make_plural(proper_name: &str, s: &str) -> String {
 }
 
 fn struct_name(s: &str) -> String {
-    let t = to_title_case(&clean_name(s)).replace(" ", "");
+    let t = to_title_case(&clean_name(s)).replace(' ', "");
 
     // Check if we actually have a number.
     if let Ok(i) = t.parse::<i64>() {
@@ -2543,8 +2543,8 @@ fn clean_name(t: &str) -> String {
             .replace(" is ", " ")
             .replace(" and ", " ")
             .replace(" the ", " ")
-            .replace("/", " ")
-            .replace("-", " "),
+            .replace('/', " ")
+            .replace('-', " "),
     )
     .replace("_i_ds", "_ids")
     .replace("v_1_", "")
@@ -2582,7 +2582,7 @@ fn clean_name(t: &str) -> String {
     .replace("_view_model", "_")
     .trim_start_matches('_')
     .trim_end_matches('_')
-    .replace("_", " ")
+    .replace('_', " ")
     .trim()
     .to_string();
 
@@ -2607,7 +2607,7 @@ pub fn path_to_operation_id(path: &str, method: &str) -> String {
     let new = format!(
         "{}_{}",
         method.to_lowercase(),
-        path.replace("/", "-")
+        path.replace('/', "-")
             .trim_start_matches('-')
             .replace('{', "_by_")
             .replace('}', "")
@@ -2749,9 +2749,9 @@ fn oid_to_object_name(s: &str) -> String {
         .replace(" the ", " ")
         .replace("(beta)", "")
         .replace("(legacy)", "")
-        .replace("-", " ")
+        .replace('-', " ")
         .replace(" a ", " ")
-        .replace("'", "")
+        .replace('\'', "")
         .replace(" of ", " ")
         .replace("authenticated user", "")
         .replace("  ", " ")
@@ -2869,7 +2869,7 @@ fn main() -> Result<()> {
             debug(&format!("    -> {:?}", id));
             debug("");
             if let openapiv3::ReferenceOr::Item(item) = p {
-                parameters.insert(struct_name(&pn.to_string()), item);
+                parameters.insert(struct_name(pn), item);
             } else {
                 bail!("parameter {} uses reference, unsupported: {:?}", pn, p);
             }
