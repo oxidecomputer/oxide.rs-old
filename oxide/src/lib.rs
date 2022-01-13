@@ -29,7 +29,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! oxide-api = "0.1.0-rc.4"
+//! oxide-api = "0.1.0-rc.5"
 //! ```
 //!
 //! ## Basic example
@@ -162,13 +162,13 @@ impl Client {
         parsed_url.map(|u| (u, Some(auth))).map_err(Error::from)
     }
 
-    async fn request_raw(
+    pub async fn request_raw(
         &self,
         method: reqwest::Method,
         uri: &str,
         body: Option<reqwest::Body>,
     ) -> Result<reqwest::Response> {
-        let u = if uri.starts_with("https://") {
+        let u = if uri.starts_with("https://") || uri.starts_with("http://") {
             uri.to_string()
         } else {
             (self.host.clone() + uri).to_string()
@@ -301,7 +301,7 @@ impl Client {
     where
         Out: serde::de::DeserializeOwned + 'static + Send,
     {
-        let u = if uri.starts_with("https://") {
+        let u = if uri.starts_with("https://") || uri.starts_with("http://") {
             uri.to_string()
         } else {
             (self.host.clone() + uri).to_string()
@@ -380,7 +380,7 @@ impl Client {
     where
         Out: serde::de::DeserializeOwned + 'static + Send,
     {
-        let u = if uri.starts_with("https://") {
+        let u = if uri.starts_with("https://") || uri.starts_with("http://") {
             uri.to_string()
         } else {
             (self.host.clone() + uri).to_string()
@@ -453,7 +453,7 @@ impl Client {
     where
         Out: serde::de::DeserializeOwned + 'static + Send,
     {
-        let u = if uri.starts_with("https://") {
+        let u = if uri.starts_with("https://") || uri.starts_with("http://") {
             uri.to_string()
         } else {
             (self.host.clone() + uri).to_string()

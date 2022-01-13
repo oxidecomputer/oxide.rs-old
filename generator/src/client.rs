@@ -830,14 +830,14 @@ async fn url_and_auth(
     parsed_url.map(|u| (u, Some(auth))).map_err(Error::from)
 }}
 
-async fn request_raw(
+pub async fn request_raw(
     &self,
     method: reqwest::Method,
     uri: &str,
     body: Option<reqwest::Body>,
 ) -> Result<reqwest::Response>
 {{
-    let u = if uri.starts_with("https://") {{
+    let u = if uri.starts_with("https://") || uri.starts_with("http://") {{
         uri.to_string()
     }} else {{
         (self.host.clone() + uri).to_string()
@@ -962,7 +962,7 @@ async fn post_form<Out>(
     where
     Out: serde::de::DeserializeOwned + 'static + Send,
 {{
-    let u = if uri.starts_with("https://") {{
+    let u = if uri.starts_with("https://") || uri.starts_with("http://") {{
         uri.to_string()
     }} else {{
         (self.host.clone() + uri).to_string()
@@ -1034,7 +1034,7 @@ async fn request_with_accept_mime<Out>(
     where
     Out: serde::de::DeserializeOwned + 'static + Send,
 {{
-    let u = if uri.starts_with("https://") {{
+    let u = if uri.starts_with("https://") || uri.starts_with("http://") {{
         uri.to_string()
     }} else {{
         (self.host.clone() + uri).to_string()
@@ -1100,7 +1100,7 @@ async fn request_with_mime<Out>(
     where
     Out: serde::de::DeserializeOwned + 'static + Send,
 {{
-    let u = if uri.starts_with("https://") {{
+    let u = if uri.starts_with("https://") || uri.starts_with("http://") {{
         uri.to_string()
     }} else {{
         (self.host.clone() + uri).to_string()
