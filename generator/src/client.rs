@@ -582,6 +582,7 @@ impl Client {{
     }}
 
     /// Override the default host for the client.
+    #[must_use]
     pub fn with_host<H>(&self, host: H) -> Self
     where
         H: ToString,
@@ -763,6 +764,7 @@ impl Client {{
     }}
 
     /// Override the default host for the client.
+    #[must_use]
     pub fn with_host<H>(&self, host: H) -> Self
     where
         H: ToString,
@@ -1484,6 +1486,7 @@ impl Client {{
     }}
 
     /// Override the default host for the client.
+    #[must_use]
     pub fn with_host<H>(&self, host: H) -> Self
     where
         H: ToString,

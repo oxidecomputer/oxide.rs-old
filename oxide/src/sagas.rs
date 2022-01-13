@@ -112,10 +112,7 @@ impl Sagas {
      * * `saga_id: &str` -- human-readable free-form text about a resource.
      */
     pub async fn get(&self, saga_id: &str) -> Result<crate::types::Saga> {
-        let url = format!(
-            "/sagas/{}",
-            crate::progenitor_support::encode_path(&saga_id.to_string()),
-        );
+        let url = format!("/sagas/{}", crate::progenitor_support::encode_path(saga_id),);
 
         self.client.get(&url, None).await
     }

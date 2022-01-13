@@ -124,7 +124,7 @@ impl Organizations {
     pub async fn get(&self, organization_name: &str) -> Result<crate::types::User> {
         let url = format!(
             "/organizations/{}",
-            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(organization_name),
         );
 
         self.client.get(&url, None).await
@@ -147,7 +147,7 @@ impl Organizations {
     ) -> Result<crate::types::User> {
         let url = format!(
             "/organizations/{}",
-            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(organization_name),
         );
 
         self.client
@@ -167,7 +167,7 @@ impl Organizations {
     pub async fn delete(&self, organization_name: &str) -> Result<()> {
         let url = format!(
             "/organizations/{}",
-            crate::progenitor_support::encode_path(&organization_name.to_string()),
+            crate::progenitor_support::encode_path(organization_name),
         );
 
         self.client.delete(&url, None).await
@@ -192,8 +192,8 @@ impl Organizations {
     ) -> Result<crate::types::Project> {
         let url = format!(
             "/organizations/{}/projects/{}",
-            crate::progenitor_support::encode_path(&organization_name.to_string()),
-            crate::progenitor_support::encode_path(&project_name.to_string()),
+            crate::progenitor_support::encode_path(organization_name),
+            crate::progenitor_support::encode_path(project_name),
         );
 
         self.client

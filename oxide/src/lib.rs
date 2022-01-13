@@ -29,7 +29,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! oxide-api = "0.1.0-rc.1"
+//! oxide-api = "0.1.0-rc.2"
 //! ```
 //!
 //! ## Basic example
@@ -133,6 +133,7 @@ impl Client {
     }
 
     /// Override the default host for the client.
+    #[must_use]
     pub fn with_host<H>(&self, host: H) -> Self
     where
         H: ToString,
