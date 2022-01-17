@@ -359,6 +359,43 @@ impl FieldType {
     }
 }
 
+/**
+ * Supported set of sort modes for scanning by id only.
+ *   
+ *   Currently, we only support scanning in ascending order.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub enum IdSortModeAscending {
+    #[serde(rename = "id-ascending")]
+    IdAscending,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for IdSortModeAscending {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            IdSortModeAscending::IdAscending => "id-ascending",
+            IdSortModeAscending::Noop => "",
+            IdSortModeAscending::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for IdSortModeAscending {
+    fn default() -> IdSortModeAscending {
+        IdSortModeAscending::Noop
+    }
+}
+impl IdSortModeAscending {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, IdSortModeAscending::Noop)
+    }
+}
+
 /// Client view of a [`User`]
 #[derive(Serialize, Default, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct User {
@@ -670,6 +707,84 @@ pub struct LoginParams {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub username: String,
+}
+
+/**
+ * Supported set of sort modes for scanning by name or id
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub enum NameSortMode {
+    #[serde(rename = "id-ascending")]
+    IdAscending,
+    #[serde(rename = "name-ascending")]
+    NameAscending,
+    #[serde(rename = "name-descending")]
+    NameDescending,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for NameSortMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            NameSortMode::IdAscending => "id-ascending",
+            NameSortMode::NameAscending => "name-ascending",
+            NameSortMode::NameDescending => "name-descending",
+            NameSortMode::Noop => "",
+            NameSortMode::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for NameSortMode {
+    fn default() -> NameSortMode {
+        NameSortMode::Noop
+    }
+}
+impl NameSortMode {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, NameSortMode::Noop)
+    }
+}
+
+/**
+ * Supported set of sort modes for scanning by name only
+ *   
+ *   Currently, we only support scanning in ascending order.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub enum NameSortModeAscending {
+    #[serde(rename = "name-ascending")]
+    NameAscending,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for NameSortModeAscending {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            NameSortModeAscending::NameAscending => "name-ascending",
+            NameSortModeAscending::Noop => "",
+            NameSortModeAscending::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for NameSortModeAscending {
+    fn default() -> NameSortModeAscending {
+        NameSortModeAscending::Noop
+    }
+}
+impl NameSortModeAscending {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, NameSortModeAscending::Noop)
+    }
 }
 
 /// A `NetworkInterface` represents a virtual network interface device.
@@ -2126,119 +2241,4 @@ pub struct VpcUpdate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
-}
-
-/**
- * Supported set of sort modes for scanning by id only.
- *   
- *   Currently, we only support scanning in ascending order.
- */
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum IdSortModeAscending {
-    #[serde(rename = "id-ascending")]
-    IdAscending,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for IdSortModeAscending {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            IdSortModeAscending::IdAscending => "id-ascending",
-            IdSortModeAscending::Noop => "",
-            IdSortModeAscending::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for IdSortModeAscending {
-    fn default() -> IdSortModeAscending {
-        IdSortModeAscending::Noop
-    }
-}
-impl IdSortModeAscending {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, IdSortModeAscending::Noop)
-    }
-}
-
-/**
- * Supported set of sort modes for scanning by name or id
- */
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum NameSortMode {
-    #[serde(rename = "id-ascending")]
-    IdAscending,
-    #[serde(rename = "name-ascending")]
-    NameAscending,
-    #[serde(rename = "name-descending")]
-    NameDescending,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for NameSortMode {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            NameSortMode::IdAscending => "id-ascending",
-            NameSortMode::NameAscending => "name-ascending",
-            NameSortMode::NameDescending => "name-descending",
-            NameSortMode::Noop => "",
-            NameSortMode::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for NameSortMode {
-    fn default() -> NameSortMode {
-        NameSortMode::Noop
-    }
-}
-impl NameSortMode {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, NameSortMode::Noop)
-    }
-}
-
-/**
- * Supported set of sort modes for scanning by name only
- *   
- *   Currently, we only support scanning in ascending order.
- */
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub enum NameSortModeAscending {
-    #[serde(rename = "name-ascending")]
-    NameAscending,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for NameSortModeAscending {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            NameSortModeAscending::NameAscending => "name-ascending",
-            NameSortModeAscending::Noop => "",
-            NameSortModeAscending::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for NameSortModeAscending {
-    fn default() -> NameSortModeAscending {
-        NameSortModeAscending::Noop
-    }
-}
-impl NameSortModeAscending {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, NameSortModeAscending::Noop)
-    }
 }

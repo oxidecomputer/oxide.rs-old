@@ -2663,7 +2663,9 @@ fn main() -> Result<()> {
         }
     };
 
-    let api = load_api(&args.opt_str("i").unwrap())?;
+    let input_spec = args.opt_str("i").unwrap();
+
+    let api = load_api(&input_spec)?;
 
     let debug = |s: &str| {
         if args.opt_present("debug") {
@@ -3097,7 +3099,7 @@ rustdoc-args = ["--cfg", "docsrs"]
              * Create the Rust source files for each of the tags functions:
              */
             let fail = match functions::generate_files(&api, &mut ts, &parameters) {
-                Ok(files) => {
+                Ok((files, new_api)) => {
                     // We have a map of our files, let's write to them.
                     for (f, content) in files {
                         let mut tagrs = src.clone();
@@ -3130,6 +3132,9 @@ impl {} {{
                         );
                         save(tagrs, output.as_str())?;
                     }
+
+                    // Write out the new API spec.
+                    save(input_spec, &serde_json::to_string_pretty(&new_api)?)?;
 
                     false
                 }

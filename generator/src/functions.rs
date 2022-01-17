@@ -16,7 +16,7 @@ pub fn generate_files(
     api: &openapiv3::OpenAPI,
     ts: &mut TypeSpace,
     parameters: &BTreeMap<String, &openapiv3::Parameter>,
-) -> Result<BTreeMap<String, String>> {
+) -> Result<(BTreeMap<String, String>, openapiv3::OpenAPI)> {
     let mut tag_files: BTreeMap<String, String> = Default::default();
 
     let mut fn_names: Vec<String> = Default::default();
@@ -384,7 +384,7 @@ pub fn generate_files(
         gen(pn.as_str(), "TRACE", op.trace.as_ref())?;
     }
 
-    Ok(tag_files)
+    Ok((tag_files, api.clone()))
 }
 
 fn get_response_type_from_object(
