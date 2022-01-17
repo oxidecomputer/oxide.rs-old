@@ -6,7 +6,7 @@ on:
     paths:
       - .github/workflows/update-spec-for-docs.yml
   workflow_dispatch:
-name: generate-website-docs
+name: update spec for docs
 concurrency:
   group: docs-${{ github.ref }}
   cancel-in-progress: true
