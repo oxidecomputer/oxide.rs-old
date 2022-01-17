@@ -45,12 +45,12 @@ jobs:
       - name: Ensure no files changed
         shell: bash
         run: |
-          if [[ `git status --porcelain` ]]; then
-            echo "Files changed, exiting";
-            exit 1;
-          else
+          if [[ `git diff-index --quiet HEAD` ]]; then
             # No changes
             echo "No files changed, proceeding";
+          else
+            echo "Files changed, exiting";
+            exit 1;
           fi
       # Checkout the docs repo since we will want to update the files there.
       - uses: actions/checkout@v2
