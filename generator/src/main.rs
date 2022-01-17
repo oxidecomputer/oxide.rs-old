@@ -2255,7 +2255,7 @@ fn render_param(
     out.to_string()
 }
 
-fn gen(api: &OpenAPI, proper_name: &str, host: &str, tags: Vec<String>) -> Result<String> {
+fn gen(api: &OpenAPI, host: &str, tags: Vec<String>) -> Result<String> {
     let mut out = String::new();
 
     let mut a = |s: &str| {
@@ -2321,10 +2321,6 @@ fn gen(api: &OpenAPI, proper_name: &str, host: &str, tags: Vec<String>) -> Resul
     }
 
     a("");
-    if proper_name.starts_with("Google") {
-        a("use std::io::Write;");
-        a("");
-    }
 
     a("use anyhow::{anyhow, Error, Result};");
     a("");
@@ -2372,7 +2368,7 @@ fn gen(api: &OpenAPI, proper_name: &str, host: &str, tags: Vec<String>) -> Resul
     a("");
 
     // Print the client template.
-    a(&crate::client::generate_client(proper_name));
+    a(&crate::client::generate_client());
 
     a("");
 
@@ -2650,12 +2646,6 @@ fn main() -> Result<()> {
     opts.reqopt("v", "", "Target Rust crate version", "VERSION");
     opts.reqopt("d", "", "Target Rust crate description", "DESCRIPTION");
     opts.reqopt("", "host", "Target default host", "DEFAULT_HOST");
-    opts.reqopt(
-        "",
-        "proper-name",
-        "Target client proper name",
-        "PROPER_NAME",
-    );
     opts.reqopt("", "spec-link", "Link to the spec", "SPEC_LINK");
     opts.optflag("", "debug", "Print debug output");
 
@@ -2824,7 +2814,6 @@ fn main() -> Result<()> {
      * In addition to types defined in schemas, types may be defined inline in
      * request and response bodies.
      */
-    let proper_name = args.opt_str("proper-name").unwrap();
     let mut tags: Vec<String> = Default::default();
     for (pn, p) in api.paths.iter() {
         let op = p.item()?;
@@ -2995,7 +2984,7 @@ fn main() -> Result<()> {
     tags.sort_unstable();
     tags.dedup();
 
-    let fail = match gen(&api, &proper_name, &host, tags) {
+    let fail = match gen(&api, &host, tags) {
         Ok(out) => {
             let description = args.opt_str("d").unwrap();
 
@@ -3060,13 +3049,7 @@ rustdoc-args = ["--cfg", "docsrs"]
             /*
              * Generate our documentation for the library.
              */
-            let docs = template::generate_docs(
-                &api,
-                &to_snake_case(&name),
-                &version,
-                &proper_name,
-                &spec_link,
-            );
+            let docs = template::generate_docs(&api, &to_snake_case(&name), &version, &spec_link);
             let mut readme = root.clone();
             readme.push("README.md");
             save(
@@ -3097,7 +3080,7 @@ rustdoc-args = ["--cfg", "docsrs"]
             /*
              * Create the Rust utils module:
              */
-            let utils = utils::generate_utils(&proper_name);
+            let utils = utils::generate_utils();
             let mut utilsrs = src.clone();
             utilsrs.push("utils.rs");
             save(utilsrs, utils.as_str())?;
@@ -3105,7 +3088,7 @@ rustdoc-args = ["--cfg", "docsrs"]
             /*
              * Create the Rust source types file containing the generated types:
              */
-            let types = types::generate_types(&mut ts, &proper_name)?;
+            let types = types::generate_types(&mut ts)?;
             let mut typesrs = src.clone();
             typesrs.push("types.rs");
             save(typesrs, types.as_str())?;
