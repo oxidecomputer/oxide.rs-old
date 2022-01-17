@@ -29,7 +29,7 @@ impl Instances {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_get(
+    pub async fn get_page(
         &self,
         limit: u32,
         page_token: &str,
@@ -64,11 +64,11 @@ impl Instances {
     /**
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances` endpoint.
      *
-     * As opposed to `project_get`, this function returns all the pages of the request at once.
+     * As opposed to `get`, this function returns all the pages of the request at once.
      *
      * List instances in a project.
      */
-    pub async fn project_get_all(
+    pub async fn get_all(
         &self,
         sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
@@ -129,7 +129,7 @@ impl Instances {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_post(
+    pub async fn post(
         &self,
         organization_name: &str,
         project_name: &str,
@@ -157,7 +157,7 @@ impl Instances {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_get_instances(
+    pub async fn get(
         &self,
         instance_name: &str,
         organization_name: &str,
@@ -184,7 +184,7 @@ impl Instances {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_delete(
+    pub async fn delete(
         &self,
         instance_name: &str,
         organization_name: &str,
@@ -378,7 +378,7 @@ impl Instances {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_reboot(
+    pub async fn reboot(
         &self,
         instance_name: &str,
         organization_name: &str,
@@ -405,7 +405,7 @@ impl Instances {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_start(
+    pub async fn start(
         &self,
         instance_name: &str,
         organization_name: &str,
@@ -432,7 +432,7 @@ impl Instances {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_stop(
+    pub async fn stop(
         &self,
         instance_name: &str,
         organization_name: &str,

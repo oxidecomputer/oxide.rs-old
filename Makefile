@@ -21,7 +21,7 @@ $(SPEC):
 	curl -sSL $(SPEC_REMOTE) -o $@
 
 oxide: target/debug/generator
-	./target/debug/generator -i $(SPEC) -v 0.1.0-rc.5 \
+	./target/debug/generator -i $(SPEC) -v 0.1.0-rc.6 \
 		-o oxide \
 		-n oxide-api \
 		--proper-name Oxide \

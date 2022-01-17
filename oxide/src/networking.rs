@@ -29,7 +29,7 @@ impl Networking {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_vpcs_get(
+    pub async fn vpcs_get(
         &self,
         limit: u32,
         page_token: &str,
@@ -64,11 +64,11 @@ impl Networking {
     /**
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs` endpoint.
      *
-     * As opposed to `project_vpcs_get`, this function returns all the pages of the request at once.
+     * As opposed to `vpcs_get`, this function returns all the pages of the request at once.
      *
      * List VPCs in a project.
      */
-    pub async fn project_vpcs_get_all(
+    pub async fn vpcs_get_all(
         &self,
         sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
@@ -128,7 +128,7 @@ impl Networking {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_vpcs_post(
+    pub async fn vpcs_post(
         &self,
         organization_name: &str,
         project_name: &str,
@@ -156,7 +156,7 @@ impl Networking {
      * * `project_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_vpcs_get_vpc(
+    pub async fn vpcs_get_vpc(
         &self,
         organization_name: &str,
         project_name: &str,
@@ -183,7 +183,7 @@ impl Networking {
      * * `project_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_vpcs_put_vpc(
+    pub async fn vpcs_put_vpc(
         &self,
         organization_name: &str,
         project_name: &str,
@@ -213,7 +213,7 @@ impl Networking {
      * * `project_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn project_vpcs_delete_vpc(
+    pub async fn vpcs_delete_vpc(
         &self,
         organization_name: &str,
         project_name: &str,

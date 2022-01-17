@@ -26,7 +26,7 @@ impl Projects {
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name or id.
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn organization_get(
+    pub async fn get_page(
         &self,
         limit: u32,
         page_token: &str,
@@ -59,11 +59,11 @@ impl Projects {
     /**
      * This function performs a `GET` to the `/organizations/{organization_name}/projects` endpoint.
      *
-     * As opposed to `organization_get`, this function returns all the pages of the request at once.
+     * As opposed to `get`, this function returns all the pages of the request at once.
      *
      * List all projects.
      */
-    pub async fn organization_get_all(
+    pub async fn get_all(
         &self,
         sort_by: crate::types::NameSortMode,
         organization_name: &str,
@@ -120,7 +120,7 @@ impl Projects {
      *
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn organization_post(
+    pub async fn post(
         &self,
         organization_name: &str,
         body: &crate::types::ProjectCreate,
@@ -145,7 +145,7 @@ impl Projects {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn organization_get_projects(
+    pub async fn get(
         &self,
         organization_name: &str,
         project_name: &str,
@@ -169,11 +169,7 @@ impl Projects {
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn organization_delete(
-        &self,
-        organization_name: &str,
-        project_name: &str,
-    ) -> Result<()> {
+    pub async fn delete(&self, organization_name: &str, project_name: &str) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}",
             crate::progenitor_support::encode_path(organization_name),

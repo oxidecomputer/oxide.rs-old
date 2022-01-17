@@ -2531,10 +2531,6 @@ fn clean_name(t: &str) -> String {
             .replace("040000", "subdirectory_tree")
             .replace("160000", "submodule_commit")
             .replace("120000", "symlink_path_blob")
-            .replace("shipbob", "")
-            .replace("ShipBob", "")
-            .replace("public api models", "")
-            .replace("api view models model", "")
             .replace(" an ", " ")
             .replace(" or ", " ")
             .replace(" for ", " ")
@@ -2554,32 +2550,6 @@ fn clean_name(t: &str) -> String {
     .replace("_id_or_uuid", "")
     .replace("_uuid", "")
     .replace("_id_", "_")
-    .replace("companies_company_", "company_")
-    .replace("employees_employee_", "employee_")
-    .replace("benefits_benefit_", "benefit_")
-    .replace("compensations_compensation_", "compensation_")
-    .replace("garnishments_garnishment_", "garnishment_")
-    .replace("types_type_", "type_")
-    .replace("contractors_contractor_", "comntractor_")
-    .replace("jobs_job_", "job_")
-    .replace("payrolls_payroll_", "payroll_")
-    .replace("locations_location_", "location_")
-    .replace("applicants_applicant_", "applicant_")
-    .replace("_public_api_view_models", "_")
-    .replace("_public_common_models", "_")
-    .replace("_common_models", "_")
-    .replace("_public_common", "_")
-    .replace("_api_view_models", "_")
-    .replace("_api_models_public", "_")
-    .replace("_presentation_view_models", "_")
-    .replace("_presentation_models", "_")
-    .replace("channels_channel", "channel")
-    .replace("orders_order", "order")
-    .replace("webhooks_webhook", "webhook")
-    .replace("products_public", "products")
-    .replace("products_product", "product")
-    .replace("returns_return", "return")
-    .replace("_view_model", "_")
     .trim_start_matches('_')
     .trim_end_matches('_')
     .replace('_', " ")
@@ -2611,44 +2581,15 @@ pub fn path_to_operation_id(path: &str, method: &str) -> String {
             .trim_start_matches('-')
             .replace('{', "_by_")
             .replace('}', "")
-            .replace("shippingmethod", "shipping_method")
-            .replace("statushistory", "status_history")
-            .replace("cancelbulk", "cancel_bulk")
     );
-
-    if path == "/order/{orderId}/shipment" {
-        return "get_order_shipments".to_string();
-    } else if path == "/order/{orderId}/shipment/{shipmentId}/logs" {
-        return "get_order_shipment_logs".to_string();
-    }
 
     new
 }
 
 pub fn clean_fn_name(proper_name: &str, oid: &str, tag: &str) -> String {
-    if proper_name == "GitHub" {
-        return to_snake_case(oid).trim_start_matches('_').to_string();
-    }
+    let clean_name = "_".to_string();
 
-    let mut clean_name = "_".to_string();
-    if proper_name.starts_with("Google") {
-        clean_name = format!(
-            "{}_",
-            to_snake_case(
-                proper_name
-                    .replace("Google", "")
-                    .replace("Admin", "Directory")
-                    .trim()
-            )
-        );
-    }
-
-    let mut o = oid.to_string();
-    if o == "listimmessages" {
-        o = "list im messages".to_string();
-    } else if o == "sendimmessages" {
-        o = "send im messages".to_string();
-    }
+    let o = oid.to_string();
 
     let mut st = to_snake_case(&o)
         .replace("v_1_", "")
@@ -2664,14 +2605,8 @@ pub fn clean_fn_name(proper_name: &str, oid: &str, tag: &str) -> String {
         .replace("s_uuid", "")
         .replace("_id_or_uuid", "")
         .replace("_uuid", "")
-        .replace("cloudresourcemanager_", "_")
-        .replace("_csrs_csr", "_csr")
-        .replace("_idps_idp", "_idp")
-        .replace("shippingmethod_", "shipping_method_")
-        .replace("companies_company_", "company_")
-        .replace("employees_employee_", "employee_")
-        .replace("jobs_job_", "job_")
-        .replace("applicants_applicant_", "applicant_")
+        .replace("organization_", "")
+        .replace("project_", "")
         .trim_start_matches('_')
         .trim_start_matches("in_")
         .trim_start_matches("by_")
