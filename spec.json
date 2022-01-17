@@ -8,6 +8,10 @@
       "email": "api@oxide.computer"
     },
     "version": "0.0.1",
+    "x-go": {
+      "client": "// Create a client with your token.\nclient, err := oxide.NewClient(\"TOKEN\", \"your apps user agent\")\nif err != nil {\n  panic(err)\n}\nif err := client.WithBaseURL(\"BASE_URL\"); err != nil {\n  panic(err)\n}",
+      "install": "go get github.com/oxidecomputer/oxide.go"
+    },
     "x-rust": {
       "client": "use oxide_api::Client;\n\nlet client = Client::new(String::from(\"api-key\"));",
       "install": "[dependencies]\noxide-api = \"0.1.0-rc.7\""
@@ -66,6 +70,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "rackResultsPage, err := client.HardwareRacksGet(limit, pageToken, sortBy)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.HardwareRacksGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_rack = client.hardware().racks_get(limit, page_token, sort_by).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/hardware/struct.Hardware.html#method.racks_get"
@@ -103,6 +111,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "rack, err := client.HardwareRacksGetRack(rackId)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.HardwareRacksGetRack"
         },
         "x-rust": {
           "example": "let rack = client.hardware().racks_get_rack(rack_id).await?;",
@@ -162,6 +174,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "sledResultsPage, err := client.HardwareSledsGet(limit, pageToken, sortBy)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.HardwareSledsGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_sled = client.hardware().sleds_get(limit, page_token, sort_by).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/hardware/struct.Hardware.html#method.sleds_get"
@@ -200,6 +216,10 @@
             }
           }
         },
+        "x-go": {
+          "example": "sled, err := client.HardwareSledsGetSled(sledId)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.HardwareSledsGetSled"
+        },
         "x-rust": {
           "example": "let sled = client.hardware().sleds_get_sled(sled_id).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/hardware/struct.Hardware.html#method.sleds_get_sled"
@@ -224,6 +244,10 @@
             "description": ""
           }
         },
+        "x-go": {
+          "example": "if err := client.SpoofLogin(body); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.SpoofLogin"
+        },
         "x-rust": {
           "example": "client.login().spoof(body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/login/struct.Login.html#method.spoof"
@@ -237,6 +261,10 @@
           "default": {
             "description": ""
           }
+        },
+        "x-go": {
+          "example": "if err := client.Logout(); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.Logout"
         },
         "x-rust": {
           "example": "client.logout().get().await?;",
@@ -296,6 +324,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "organizationResultsPage, err := client.OrganizationsGet(limit, pageToken, sortBy)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.OrganizationsGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_user = client.organizations().get_page(limit, page_token, sort_by).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/organizations/struct.Organizations.html#method.get_page"
@@ -328,6 +360,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "organization, err := client.OrganizationsPost(body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.OrganizationsPost"
         },
         "x-rust": {
           "example": "let user = client.organizations().post(body).await?;",
@@ -364,6 +400,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "organization, err := client.OrganizationsGetOrganization(organizationName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.OrganizationsGetOrganization"
         },
         "x-rust": {
           "example": "let user = client.organizations().get(organization_name).await?;",
@@ -409,6 +449,10 @@
             }
           }
         },
+        "x-go": {
+          "example": "organization, err := client.OrganizationsPutOrganization(organizationName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.OrganizationsPutOrganization"
+        },
         "x-rust": {
           "example": "let user = client.organizations().put(organization_name, body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/organizations/struct.Organizations.html#method.put"
@@ -435,6 +479,10 @@
           "204": {
             "description": "successful deletion"
           }
+        },
+        "x-go": {
+          "example": "if err := client.OrganizationsDeleteOrganization(organizationName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.OrganizationsDeleteOrganization"
         },
         "x-rust": {
           "example": "client.organizations().delete(organization_name).await?;",
@@ -503,6 +551,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "projectResultsPage, err := client.OrganizationProjectsGet(limit, pageToken, sortBy, organizationName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.OrganizationProjectsGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_project = client.projects().get_page(limit, page_token, sort_by, organization_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/projects/struct.Projects.html#method.get_page"
@@ -546,6 +598,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "project, err := client.OrganizationProjectsPost(organizationName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.OrganizationProjectsPost"
         },
         "x-rust": {
           "example": "let project = client.projects().post(organization_name, body).await?;",
@@ -591,6 +647,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "project, err := client.OrganizationProjectsGetProject(organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.OrganizationProjectsGetProject"
         },
         "x-rust": {
           "example": "let project = client.projects().get(organization_name, project_name).await?;",
@@ -645,6 +705,10 @@
             }
           }
         },
+        "x-go": {
+          "example": "project, err := client.OrganizationProjectsPutProject(organizationName, projectName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.OrganizationProjectsPutProject"
+        },
         "x-rust": {
           "example": "let project = client.organizations().projects_put_project(organization_name, project_name, body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/organizations/struct.Organizations.html#method.projects_put_project"
@@ -680,6 +744,10 @@
           "204": {
             "description": "successful deletion"
           }
+        },
+        "x-go": {
+          "example": "if err := client.OrganizationProjectsDeleteProject(organizationName, projectName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.OrganizationProjectsDeleteProject"
         },
         "x-rust": {
           "example": "client.projects().delete(organization_name, project_name).await?;",
@@ -757,6 +825,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "diskResultsPage, err := client.ProjectDisksGet(limit, pageToken, sortBy, organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectDisksGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_disk = client.projects().disks_get(limit, page_token, sort_by, organization_name, project_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/projects/struct.Projects.html#method.disks_get"
@@ -809,6 +881,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "disk, err := client.ProjectDisksPost(organizationName, projectName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectDisksPost"
         },
         "x-rust": {
           "example": "let disk = client.projects().disks_post(organization_name, project_name, body).await?;",
@@ -864,6 +940,10 @@
             }
           }
         },
+        "x-go": {
+          "example": "disk, err := client.ProjectDisksGetDisk(diskName, organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectDisksGetDisk"
+        },
         "x-rust": {
           "example": "let disk = client.projects().disks_get_disk(disk_name, organization_name, project_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/projects/struct.Projects.html#method.disks_get_disk"
@@ -908,6 +988,10 @@
           "204": {
             "description": "successful deletion"
           }
+        },
+        "x-go": {
+          "example": "if err := client.ProjectDisksDeleteDisk(diskName, organizationName, projectName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectDisksDeleteDisk"
         },
         "x-rust": {
           "example": "client.projects().disks_delete_disk(disk_name, organization_name, project_name).await?;",
@@ -985,6 +1069,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "instanceResultsPage, err := client.ProjectInstancesGet(limit, pageToken, sortBy, organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectInstancesGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_instance = client.instances().get_page(limit, page_token, sort_by, organization_name, project_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.get_page"
@@ -1037,6 +1125,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "instance, err := client.ProjectInstancesPost(organizationName, projectName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectInstancesPost"
         },
         "x-rust": {
           "example": "let instance = client.instances().post(organization_name, project_name, body).await?;",
@@ -1092,6 +1184,10 @@
             }
           }
         },
+        "x-go": {
+          "example": "instance, err := client.ProjectInstancesGetInstance(instanceName, organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectInstancesGetInstance"
+        },
         "x-rust": {
           "example": "let instance = client.instances().get(instance_name, organization_name, project_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.get"
@@ -1136,6 +1232,10 @@
           "204": {
             "description": "successful deletion"
           }
+        },
+        "x-go": {
+          "example": "if err := client.ProjectInstancesDeleteInstance(instanceName, organizationName, projectName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectInstancesDeleteInstance"
         },
         "x-rust": {
           "example": "client.instances().delete(instance_name, organization_name, project_name).await?;",
@@ -1222,6 +1322,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "diskResultsPage, err := client.InstanceDisksGet(limit, pageToken, sortBy, instanceName, organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.InstanceDisksGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_disk = client.instances().disks_get(limit, page_token, sort_by, instance_name, organization_name, project_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.disks_get"
@@ -1284,6 +1388,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "disk, err := client.InstanceDisksAttach(instanceName, organizationName, projectName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.InstanceDisksAttach"
         },
         "x-rust": {
           "example": "let disk = client.instances().disks_attach(instance_name, organization_name, project_name, body).await?;",
@@ -1348,6 +1456,10 @@
             }
           }
         },
+        "x-go": {
+          "example": "disk, err := client.InstanceDisksDetach(instanceName, organizationName, projectName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.InstanceDisksDetach"
+        },
         "x-rust": {
           "example": "let disk = client.instances().disks_detach(instance_name, organization_name, project_name, body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.disks_detach"
@@ -1401,6 +1513,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "instance, err := client.ProjectInstancesInstanceReboot(instanceName, organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectInstancesInstanceReboot"
         },
         "x-rust": {
           "example": "let instance = client.instances().reboot(instance_name, organization_name, project_name).await?;",
@@ -1456,6 +1572,10 @@
             }
           }
         },
+        "x-go": {
+          "example": "instance, err := client.ProjectInstancesInstanceStart(instanceName, organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectInstancesInstanceStart"
+        },
         "x-rust": {
           "example": "let instance = client.instances().start(instance_name, organization_name, project_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.start"
@@ -1509,6 +1629,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "instance, err := client.ProjectInstancesInstanceStop(instanceName, organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectInstancesInstanceStop"
         },
         "x-rust": {
           "example": "let instance = client.instances().stop(instance_name, organization_name, project_name).await?;",
@@ -1586,6 +1710,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "vPCResultsPage, err := client.ProjectVpcsGet(limit, pageToken, sortBy, organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectVpcsGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_vpc = client.networking().vpcs_get(limit, page_token, sort_by, organization_name, project_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpcs_get"
@@ -1638,6 +1766,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "vPC, err := client.ProjectVpcsPost(organizationName, projectName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectVpcsPost"
         },
         "x-rust": {
           "example": "let vpc = client.networking().vpcs_post(organization_name, project_name, body).await?;",
@@ -1692,6 +1824,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "vPC, err := client.ProjectVpcsGetVpc(organizationName, projectName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectVpcsGetVpc"
         },
         "x-rust": {
           "example": "let vpc = client.networking().vpcs_get_vpc(organization_name, project_name, vpc_name).await?;",
@@ -1748,6 +1884,10 @@
             "description": "resource updated"
           }
         },
+        "x-go": {
+          "example": "if err := client.ProjectVpcsPutVpc(organizationName, projectName, vpcName, body); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectVpcsPutVpc"
+        },
         "x-rust": {
           "example": "client.networking().vpcs_put_vpc(organization_name, project_name, vpc_name, body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpcs_put_vpc"
@@ -1792,6 +1932,10 @@
           "204": {
             "description": "successful deletion"
           }
+        },
+        "x-go": {
+          "example": "if err := client.ProjectVpcsDeleteVpc(organizationName, projectName, vpcName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.ProjectVpcsDeleteVpc"
         },
         "x-rust": {
           "example": "client.networking().vpcs_delete_vpc(organization_name, project_name, vpc_name).await?;",
@@ -1878,6 +2022,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "vPCFirewallRuleResultsPage, err := client.VpcFirewallRulesGet(limit, pageToken, sortBy, organizationName, projectName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcFirewallRulesGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_vpc_firewall_rule = client.networking().vpc_firewall_rules_get(limit, page_token, sort_by, organization_name, project_name, vpc_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpc_firewall_rules_get"
@@ -1939,6 +2087,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "vPCFirewallRuleUpdateResult, err := client.VpcFirewallRulesPut(organizationName, projectName, vpcName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcFirewallRulesPut"
         },
         "x-rust": {
           "example": "let vpc_firewall_rule = client.networking().vpc_firewall_rules_put(organization_name, project_name, vpc_name, body).await?;",
@@ -2025,6 +2177,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "vPCRouterResultsPage, err := client.VpcRoutersGet(limit, pageToken, sortBy, organizationName, projectName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcRoutersGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_vpc_router = client.networking().vpc_routers_get(limit, page_token, sort_by, organization_name, project_name, vpc_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpc_routers_get"
@@ -2086,6 +2242,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "vPCRouter, err := client.VpcRoutersPost(organizationName, projectName, vpcName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcRoutersPost"
         },
         "x-rust": {
           "example": "let vpc_router = client.networking().vpc_routers_post(organization_name, project_name, vpc_name, body).await?;",
@@ -2149,6 +2309,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "vPCRouter, err := client.VpcRoutersGetRouter(organizationName, projectName, routerName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcRoutersGetRouter"
         },
         "x-rust": {
           "example": "let vpc_router = client.networking().vpc_routers_get_router(organization_name, project_name, router_name, vpc_name).await?;",
@@ -2214,6 +2378,10 @@
             "description": "resource updated"
           }
         },
+        "x-go": {
+          "example": "if err := client.VpcRoutersPutRouter(organizationName, projectName, routerName, vpcName, body); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcRoutersPutRouter"
+        },
         "x-rust": {
           "example": "client.networking().vpc_routers_put_router(organization_name, project_name, router_name, vpc_name, body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpc_routers_put_router"
@@ -2267,6 +2435,10 @@
           "204": {
             "description": "successful deletion"
           }
+        },
+        "x-go": {
+          "example": "if err := client.VpcRoutersDeleteRouter(organizationName, projectName, routerName, vpcName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcRoutersDeleteRouter"
         },
         "x-rust": {
           "example": "client.networking().vpc_routers_delete_router(organization_name, project_name, router_name, vpc_name).await?;",
@@ -2362,6 +2534,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "routerRouteResultsPage, err := client.RoutersRoutesGet(limit, pageToken, sortBy, organizationName, projectName, routerName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.RoutersRoutesGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_router_route = client.networking().routers_routes_get(limit, page_token, sort_by, organization_name, project_name, router_name, vpc_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.routers_routes_get"
@@ -2432,6 +2608,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "routerRoute, err := client.RoutersRoutesPost(organizationName, projectName, routerName, vpcName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.RoutersRoutesPost"
         },
         "x-rust": {
           "example": "let router_route = client.networking().routers_routes_post(organization_name, project_name, router_name, vpc_name, body).await?;",
@@ -2504,6 +2684,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "routerRoute, err := client.RoutersRoutesGetRoute(organizationName, projectName, routeName, routerName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.RoutersRoutesGetRoute"
         },
         "x-rust": {
           "example": "let router_route = client.networking().routers_routes_get_route(organization_name, project_name, route_name, router_name, vpc_name).await?;",
@@ -2578,6 +2762,10 @@
             "description": "resource updated"
           }
         },
+        "x-go": {
+          "example": "if err := client.RoutersRoutesPutRoute(organizationName, projectName, routeName, routerName, vpcName, body); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.RoutersRoutesPutRoute"
+        },
         "x-rust": {
           "example": "client.networking().routers_routes_put_route(organization_name, project_name, route_name, router_name, vpc_name, body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.routers_routes_put_route"
@@ -2640,6 +2828,10 @@
           "204": {
             "description": "successful deletion"
           }
+        },
+        "x-go": {
+          "example": "if err := client.RoutersRoutesDeleteRoute(organizationName, projectName, routeName, routerName, vpcName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.RoutersRoutesDeleteRoute"
         },
         "x-rust": {
           "example": "client.networking().routers_routes_delete_route(organization_name, project_name, route_name, router_name, vpc_name).await?;",
@@ -2726,6 +2918,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "vPCSubnetResultsPage, err := client.VpcSubnetsGet(limit, pageToken, sortBy, organizationName, projectName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcSubnetsGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_vpc_subnet = client.networking().vpc_subnets_get(limit, page_token, sort_by, organization_name, project_name, vpc_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpc_subnets_get"
@@ -2787,6 +2983,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "vPCSubnet, err := client.VpcSubnetsPost(organizationName, projectName, vpcName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcSubnetsPost"
         },
         "x-rust": {
           "example": "let vpc_subnet = client.networking().vpc_subnets_post(organization_name, project_name, vpc_name, body).await?;",
@@ -2850,6 +3050,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "vPCSubnet, err := client.VpcSubnetsGetSubnet(organizationName, projectName, subnetName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcSubnetsGetSubnet"
         },
         "x-rust": {
           "example": "let vpc_subnet = client.networking().vpc_subnets_get_subnet(organization_name, project_name, subnet_name, vpc_name).await?;",
@@ -2915,6 +3119,10 @@
             "description": "resource updated"
           }
         },
+        "x-go": {
+          "example": "if err := client.VpcSubnetsPutSubnet(organizationName, projectName, subnetName, vpcName, body); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcSubnetsPutSubnet"
+        },
         "x-rust": {
           "example": "client.networking().vpc_subnets_put_subnet(organization_name, project_name, subnet_name, vpc_name, body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpc_subnets_put_subnet"
@@ -2968,6 +3176,10 @@
           "204": {
             "description": "successful deletion"
           }
+        },
+        "x-go": {
+          "example": "if err := client.VpcSubnetsDeleteSubnet(organizationName, projectName, subnetName, vpcName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.VpcSubnetsDeleteSubnet"
         },
         "x-rust": {
           "example": "client.networking().vpc_subnets_delete_subnet(organization_name, project_name, subnet_name, vpc_name).await?;",
@@ -3063,6 +3275,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "networkInterfaceResultsPage, err := client.SubnetsIpsGet(limit, pageToken, sortBy, organizationName, projectName, subnetName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.SubnetsIpsGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_network_interface = client.networking().subnets_ips_get(limit, page_token, sort_by, organization_name, project_name, subnet_name, vpc_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.subnets_ips_get"
@@ -3113,6 +3329,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "roleResultsPage, err := client.RolesGet(limit, pageToken)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.RolesGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_role = client.roles().get_page(limit, page_token).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/roles/struct.Roles.html#method.get_page"
@@ -3149,6 +3369,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "role, err := client.RolesGetRole(roleName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.RolesGetRole"
         },
         "x-rust": {
           "example": "let role = client.roles().get(role_name).await?;",
@@ -3208,6 +3432,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "sagaResultsPage, err := client.SagasGet(limit, pageToken, sortBy)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.SagasGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_saga = client.sagas().get_page(limit, page_token, sort_by).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/sagas/struct.Sagas.html#method.get_page"
@@ -3245,6 +3473,10 @@
             }
           }
         },
+        "x-go": {
+          "example": "saga, err := client.SagasGetSaga(sagaId)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.SagasGetSaga"
+        },
         "x-rust": {
           "example": "let saga = client.sagas().get(saga_id).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/sagas/struct.Sagas.html#method.get"
@@ -3266,6 +3498,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "sessionUser, err := client.SessionMe()",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.SessionMe"
         },
         "x-rust": {
           "example": "let session_user = client.session().me().await?;",
@@ -3317,6 +3553,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "timeseriesSchemaResultsPage, err := client.TimeseriesSchemaGet(limit, pageToken)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.TimeseriesSchemaGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_timeseries_schema = client.metrics().timeseries_schema_get(limit, page_token).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/metrics/struct.Metrics.html#method.timeseries_schema_get"
@@ -3375,6 +3615,10 @@
           }
         },
         "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "userResultsPage, err := client.UsersGet(limit, pageToken, sortBy)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.UsersGet"
+        },
         "x-rust": {
           "example": "let vec_crate_types_user = client.users().get_page(limit, page_token, sort_by).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/users/struct.Users.html#method.get_page"
@@ -3410,6 +3654,10 @@
               }
             }
           }
+        },
+        "x-go": {
+          "example": "user, err := client.UsersGetUser(userName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#Client.UsersGetUser"
         },
         "x-rust": {
           "example": "let user = client.users().get(user_name).await?;",
