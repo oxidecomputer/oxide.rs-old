@@ -2586,7 +2586,7 @@ pub fn path_to_operation_id(path: &str, method: &str) -> String {
     new
 }
 
-pub fn clean_fn_name(proper_name: &str, oid: &str, tag: &str) -> String {
+pub fn clean_fn_name(_proper_name: &str, oid: &str, tag: &str) -> String {
     let clean_name = "_".to_string();
 
     let o = oid.to_string();
