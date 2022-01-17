@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   update-spec:
-    name: make-release
+    name: update-spec
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
