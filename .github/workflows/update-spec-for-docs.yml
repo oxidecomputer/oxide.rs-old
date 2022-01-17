@@ -19,7 +19,7 @@ jobs:
       - name: Install latest rust
         uses: actions-rs/toolchain@v1
         with:
-            toolchain: stable
+            toolchain: nightly
             override: true
             components: rustfmt, clippy
       - name: Cache cargo registry
@@ -45,14 +45,12 @@ jobs:
       - name: Ensure no files changed
         shell: bash
         run: |
-          git status
-          git diff-index --quiet HEAD
-          if [[ `git diff-index --quiet HEAD` ]]; then
-            # No changes
-            echo "No files changed, proceeding";
-          else
+          if [[ `git status --porcelain` ]]; then
             echo "Files changed, exiting";
             exit 1;
+          else
+            # No changes
+            echo "No files changed, proceeding";
           fi
       # Checkout the docs repo since we will want to update the files there.
       - uses: actions/checkout@v2
