@@ -2,7 +2,7 @@
  * Declare the client object:
  */
 
-pub fn generate_client_generic_api_key(proper_name: &str) -> String {
+pub fn generate_client(proper_name: &str) -> String {
     format!(
         r#"use std::env;
 

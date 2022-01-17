@@ -2285,9 +2285,7 @@ fn gen(api: &OpenAPI, proper_name: &str, host: &str, tags: Vec<String>) -> Resul
      * Tags are how functions are grouped.
      */
     for tag in api.tags.iter() {
-        if !tags.contains(&to_snake_case(&clean_name(&tag.name)))
-            && (proper_name == "Zoom" || proper_name == "DocuSign")
-        {
+        if !tags.contains(&to_snake_case(&clean_name(&tag.name))) {
             // Return early do nothing!
             // This fixes Zoom and DocuSign where they list tags that have no associated functions.
             continue;
@@ -2374,7 +2372,7 @@ fn gen(api: &OpenAPI, proper_name: &str, host: &str, tags: Vec<String>) -> Resul
     a("");
 
     // Print the client template.
-    a(&crate::client::generate_client_generic_api_key(proper_name));
+    a(&crate::client::generate_client(proper_name));
 
     a("");
 
@@ -2659,24 +2657,6 @@ fn main() -> Result<()> {
         "PROPER_NAME",
     );
     opts.reqopt("", "spec-link", "Link to the spec", "SPEC_LINK");
-    opts.optopt(
-        "",
-        "token-endpoint",
-        "Target token endpoint",
-        "TOKEN_ENDPOINT",
-    );
-    opts.optopt(
-        "",
-        "user-consent-endpoint",
-        "Target user consent endpoint",
-        "USER_CONSENT_ENDPOINT",
-    );
-    opts.optopt(
-        "",
-        "add-post-header",
-        "A header to add to post requests",
-        "ADD_POST_HEADER",
-    );
     opts.optflag("", "debug", "Print debug output");
 
     let args = match opts.parse(std::env::args().skip(1)) {
@@ -3080,7 +3060,7 @@ rustdoc-args = ["--cfg", "docsrs"]
             /*
              * Generate our documentation for the library.
              */
-            let docs = template::generate_docs_generic_api_key(
+            let docs = template::generate_docs(
                 &api,
                 &to_snake_case(&name),
                 &version,

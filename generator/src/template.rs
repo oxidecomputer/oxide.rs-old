@@ -433,7 +433,7 @@ pub fn generate_docs_openapi_info(
     )
 }
 
-pub fn generate_docs_generic_api_key(
+pub fn generate_docs(
     api: &openapiv3::OpenAPI,
     name: &str,
     version: &str,
