@@ -14,7 +14,7 @@
     },
     "x-rust": {
       "client": "use oxide_api::Client;\n\nlet client = Client::new(String::from(\"api-key\"));",
-      "install": "[dependencies]\noxide-api = \"0.1.0-rc.7\""
+      "install": "[dependencies]\noxide-api = \"0.1.0-rc.8\""
     }
   },
   "paths": {
