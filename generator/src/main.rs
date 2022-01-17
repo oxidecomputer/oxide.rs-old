@@ -2281,12 +2281,6 @@ fn gen(
     a("#![allow(missing_docs)]"); // TODO: Make this a deny.
     a("#![cfg_attr(docsrs, feature(doc_cfg))]");
     a("");
-    if proper_name == "GitHub" {
-        a("pub mod auth;");
-        a(r#"#[cfg(feature = "httpcache")]"#);
-        a(r#"#[cfg_attr(docsrs, doc(cfg(feature = "httpcache")))]"#);
-        a("pub mod http_cache;");
-    }
     a("#[cfg(test)]");
     a("mod tests;");
     // Hopefully there is never a "tag" named after these reserved libs.
@@ -2388,32 +2382,10 @@ fn gen(
     a("");
 
     // Print the client template.
-    if proper_name == "GitHub" {
-        a(crate::client::GITHUB_TEMPLATE);
-    } else if proper_name == "SendGrid"
-        || proper_name == "Giphy"
-        || proper_name == "Rev.ai"
-        || proper_name == "Okta"
-        || proper_name == "Oxide"
-    {
-        a(&crate::client::generate_client_generic_api_key(
-            proper_name,
-            add_post_header,
-        ));
-    } else if proper_name == "TripActions" {
-        a(&crate::client::generate_client_generic_client_credentials(
-            proper_name,
-            token_endpoint,
-            add_post_header,
-        ));
-    } else {
-        a(&crate::client::generate_client_generic_token(
-            proper_name,
-            token_endpoint,
-            user_consent_endpoint,
-            add_post_header,
-        ));
-    }
+    a(&crate::client::generate_client_generic_api_key(
+        proper_name,
+        add_post_header,
+    ));
 
     a("");
 
@@ -2422,11 +2394,9 @@ fn gen(
      * Tags are how functions are grouped.
      */
     for tag in api.tags.iter() {
-        if !tags.contains(&to_snake_case(&tag.name))
-            && (proper_name == "Zoom" || proper_name == "DocuSign")
-        {
+        if !tags.contains(&to_snake_case(&tag.name)) {
             // Return early do nothing!
-            // This fixes Zoom and DocuSign where they list tags that have no associated functions.
+            // This fixes where they list tags that have no associated functions.
             continue;
         }
 
@@ -2480,23 +2450,6 @@ fn gen(
     a("}");
 
     Ok(out)
-}
-
-pub fn make_plural(proper_name: &str, s: &str) -> String {
-    // Only fix the ramp names.
-    if proper_name != "Ramp" && proper_name != "Okta" {
-        return s.to_string();
-    }
-
-    if s.ends_with("ss") && !s.ends_with("access") {
-        return format!("{}es", s);
-    } else if s.ends_with('s') || s.ends_with("_all") {
-        return s.to_string();
-    } else if s.ends_with('y') {
-        return format!("{}ies", s.trim_end_matches('y'));
-    }
-
-    format!("{}s", s)
 }
 
 fn struct_name(s: &str) -> String {
@@ -2947,10 +2900,7 @@ fn main() -> Result<()> {
 
                     tags.push(vec.first().unwrap().to_string());
                 }
-                let tag = to_snake_case(&clean_name(&make_plural(
-                    &proper_name,
-                    tags.first().unwrap(),
-                )));
+                let tag = to_snake_case(&clean_name(tags.first().unwrap()));
 
                 let oid = clean_fn_name(&proper_name, &od, &tag);
 
@@ -3112,22 +3062,6 @@ fn main() -> Result<()> {
             /*
              * Write the Cargo.toml file:
              */
-            let mut uuid_lib = "".to_string();
-            let mut yup_oauth2_lib = "".to_string();
-            if proper_name != "GitHub" {
-                uuid_lib = r#"
-bytes = { version = "1", features = ["serde"] }
-uuid = { version = "^0.8", features = ["serde", "v4"] }"#
-                    .to_string();
-            }
-
-            if proper_name.starts_with("Google") {
-                yup_oauth2_lib = r#"
-base64 = "^0.12"
-yup-oauth2 = "^5""#
-                    .to_string();
-            }
-
             let mut toml = root.clone();
             toml.push("Cargo.toml");
             let tomlout = format!(
@@ -3143,6 +3077,7 @@ license = "MIT"
 
 [dependencies]
 anyhow = "1"
+bytes = {{ version = "1", features = ["serde"] }}
 chrono = {{ version = "0.4", features = ["serde"] }}
 dirs = {{ version = "^4.0.0", optional = true }}
 http = "^0.2.4"
@@ -3155,7 +3090,8 @@ schemars = {{ version = "0.8", features = ["bytes", "chrono", "url", "uuid"] }}
 serde = {{ version = "1", features = ["derive"] }}
 serde_json = "1"
 serde_urlencoded = "^0.7"
-url = {{ version = "2", features = ["serde"] }}{}{}
+url = {{ version = "2", features = ["serde"] }}
+uuid = {{ version = "^0.8", features = ["serde", "v4"] }}
 
 [dev-dependencies]
 base64 = "^0.13"
@@ -3171,53 +3107,20 @@ httpcache = ["dirs"]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 "#,
-                name, description, version, name, output_dir, uuid_lib, yup_oauth2_lib
+                name, description, version, name, output_dir,
             );
             save(&toml, tomlout.as_str())?;
 
             /*
              * Generate our documentation for the library.
              */
-            let docs = if proper_name == "GitHub" {
-                template::generate_docs_github(
-                    &api,
-                    &to_snake_case(&name),
-                    &version,
-                    &proper_name,
-                    host.trim_start_matches("https://"),
-                    &spec_link,
-                )
-            } else if proper_name == "SendGrid"
-                || proper_name == "Giphy"
-                || proper_name == "Rev.ai"
-                || proper_name == "Okta"
-                || proper_name == "Oxide"
-            {
-                template::generate_docs_generic_api_key(
-                    &api,
-                    &to_snake_case(&name),
-                    &version,
-                    &proper_name,
-                    &spec_link,
-                )
-            } else if proper_name == "TripActions" {
-                template::generate_docs_generic_client_credentials(
-                    &api,
-                    &to_snake_case(&name),
-                    &version,
-                    &proper_name,
-                    &spec_link,
-                )
-            } else {
-                template::generate_docs_generic_token(
-                    &api,
-                    &to_snake_case(&name),
-                    &version,
-                    &proper_name,
-                    &spec_link,
-                    &add_post_header,
-                )
-            };
+            let docs = template::generate_docs_generic_api_key(
+                &api,
+                &to_snake_case(&name),
+                &version,
+                &proper_name,
+                &spec_link,
+            );
             let mut readme = root.clone();
             readme.push("README.md");
             save(

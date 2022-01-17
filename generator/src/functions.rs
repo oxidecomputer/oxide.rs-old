@@ -4,9 +4,9 @@ use anyhow::{bail, Result};
 use inflector::cases::snakecase::to_snake_case;
 
 use crate::{
-    clean_fn_name, clean_name, get_parameter_data, make_plural, oid_to_object_name,
-    path_to_operation_id, struct_name, template::parse, ExtractJsonMediaType, ParameterDataExt,
-    ReferenceOrExt, TypeId, TypeSpace,
+    clean_fn_name, clean_name, get_parameter_data, oid_to_object_name, path_to_operation_id,
+    struct_name, template::parse, ExtractJsonMediaType, ParameterDataExt, ReferenceOrExt, TypeId,
+    TypeSpace,
 };
 
 /*
@@ -57,10 +57,7 @@ pub fn generate_files(
 
                 tags.push(vec.first().unwrap().to_string());
             }
-            let tag = to_snake_case(&clean_name(&make_plural(
-                proper_name,
-                tags.first().unwrap(),
-            )));
+            let tag = to_snake_case(&clean_name(tags.first().unwrap()));
 
             let oid = clean_fn_name(proper_name, &od, &tag);
 
@@ -280,8 +277,6 @@ pub fn generate_files(
                 // Make sure we don't add an s where we don't need one.
                 // Don't make a function plural where it is not needed.
                 fn_name = fn_name.trim_end_matches('s').to_string();
-            } else if frt.starts_with("Vec<") && fn_name != "get" && fn_name != "list" {
-                fn_name = make_plural(proper_name, &fn_name);
             } else if frt.starts_with("Vec<") && fn_name == "get" {
                 fn_name = "get_page".to_string()
             }
@@ -358,14 +353,6 @@ pub fn generate_files(
                     && !fn_name.contains("list_all")
                 {
                     fn_name = format!("get_all_{}", fn_name);
-                }
-
-                if fn_name != "get_all"
-                    && fn_name != "list_all"
-                    && fn_name != "get"
-                    && fn_name != "list"
-                {
-                    fn_name = make_plural(proper_name, &fn_name);
                 }
 
                 // Do this right before printing. Check if we already have this function name.
@@ -624,12 +611,6 @@ fn get_fn_params(
             } else if (!all_pages || !is_page_param(nam, proper_name))
                 && nam != "authorization"
                 && !nam.starts_with("authorization_bearer")
-                && (!proper_name.starts_with("Google")
-                    || !is_google_unnecessary_param(proper_name, nam))
-                && (proper_name != "SendGrid" || !is_sendgrid_unnecessary_param(nam))
-                && (proper_name != "Slack" || !is_slack_unnecessary_param(nam))
-                && (proper_name != "Okta" || !is_okta_unnecessary_param(nam))
-                && (proper_name != "ShipBob" || !is_shipbob_unnecessary_param(nam))
             {
                 if typ == "chrono::DateTime<chrono::Utc>" {
                     fn_params_str.push(format!("{}: Option<{}>,", nam, typ));
@@ -674,12 +655,6 @@ fn get_fn_params(
                 } else if (!all_pages || !is_page_param(nam, proper_name))
                     && nam != "authorization"
                     && !nam.starts_with("authorization_bearer")
-                    && (!proper_name.starts_with("Google")
-                        || !is_google_unnecessary_param(proper_name, nam))
-                    && (proper_name != "SendGrid" || !is_sendgrid_unnecessary_param(nam))
-                    && (proper_name != "Slack" || !is_slack_unnecessary_param(nam))
-                    && (proper_name != "Okta" || !is_okta_unnecessary_param(nam))
-                    && (proper_name != "ShipBob" || !is_shipbob_unnecessary_param(nam))
                 {
                     if typ == "chrono::DateTime<chrono::Utc>" {
                         query_params.insert(
@@ -961,44 +936,4 @@ fn is_page_param(s: &str, proper_name: &str) -> bool {
         || s == "sync_token"
         || s == "limit"
         || (s == "after" && proper_name == "Okta")
-}
-
-fn is_google_unnecessary_param(proper_name: &str, s: &str) -> bool {
-    // These are either dumb or depreciated.
-    s == "access_token"
-        || s == "oauth_token"
-        || s == "pretty_print"
-        || s == "xgafv"
-        || s == "custom_field_mask"
-        || s == "sync_token"
-        || s == "user_ip"
-        || s == "quota_user"
-        || s == "key"
-        || s == "fields"
-        || s == "callback"
-        || s == "upload_protocol"
-        || s == "upload_type"
-        || s == "always_include_email"
-        || s == "enforce_single_parent"
-        || s == "corpus"
-        || (s == "alt" && proper_name != "Google Groups Settings")
-}
-
-fn is_slack_unnecessary_param(s: &str) -> bool {
-    s == "token"
-}
-
-fn is_sendgrid_unnecessary_param(s: &str) -> bool {
-    s == "on_behalf_of" || s == "accept" || s == "x_query_id" || s == "x_cursor"
-}
-
-fn is_okta_unnecessary_param(s: &str) -> bool {
-    s == "okta_access_gateway_agent"
-        || s == "x_forwarded_for"
-        || s == "user_agent"
-        || s == "accept_language"
-}
-
-fn is_shipbob_unnecessary_param(s: &str) -> bool {
-    s == "shipbob_channel_id"
 }
