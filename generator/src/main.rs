@@ -2526,7 +2526,7 @@ pub fn path_to_operation_id(path: &str, method: &str) -> String {
     new
 }
 
-pub fn clean_fn_name(_proper_name: &str, oid: &str, tag: &str) -> String {
+pub fn clean_fn_name(oid: &str, tag: &str) -> String {
     let clean_name = "_".to_string();
 
     let o = oid.to_string();
@@ -2871,7 +2871,7 @@ fn main() -> Result<()> {
                 }
                 let tag = to_snake_case(&clean_name(tags.first().unwrap()));
 
-                let oid = clean_fn_name(&proper_name, &od, &tag);
+                let oid = clean_fn_name(&od, &tag);
 
                 debug("");
                 debug(&oid);
@@ -3113,7 +3113,7 @@ rustdoc-args = ["--cfg", "docsrs"]
             /*
              * Create the Rust source files for each of the tags functions:
              */
-            let fail = match functions::generate_files(&api, &proper_name, &mut ts, &parameters) {
+            let fail = match functions::generate_files(&api, &mut ts, &parameters) {
                 Ok(files) => {
                     // We have a map of our files, let's write to them.
                     for (f, content) in files {

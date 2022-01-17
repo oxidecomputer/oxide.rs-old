@@ -14,7 +14,6 @@ use crate::{
  */
 pub fn generate_files(
     api: &openapiv3::OpenAPI,
-    proper_name: &str,
     ts: &mut TypeSpace,
     parameters: &BTreeMap<String, &openapiv3::Parameter>,
 ) -> Result<BTreeMap<String, String>> {
@@ -59,7 +58,7 @@ pub fn generate_files(
             }
             let tag = to_snake_case(&clean_name(tags.first().unwrap()));
 
-            let oid = clean_fn_name(proper_name, &od, &tag);
+            let oid = clean_fn_name(&od, &tag);
 
             let mut out = String::new();
             if let Some(o) = tag_files.get(&tag) {
@@ -209,7 +208,7 @@ pub fn generate_files(
              * Get the function parameters.
              */
             let (fn_params_str, query_params) =
-                get_fn_params(ts, o, parameters, false, op.parameters.clone(), proper_name)?;
+                get_fn_params(ts, o, parameters, false, op.parameters.clone())?;
 
             /*
              * Generate the URL for the request.
@@ -223,9 +222,6 @@ pub fn generate_files(
             let (mut response_type, _tid, inner_response_type, pagination_property) =
                 get_response_type(&od, ts, o)?;
 
-            if proper_name == "GitHub" && response_type == "crate::types::Data" {
-                response_type = "()".to_string();
-            }
             // We shouldn't ever have an optional response type, thats just annoying.
             if response_type.starts_with("Option<") {
                 response_type = response_type
@@ -235,7 +231,6 @@ pub fn generate_files(
             }
 
             let mut fn_inner = get_fn_inner(
-                proper_name,
                 &oid,
                 m,
                 &body_func,
@@ -265,8 +260,7 @@ pub fn generate_files(
                 .trim_start_matches(&tag)
                 .trim_start_matches('_')
                 .to_string();
-            if proper_name != "GitHub"
-                && !frt.starts_with("Vec<")
+            if !frt.starts_with("Vec<")
                 && !frt.ends_with("Response")
                 && !frt.ends_with("Summary")
                 && http::Method::GET == m
@@ -316,13 +310,12 @@ pub fn generate_files(
                 )?;
 
                 let (fn_params_str, query_params) =
-                    get_fn_params(ts, o, parameters, true, op.parameters.clone(), proper_name)?;
+                    get_fn_params(ts, o, parameters, true, op.parameters.clone())?;
 
                 let tmp = parse(p)?;
                 let template = tmp.compile(query_params);
 
                 let fn_inner = get_fn_inner(
-                    proper_name,
                     &oid,
                     m,
                     &body_func,
@@ -564,7 +557,6 @@ fn get_fn_params(
     parameters: &BTreeMap<String, &openapiv3::Parameter>,
     all_pages: bool,
     global_params: Vec<openapiv3::ReferenceOr<openapiv3::Parameter>>,
-    proper_name: &str,
 ) -> Result<(Vec<String>, BTreeMap<String, (String, String)>)> {
     /*
      * Query parameters are sorted lexicographically to ensure a stable
@@ -608,7 +600,7 @@ fn get_fn_params(
             } else if nam == "i_ds" {
                 fn_params_str.push(format!("ids: {},", typ));
                 fn_params.push("ids".to_string());
-            } else if (!all_pages || !is_page_param(nam, proper_name))
+            } else if (!all_pages || !is_page_param(nam))
                 && nam != "authorization"
                 && !nam.starts_with("authorization_bearer")
             {
@@ -652,7 +644,7 @@ fn get_fn_params(
                         "ids".to_string(),
                         (typ.to_string(), parameter_data.name.to_string()),
                     );
-                } else if (!all_pages || !is_page_param(nam, proper_name))
+                } else if (!all_pages || !is_page_param(nam))
                     && nam != "authorization"
                     && !nam.starts_with("authorization_bearer")
                 {
@@ -681,7 +673,6 @@ fn get_fn_params(
 // TODO: Fix this
 #[allow(clippy::too_many_arguments)]
 fn get_fn_inner(
-    proper_name: &str,
     oid: &str,
     m: &str,
     body_func: &Option<String>,
@@ -702,7 +693,7 @@ fn get_fn_inner(
 
     if all_pages && pagination_property.is_empty() {
         return Ok(format!("self.client.get_all_pages(&url, {}).await", body));
-    } else if all_pages && proper_name == "Oxide" {
+    } else if all_pages {
         // We will do a custom function here.
         let inner = format!(
             r#"let mut resp: {} = self.client.{}(&url, {}).await?;
@@ -747,8 +738,7 @@ fn get_fn_inner(
         return Ok(inner);
     } else if all_pages && !pagination_property.is_empty() {
         bail!(
-            "must implement custom pagination function for {} {}",
-            proper_name,
+            "must implement custom pagination function for {}",
             pagination_property
         );
     }
@@ -921,19 +911,6 @@ fn get_fn_docs_all(o: &openapiv3::Operation, m: &str, p: &str, fn_name: &str) ->
     Ok(out.trim().to_string())
 }
 
-fn is_page_param(s: &str, proper_name: &str) -> bool {
-    s == "page"
-        || s == "per_page"
-        || s == "per"
-        || s == "page_size"
-        || s == "size"
-        || s == "next_page_token"
-        || s == "next_page"
-        || s == "page_token"
-        || s == "max_results"
-        || s == "page_number"
-        || s == "start"
-        || s == "sync_token"
-        || s == "limit"
-        || (s == "after" && proper_name == "Okta")
+fn is_page_param(s: &str) -> bool {
+    s == "next_page" || s == "page_token" || s == "limit"
 }
