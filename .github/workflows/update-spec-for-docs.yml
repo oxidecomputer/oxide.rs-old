@@ -45,6 +45,7 @@ jobs:
       - name: Ensure no files changed
         shell: bash
         run: |
+          git diff-index --quiet HEAD
           if [[ `git diff-index --quiet HEAD` ]]; then
             # No changes
             echo "No files changed, proceeding";
