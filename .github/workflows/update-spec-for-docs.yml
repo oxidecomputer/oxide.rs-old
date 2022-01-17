@@ -11,7 +11,7 @@ concurrency:
   group: docs-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  generate-website-docs:
+  update-spec:
     name: make-release
     runs-on: ubuntu-latest
     steps:
