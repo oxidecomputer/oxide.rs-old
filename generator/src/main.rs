@@ -3109,7 +3109,11 @@ rustdoc-args = ["--cfg", "docsrs"]
                         "client".to_string(),
                         r#"use oxide_api::Client;
 
-let client = Client::new(String::from("api-key"));"#
+// Authenticate via an API token.
+let mut client = Client::new("$TOKEN");
+
+// Set the base URL for the API.
+client = client.with_host("$BASE_URL");"#
                             .to_string(),
                     );
 
