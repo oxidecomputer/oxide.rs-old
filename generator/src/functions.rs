@@ -362,8 +362,6 @@ pub fn generate_files(
                 .paths
                 .insert(pn.to_string(), openapiv3::ReferenceOr::Item(new_op.clone()));
 
-            println!("GENERATING tag {}, pn {}, m {}: {:?}", tag, pn, m, example);
-
             // If we are returning a list of things and we have page, etc as
             // params, let's get all the pages.
             if frt.starts_with("Vec<") && http::Method::GET == m {
