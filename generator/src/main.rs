@@ -2255,15 +2255,7 @@ fn render_param(
     out.to_string()
 }
 
-fn gen(
-    api: &OpenAPI,
-    proper_name: &str,
-    host: &str,
-    tags: Vec<String>,
-    token_endpoint: &str,
-    user_consent_endpoint: &str,
-    add_post_header: &str,
-) -> Result<String> {
+fn gen(api: &OpenAPI, proper_name: &str, host: &str, tags: Vec<String>) -> Result<String> {
     let mut out = String::new();
 
     let mut a = |s: &str| {
@@ -2382,10 +2374,7 @@ fn gen(
     a("");
 
     // Print the client template.
-    a(&crate::client::generate_client_generic_api_key(
-        proper_name,
-        add_post_header,
-    ));
+    a(&crate::client::generate_client_generic_api_key(proper_name));
 
     a("");
 
@@ -3021,35 +3010,12 @@ fn main() -> Result<()> {
     let host = args.opt_str("host").unwrap();
     let output_dir = args.opt_str("o").unwrap();
     let spec_link = args.opt_str("spec-link").unwrap();
-    let token_endpoint = if let Some(te) = args.opt_str("token-endpoint") {
-        te
-    } else {
-        String::new()
-    };
-    let user_consent_endpoint = if let Some(uce) = args.opt_str("user-consent-endpoint") {
-        uce
-    } else {
-        String::new()
-    };
 
     // Sort our tags and de-duplicate them.
     tags.sort_unstable();
     tags.dedup();
 
-    let add_post_header = if let Some(ph) = args.opt_str("add-post-header") {
-        ph
-    } else {
-        String::new()
-    };
-    let fail = match gen(
-        &api,
-        &proper_name,
-        &host,
-        tags,
-        &token_endpoint,
-        &user_consent_endpoint,
-        &add_post_header,
-    ) {
+    let fail = match gen(&api, &proper_name, &host, tags) {
         Ok(out) => {
             let description = args.opt_str("d").unwrap();
 
