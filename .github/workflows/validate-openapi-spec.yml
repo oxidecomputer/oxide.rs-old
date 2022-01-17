@@ -1,5 +1,11 @@
 name: validate-openapi-spec
 on:
+  push:
+    paths:
+      - .github/workflows/validate-openapi-spec.yml
+      - spec.json
+    branches:
+      - main
   pull_request:
     paths:
       - .github/workflows/validate-openapi-spec.yml
