@@ -2,6 +2,7 @@ on:
   pull_request:
     paths:
       - spec.json
+      - .github/workflows/make-generate.yml
 name: make-generate
 permissions:
   packages: read
