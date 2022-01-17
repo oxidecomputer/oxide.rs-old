@@ -25,7 +25,13 @@ pub fn generate_files(
     for (pn, path) in api.paths.iter() {
         let op = path.item().unwrap_or_else(|e| panic!("bad path: {}", e));
 
-        let mut gen = |p: &str, m: &str, o: Option<&openapiv3::Operation>| -> Result<()> {
+        let mut new_op = op.clone();
+
+        let mut gen = |p: &str,
+                       m: &str,
+                       o: Option<&openapiv3::Operation>,
+                       new_op: &mut openapiv3::PathItem|
+         -> Result<()> {
             let o = if let Some(o) = o {
                 o
             } else {
@@ -288,7 +294,6 @@ pub fn generate_files(
             );
 
             // Add the docs to our spec.
-            let mut new_op = op.clone();
             let mut new_operation = o.clone();
 
             let mut docs_params: Vec<String> = Vec::new();
@@ -355,7 +360,9 @@ pub fn generate_files(
 
             new_api
                 .paths
-                .insert(pn.to_string(), openapiv3::ReferenceOr::Item(new_op));
+                .insert(pn.to_string(), openapiv3::ReferenceOr::Item(new_op.clone()));
+
+            println!("GENERATING tag {}, pn {}, m {}: {:?}", tag, pn, m, example);
 
             // If we are returning a list of things and we have page, etc as
             // params, let's get all the pages.
@@ -432,14 +439,14 @@ pub fn generate_files(
             Ok(())
         };
 
-        gen(pn.as_str(), "GET", op.get.as_ref())?;
-        gen(pn.as_str(), "PUT", op.put.as_ref())?;
-        gen(pn.as_str(), "POST", op.post.as_ref())?;
-        gen(pn.as_str(), "DELETE", op.delete.as_ref())?;
-        gen(pn.as_str(), "OPTIONS", op.options.as_ref())?;
-        gen(pn.as_str(), "HEAD", op.head.as_ref())?;
-        gen(pn.as_str(), "PATCH", op.patch.as_ref())?;
-        gen(pn.as_str(), "TRACE", op.trace.as_ref())?;
+        gen(pn.as_str(), "GET", op.get.as_ref(), &mut new_op)?;
+        gen(pn.as_str(), "PUT", op.put.as_ref(), &mut new_op)?;
+        gen(pn.as_str(), "POST", op.post.as_ref(), &mut new_op)?;
+        gen(pn.as_str(), "DELETE", op.delete.as_ref(), &mut new_op)?;
+        gen(pn.as_str(), "OPTIONS", op.options.as_ref(), &mut new_op)?;
+        gen(pn.as_str(), "HEAD", op.head.as_ref(), &mut new_op)?;
+        gen(pn.as_str(), "PATCH", op.patch.as_ref(), &mut new_op)?;
+        gen(pn.as_str(), "TRACE", op.trace.as_ref(), &mut new_op)?;
     }
 
     Ok((tag_files, new_api))
