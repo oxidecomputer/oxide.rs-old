@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 
 use anyhow::{bail, Result};
 use inflector::cases::snakecase::to_snake_case;
@@ -299,28 +299,41 @@ pub fn generate_files(
             if body_param.is_some() {
                 docs_params.push("body".to_string());
             }
+            let mut example: HashMap<String, String> = HashMap::new();
             if frt == "()" {
-                new_operation.extensions.insert(
-                    "x-rust".to_string(),
-                    serde_json::json!(format!(
+                example.insert(
+                    "example".to_string(),
+                    format!(
                         "client.{}().{}({}).await?;",
                         tag,
                         fn_name,
                         docs_params.join(", ")
-                    )),
+                    ),
                 );
             } else {
-                new_operation.extensions.insert(
-                    "x-rust".to_string(),
-                    serde_json::json!(format!(
+                example.insert(
+                    "example".to_string(),
+                    format!(
                         "let {} = client.{}().{}({}).await?;",
                         to_snake_case(&frt).trim_start_matches("crate_types_"),
                         tag,
                         fn_name,
                         docs_params.join(", ")
-                    )),
+                    ),
                 );
             }
+            example.insert(
+                "libDocsLink".to_string(),
+                format!(
+                    "https://docs.rs/oxide-api/latest/oxide_api/{}/struct.{}.html#method.{}",
+                    tag,
+                    struct_name(&tag),
+                    fn_name
+                ),
+            );
+            new_operation
+                .extensions
+                .insert("x-rust".to_string(), serde_json::json!(example));
             match m {
                 "GET" => {
                     new_op.get = Some(new_operation);

@@ -66,7 +66,10 @@
           }
         },
         "x-dropshot-pagination": true,
-        "x-rust": "let vec_crate_types_rack = client.hardware().racks_get(limit, page_token, sort_by).await?;"
+        "x-rust": {
+          "example": "let vec_crate_types_rack = client.hardware().racks_get(limit, page_token, sort_by).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/hardware/struct.Hardware.html#method.racks_get"
+        }
       }
     },
     "/hardware/racks/{rack_id}": {
@@ -101,7 +104,10 @@
             }
           }
         },
-        "x-rust": "let rack = client.hardware().racks_get_rack(rack_id).await?;"
+        "x-rust": {
+          "example": "let rack = client.hardware().racks_get_rack(rack_id).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/hardware/struct.Hardware.html#method.racks_get_rack"
+        }
       }
     },
     "/hardware/sleds": {
@@ -156,7 +162,10 @@
           }
         },
         "x-dropshot-pagination": true,
-        "x-rust": "let vec_crate_types_sled = client.hardware().sleds_get(limit, page_token, sort_by).await?;"
+        "x-rust": {
+          "example": "let vec_crate_types_sled = client.hardware().sleds_get(limit, page_token, sort_by).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/hardware/struct.Hardware.html#method.sleds_get"
+        }
       }
     },
     "/hardware/sleds/{sled_id}": {
@@ -191,7 +200,10 @@
             }
           }
         },
-        "x-rust": "let sled = client.hardware().sleds_get_sled(sled_id).await?;"
+        "x-rust": {
+          "example": "let sled = client.hardware().sleds_get_sled(sled_id).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/hardware/struct.Hardware.html#method.sleds_get_sled"
+        }
       }
     },
     "/login": {
@@ -212,7 +224,10 @@
             "description": ""
           }
         },
-        "x-rust": "client.login().spoof(body).await?;"
+        "x-rust": {
+          "example": "client.login().spoof(body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/login/struct.Login.html#method.spoof"
+        }
       }
     },
     "/logout": {
@@ -223,7 +238,10 @@
             "description": ""
           }
         },
-        "x-rust": "client.logout().get().await?;"
+        "x-rust": {
+          "example": "client.logout().get().await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/logout/struct.Logout.html#method.get"
+        }
       }
     },
     "/organizations": {
@@ -307,7 +325,10 @@
             }
           }
         },
-        "x-rust": "let user = client.organizations().post(body).await?;"
+        "x-rust": {
+          "example": "let user = client.organizations().post(body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/organizations/struct.Organizations.html#method.post"
+        }
       }
     },
     "/organizations/{organization_name}": {
@@ -403,7 +424,10 @@
             "description": "successful deletion"
           }
         },
-        "x-rust": "client.organizations().delete(organization_name).await?;"
+        "x-rust": {
+          "example": "client.organizations().delete(organization_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/organizations/struct.Organizations.html#method.delete"
+        }
       }
     },
     "/organizations/{organization_name}/projects": {
@@ -507,7 +531,10 @@
             }
           }
         },
-        "x-rust": "let project = client.projects().post(organization_name, body).await?;"
+        "x-rust": {
+          "example": "let project = client.projects().post(organization_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/projects/struct.Projects.html#method.post"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}": {
@@ -630,7 +657,10 @@
             "description": "successful deletion"
           }
         },
-        "x-rust": "client.projects().delete(organization_name, project_name).await?;"
+        "x-rust": {
+          "example": "client.projects().delete(organization_name, project_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/projects/struct.Projects.html#method.delete"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/disks": {
@@ -752,7 +782,10 @@
             }
           }
         },
-        "x-rust": "let disk = client.projects().disks_post(organization_name, project_name, body).await?;"
+        "x-rust": {
+          "example": "let disk = client.projects().disks_post(organization_name, project_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/projects/struct.Projects.html#method.disks_post"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/disks/{disk_name}": {
@@ -844,7 +877,10 @@
             "description": "successful deletion"
           }
         },
-        "x-rust": "client.projects().disks_delete_disk(disk_name, organization_name, project_name).await?;"
+        "x-rust": {
+          "example": "client.projects().disks_delete_disk(disk_name, organization_name, project_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/projects/struct.Projects.html#method.disks_delete_disk"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/instances": {
@@ -966,7 +1002,10 @@
             }
           }
         },
-        "x-rust": "let instance = client.instances().post(organization_name, project_name, body).await?;"
+        "x-rust": {
+          "example": "let instance = client.instances().post(organization_name, project_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.post"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}": {
@@ -1058,7 +1097,10 @@
             "description": "successful deletion"
           }
         },
-        "x-rust": "client.instances().delete(instance_name, organization_name, project_name).await?;"
+        "x-rust": {
+          "example": "client.instances().delete(instance_name, organization_name, project_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.delete"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks": {
@@ -1140,7 +1182,10 @@
           }
         },
         "x-dropshot-pagination": true,
-        "x-rust": "let vec_crate_types_disk = client.instances().disks_get(limit, page_token, sort_by, instance_name, organization_name, project_name).await?;"
+        "x-rust": {
+          "example": "let vec_crate_types_disk = client.instances().disks_get(limit, page_token, sort_by, instance_name, organization_name, project_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.disks_get"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks/attach": {
@@ -1200,7 +1245,10 @@
             }
           }
         },
-        "x-rust": "let disk = client.instances().disks_attach(instance_name, organization_name, project_name, body).await?;"
+        "x-rust": {
+          "example": "let disk = client.instances().disks_attach(instance_name, organization_name, project_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.disks_attach"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks/detach": {
@@ -1260,7 +1308,10 @@
             }
           }
         },
-        "x-rust": "let disk = client.instances().disks_detach(instance_name, organization_name, project_name, body).await?;"
+        "x-rust": {
+          "example": "let disk = client.instances().disks_detach(instance_name, organization_name, project_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.disks_detach"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/reboot": {
@@ -1311,7 +1362,10 @@
             }
           }
         },
-        "x-rust": "let instance = client.instances().reboot(instance_name, organization_name, project_name).await?;"
+        "x-rust": {
+          "example": "let instance = client.instances().reboot(instance_name, organization_name, project_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.reboot"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/start": {
@@ -1362,7 +1416,10 @@
             }
           }
         },
-        "x-rust": "let instance = client.instances().start(instance_name, organization_name, project_name).await?;"
+        "x-rust": {
+          "example": "let instance = client.instances().start(instance_name, organization_name, project_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.start"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/stop": {
@@ -1413,7 +1470,10 @@
             }
           }
         },
-        "x-rust": "let instance = client.instances().stop(instance_name, organization_name, project_name).await?;"
+        "x-rust": {
+          "example": "let instance = client.instances().stop(instance_name, organization_name, project_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/instances/struct.Instances.html#method.stop"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/vpcs": {
@@ -1535,7 +1595,10 @@
             }
           }
         },
-        "x-rust": "let vpc = client.networking().vpcs_post(organization_name, project_name, body).await?;"
+        "x-rust": {
+          "example": "let vpc = client.networking().vpcs_post(organization_name, project_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpcs_post"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}": {
@@ -1678,7 +1741,10 @@
             "description": "successful deletion"
           }
         },
-        "x-rust": "client.networking().vpcs_delete_vpc(organization_name, project_name, vpc_name).await?;"
+        "x-rust": {
+          "example": "client.networking().vpcs_delete_vpc(organization_name, project_name, vpc_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpcs_delete_vpc"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/firewall/rules": {
@@ -1818,7 +1884,10 @@
             }
           }
         },
-        "x-rust": "let vpc_firewall_rule = client.networking().vpc_firewall_rules_put(organization_name, project_name, vpc_name, body).await?;"
+        "x-rust": {
+          "example": "let vpc_firewall_rule = client.networking().vpc_firewall_rules_put(organization_name, project_name, vpc_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpc_firewall_rules_put"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers": {
@@ -1958,7 +2027,10 @@
             }
           }
         },
-        "x-rust": "let vpc_router = client.networking().vpc_routers_post(organization_name, project_name, vpc_name, body).await?;"
+        "x-rust": {
+          "example": "let vpc_router = client.networking().vpc_routers_post(organization_name, project_name, vpc_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpc_routers_post"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}": {
@@ -2128,7 +2200,10 @@
             "description": "successful deletion"
           }
         },
-        "x-rust": "client.networking().vpc_routers_delete_router(organization_name, project_name, router_name, vpc_name).await?;"
+        "x-rust": {
+          "example": "client.networking().vpc_routers_delete_router(organization_name, project_name, router_name, vpc_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpc_routers_delete_router"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes": {
@@ -2286,7 +2361,10 @@
             }
           }
         },
-        "x-rust": "let router_route = client.networking().routers_routes_post(organization_name, project_name, router_name, vpc_name, body).await?;"
+        "x-rust": {
+          "example": "let router_route = client.networking().routers_routes_post(organization_name, project_name, router_name, vpc_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.routers_routes_post"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes/{route_name}": {
@@ -2483,7 +2561,10 @@
             "description": "successful deletion"
           }
         },
-        "x-rust": "client.networking().routers_routes_delete_route(organization_name, project_name, route_name, router_name, vpc_name).await?;"
+        "x-rust": {
+          "example": "client.networking().routers_routes_delete_route(organization_name, project_name, route_name, router_name, vpc_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.routers_routes_delete_route"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets": {
@@ -2623,7 +2704,10 @@
             }
           }
         },
-        "x-rust": "let vpc_subnet = client.networking().vpc_subnets_post(organization_name, project_name, vpc_name, body).await?;"
+        "x-rust": {
+          "example": "let vpc_subnet = client.networking().vpc_subnets_post(organization_name, project_name, vpc_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpc_subnets_post"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}": {
@@ -2793,7 +2877,10 @@
             "description": "successful deletion"
           }
         },
-        "x-rust": "client.networking().vpc_subnets_delete_subnet(organization_name, project_name, subnet_name, vpc_name).await?;"
+        "x-rust": {
+          "example": "client.networking().vpc_subnets_delete_subnet(organization_name, project_name, subnet_name, vpc_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.vpc_subnets_delete_subnet"
+        }
       }
     },
     "/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}/ips": {
@@ -2884,7 +2971,10 @@
           }
         },
         "x-dropshot-pagination": true,
-        "x-rust": "let vec_crate_types_network_interface = client.networking().subnets_ips_get(limit, page_token, sort_by, organization_name, project_name, subnet_name, vpc_name).await?;"
+        "x-rust": {
+          "example": "let vec_crate_types_network_interface = client.networking().subnets_ips_get(limit, page_token, sort_by, organization_name, project_name, subnet_name, vpc_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/networking/struct.Networking.html#method.subnets_ips_get"
+        }
       }
     },
     "/roles": {
@@ -2931,7 +3021,10 @@
           }
         },
         "x-dropshot-pagination": true,
-        "x-rust": "let vec_crate_types_role = client.roles().get_page(limit, page_token).await?;"
+        "x-rust": {
+          "example": "let vec_crate_types_role = client.roles().get_page(limit, page_token).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/roles/struct.Roles.html#method.get_page"
+        }
       }
     },
     "/roles/{role_name}": {
@@ -2965,7 +3058,10 @@
             }
           }
         },
-        "x-rust": "let role = client.roles().get(role_name).await?;"
+        "x-rust": {
+          "example": "let role = client.roles().get(role_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/roles/struct.Roles.html#method.get"
+        }
       }
     },
     "/sagas": {
@@ -3020,7 +3116,10 @@
           }
         },
         "x-dropshot-pagination": true,
-        "x-rust": "let vec_crate_types_saga = client.sagas().get_page(limit, page_token, sort_by).await?;"
+        "x-rust": {
+          "example": "let vec_crate_types_saga = client.sagas().get_page(limit, page_token, sort_by).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/sagas/struct.Sagas.html#method.get_page"
+        }
       }
     },
     "/sagas/{saga_id}": {
@@ -3054,7 +3153,10 @@
             }
           }
         },
-        "x-rust": "let saga = client.sagas().get(saga_id).await?;"
+        "x-rust": {
+          "example": "let saga = client.sagas().get(saga_id).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/sagas/struct.Sagas.html#method.get"
+        }
       }
     },
     "/session/me": {
@@ -3073,7 +3175,10 @@
             }
           }
         },
-        "x-rust": "let session_user = client.session().me().await?;"
+        "x-rust": {
+          "example": "let session_user = client.session().me().await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/session/struct.Session.html#method.me"
+        }
       }
     },
     "/timeseries/schema": {
@@ -3120,7 +3225,10 @@
           }
         },
         "x-dropshot-pagination": true,
-        "x-rust": "let vec_crate_types_timeseries_schema = client.metrics().timeseries_schema_get(limit, page_token).await?;"
+        "x-rust": {
+          "example": "let vec_crate_types_timeseries_schema = client.metrics().timeseries_schema_get(limit, page_token).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/metrics/struct.Metrics.html#method.timeseries_schema_get"
+        }
       }
     },
     "/users": {
@@ -3175,7 +3283,10 @@
           }
         },
         "x-dropshot-pagination": true,
-        "x-rust": "let vec_crate_types_user = client.users().get_page(limit, page_token, sort_by).await?;"
+        "x-rust": {
+          "example": "let vec_crate_types_user = client.users().get_page(limit, page_token, sort_by).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/users/struct.Users.html#method.get_page"
+        }
       }
     },
     "/users/{user_name}": {
@@ -3208,7 +3319,10 @@
             }
           }
         },
-        "x-rust": "let user = client.users().get(user_name).await?;"
+        "x-rust": {
+          "example": "let user = client.users().get(user_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/users/struct.Users.html#method.get"
+        }
       }
     }
   },
