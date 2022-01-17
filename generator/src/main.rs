@@ -5,7 +5,7 @@ mod types;
 mod utils;
 
 use std::{
-    collections::{BTreeMap, HashSet},
+    collections::{BTreeMap, HashMap, HashSet},
     ffi::OsStr,
     fs::{File, OpenOptions},
     io::Write,
@@ -3099,7 +3099,26 @@ rustdoc-args = ["--cfg", "docsrs"]
              * Create the Rust source files for each of the tags functions:
              */
             let fail = match functions::generate_files(&api, &mut ts, &parameters) {
-                Ok((files, new_api)) => {
+                Ok((files, mut new_api)) => {
+                    let mut extension: HashMap<String, String> = HashMap::new();
+                    extension.insert(
+                        "install".to_string(),
+                        format!("[dependencies]\noxide-api = \"{}\"", version),
+                    );
+                    extension.insert(
+                        "client".to_string(),
+                        r#"use oxide_api::Client;
+
+let client = Client::new(String::from("api-key"));"#
+                            .to_string(),
+                    );
+
+                    // Add in our version information
+                    new_api
+                        .info
+                        .extensions
+                        .insert("x-rust".to_string(), serde_json::json!(extension));
+
                     // We have a map of our files, let's write to them.
                     for (f, content) in files {
                         let mut tagrs = src.clone();

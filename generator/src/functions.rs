@@ -17,11 +17,13 @@ pub fn generate_files(
     ts: &mut TypeSpace,
     parameters: &BTreeMap<String, &openapiv3::Parameter>,
 ) -> Result<(BTreeMap<String, String>, openapiv3::OpenAPI)> {
+    let mut new_api = api.clone();
+
     let mut tag_files: BTreeMap<String, String> = Default::default();
 
     let mut fn_names: Vec<String> = Default::default();
-    for (pn, p) in api.paths.iter() {
-        let op = p.item().unwrap_or_else(|e| panic!("bad path: {}", e));
+    for (pn, path) in api.paths.iter() {
+        let op = path.item().unwrap_or_else(|e| panic!("bad path: {}", e));
 
         let mut gen = |p: &str, m: &str, o: Option<&openapiv3::Operation>| -> Result<()> {
             let o = if let Some(o) = o {
@@ -80,12 +82,6 @@ pub fn generate_files(
                                 fn_name: &str| {
                 // Print the function docs.
                 a(docs);
-
-                // For this one function, we need it to be recursive since this is how you get
-                // an access token when authenicating on behalf of an app with a JWT.
-                if fn_name == "create_installation_access_token" {
-                    a("#[async_recursion::async_recursion]");
-                }
 
                 if bounds.is_empty() {
                     a(&format!("pub async fn {}(", fn_name,));
@@ -230,7 +226,7 @@ pub fn generate_files(
                     .to_string();
             }
 
-            let mut fn_inner = get_fn_inner(
+            let fn_inner = get_fn_inner(
                 &oid,
                 m,
                 &body_func,
@@ -239,14 +235,6 @@ pub fn generate_files(
                 &pagination_property,
                 false,
             )?;
-
-            // TODO: don't special case this.
-            if p == "/jobs/{id}/transcript" || p == "/jobs/{id}/captions" {
-                fn_inner =
-                    r#"self.client.request_with_accept_mime(reqwest::Method::GET, &url, &accept.to_string()).await"#
-                        .to_string();
-                response_type = "String".to_string();
-            }
 
             // Get the function without the function inners.
             // This is specifically for Ramp.
@@ -298,6 +286,63 @@ pub fn generate_files(
                 &fn_inner,
                 &fn_name,
             );
+
+            // Add the docs to our spec.
+            let mut new_op = op.clone();
+            let mut new_operation = o.clone();
+
+            let mut docs_params: Vec<String> = Vec::new();
+            for param in fn_params_str {
+                let split = param.split(':').collect::<Vec<&str>>();
+                docs_params.push(split[0].to_string());
+            }
+            if body_param.is_some() {
+                docs_params.push("body".to_string());
+            }
+            if frt == "()" {
+                new_operation.extensions.insert(
+                    "x-rust".to_string(),
+                    serde_json::json!(format!(
+                        "client.{}().{}({}).await?;",
+                        tag,
+                        fn_name,
+                        docs_params.join(", ")
+                    )),
+                );
+            } else {
+                new_operation.extensions.insert(
+                    "x-rust".to_string(),
+                    serde_json::json!(format!(
+                        "let {} = client.{}().{}({}).await?;",
+                        to_snake_case(&frt).trim_start_matches("crate_types_"),
+                        tag,
+                        fn_name,
+                        docs_params.join(", ")
+                    )),
+                );
+            }
+            match m {
+                "GET" => {
+                    new_op.get = Some(new_operation);
+                }
+                "POST" => {
+                    new_op.post = Some(new_operation);
+                }
+                "PUT" => {
+                    new_op.put = Some(new_operation);
+                }
+                "PATCH" => {
+                    new_op.patch = Some(new_operation);
+                }
+                "DELETE" => {
+                    new_op.delete = Some(new_operation);
+                }
+                _ => {}
+            }
+
+            new_api
+                .paths
+                .insert(pn.to_string(), openapiv3::ReferenceOr::Item(new_op));
 
             // If we are returning a list of things and we have page, etc as
             // params, let's get all the pages.
@@ -384,7 +429,7 @@ pub fn generate_files(
         gen(pn.as_str(), "TRACE", op.trace.as_ref())?;
     }
 
-    Ok((tag_files, api.clone()))
+    Ok((tag_files, new_api))
 }
 
 fn get_response_type_from_object(
