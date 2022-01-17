@@ -24,7 +24,6 @@ oxide: target/debug/generator
 	./target/debug/generator -i $(SPEC) -v 0.1.0-rc.6 \
 		-o oxide \
 		-n oxide-api \
-		--proper-name Oxide \
 		-d "A fully generated & opinionated API client for the Oxide API." \
 		--spec-link "https://github.com/$(SPEC_REPO)" \
 		--host "api.oxide.computer" $(EXTRA_ARGS)

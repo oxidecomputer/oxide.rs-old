@@ -2,7 +2,8 @@
  * Declare the client object:
  */
 
-pub fn generate_client(proper_name: &str) -> String {
+pub fn generate_client() -> String {
+    let proper_name = "Oxide";
     format!(
         r#"use std::env;
 

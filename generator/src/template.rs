@@ -437,9 +437,9 @@ pub fn generate_docs(
     api: &openapiv3::OpenAPI,
     name: &str,
     version: &str,
-    proper_name: &str,
     spec_link: &str,
 ) -> String {
+    let proper_name = "Oxide";
     let info = generate_docs_openapi_info(api, proper_name, spec_link, name);
     format!(
         r#"{}
