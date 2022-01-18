@@ -43,4 +43,5 @@ jobs:
           cargo test
         shell: bash
         env:
-          OXIDE_API_KEY: ${{ secrets.OXIDE_API_KEY }}
+          OXIDE_TOKEN: ${{ secrets.OXIDE_API_KEY }}
+          OXIDE_HOST: ${{ secrets.OXIDE_HOST }}
