@@ -3108,9 +3108,8 @@ let client = Client::new("$OXIDE_TOKEN", "$OXIDE_HOST");
 
 // Authenticate with your token and host parsed from the environment variables:
 // OXIDE_TOKEN, OXIDE_HOST.
-let client = Client::new_from_env();
-;"#
-                        .to_string(),
+let client = Client::new_from_env();"#
+                            .to_string(),
                     );
 
                     // Add in our version information
