@@ -2255,7 +2255,7 @@ fn render_param(
     out.to_string()
 }
 
-fn gen(api: &OpenAPI, host: &str, tags: Vec<String>) -> Result<String> {
+fn gen(api: &OpenAPI, tags: Vec<String>) -> Result<String> {
     let mut out = String::new();
 
     let mut a = |s: &str| {
@@ -2323,12 +2323,6 @@ fn gen(api: &OpenAPI, host: &str, tags: Vec<String>) -> Result<String> {
     a("");
 
     a("use anyhow::{anyhow, Error, Result};");
-    a("");
-
-    a(&format!(
-        r#"pub const DEFAULT_HOST: &str = "https://{}";"#,
-        host.trim_start_matches("https://")
-    ));
     a("");
 
     a("mod progenitor_support {");
@@ -2645,7 +2639,6 @@ fn main() -> Result<()> {
     opts.reqopt("n", "", "Target Rust crate name", "CRATE");
     opts.reqopt("v", "", "Target Rust crate version", "VERSION");
     opts.reqopt("d", "", "Target Rust crate description", "DESCRIPTION");
-    opts.reqopt("", "host", "Target default host", "DEFAULT_HOST");
     opts.reqopt("", "spec-link", "Link to the spec", "SPEC_LINK");
     opts.optflag("", "debug", "Print debug output");
 
@@ -2978,7 +2971,6 @@ fn main() -> Result<()> {
 
     let name = args.opt_str("n").unwrap();
     let version = args.opt_str("v").unwrap();
-    let host = args.opt_str("host").unwrap();
     let output_dir = args.opt_str("o").unwrap();
     let spec_link = args.opt_str("spec-link").unwrap();
 
@@ -2986,7 +2978,7 @@ fn main() -> Result<()> {
     tags.sort_unstable();
     tags.dedup();
 
-    let fail = match gen(&api, &host, tags) {
+    let fail = match gen(&api, tags) {
         Ok(out) => {
             let description = args.opt_str("d").unwrap();
 
@@ -3110,11 +3102,15 @@ rustdoc-args = ["--cfg", "docsrs"]
                         r#"use oxide_api::Client;
 
 // Authenticate via an API token.
-let mut client = Client::new("$TOKEN");
+let client = Client::new("$OXIDE_TOKEN", "$OXIDE_HOST");
 
-// Set the base URL for the API.
-client = client.with_host("$BASE_URL");"#
-                            .to_string(),
+// - OR -
+
+// Authenticate with your token and host parsed from the environment variables:
+// OXIDE_TOKEN, OXIDE_HOST.
+let client = Client::new_from_env();
+;"#
+                        .to_string(),
                     );
 
                     // Add in our version information

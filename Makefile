@@ -27,8 +27,7 @@ oxide: target/debug/generator
 		-o oxide \
 		-n oxide-api \
 		-d "A fully generated & opinionated API client for the Oxide API." \
-		--spec-link "https://github.com/$(SPEC_REPO)" \
-		--host "api.oxide.computer" $(EXTRA_ARGS)
+		--spec-link "https://github.com/$(SPEC_REPO)" $(EXTRA_ARGS)
 	cargo fmt -p oxide-api
 
 .PHONY: tag
