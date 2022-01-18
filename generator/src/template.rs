@@ -302,7 +302,6 @@ crate::progenitor_support::encode_path(number),);\n";
 
 pub fn generate_docs_openapi_info(
     api: &openapiv3::OpenAPI,
-    proper_name: &str,
     spec_link: &str,
     package_name: &str,
 ) -> String {
@@ -400,7 +399,7 @@ pub fn generate_docs_openapi_info(
     let api_version = format!("based on API spec version `{}`", api.info.version);
 
     format!(
-        r#"//! A fully generated, opinionated API client library for {}.
+        r#"//! A fully generated, opinionated API client library for Oxide.
 //!
 //! [![docs.rs](https://docs.rs/{}/badge.svg)](https://docs.rs/{})
 //!
@@ -415,19 +414,17 @@ pub fn generate_docs_openapi_info(
 //!
 //! ## Client Details
 //!
-//! This client is generated from the [{} OpenAPI
+//! This client is generated from the [Oxide OpenAPI
 //! specs]({}) {}. This way it will remain
 //! up to date as features are added. The documentation for the crate is generated
 //! along with the code to make this library easy to use.
 //! "#,
-        proper_name,
         to_kebab_case(package_name),
         to_kebab_case(package_name),
         description,
         tos,
         contact,
         license,
-        proper_name,
         spec_link,
         api_version,
     )
@@ -439,8 +436,7 @@ pub fn generate_docs(
     version: &str,
     spec_link: &str,
 ) -> String {
-    let proper_name = "Oxide";
-    let info = generate_docs_openapi_info(api, proper_name, spec_link, name);
+    let info = generate_docs_openapi_info(api, spec_link, name);
     format!(
         r#"{}
 //!
@@ -459,31 +455,30 @@ pub fn generate_docs(
 //! ```
 //! use {}::Client;
 //!
-//! let {} = Client::new(
+//! let oxide = Client::new(
 //!     String::from("api-key"),
+//!     String::from("host"),
 //! );
 //! ```
 //!
 //! Alternatively, the library can search for most of the variables required for
 //! the client in the environment:
 //!
-//! - `{}_API_KEY`
+//! - `OXIDE_TOKEN`
+//! - `OXIDE_HOST`
 //!
 //! And then you can create a client from the environment.
 //!
 //! ```
 //! use {}::Client;
 //!
-//! let {} = Client::new_from_env();
+//! let oxide = Client::new_from_env();
 //! ```
 //!"#,
         info,
         name.replace('_', "-").to_lowercase(),
         version,
         name,
-        proper_name.to_lowercase(),
-        proper_name.to_uppercase(),
         name,
-        proper_name.to_lowercase(),
     )
 }

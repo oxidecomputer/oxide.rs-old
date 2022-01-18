@@ -40,13 +40,14 @@
 //! ```
 //! use oxide_api::Client;
 //!
-//! let oxide = Client::new(String::from("api-key"));
+//! let oxide = Client::new(String::from("api-key"), String::from("host"));
 //! ```
 //!
 //! Alternatively, the library can search for most of the variables required for
 //! the client in the environment:
 //!
-//! - `OXIDE_API_KEY`
+//! - `OXIDE_TOKEN`
+//! - `OXIDE_HOST`
 //!
 //! And then you can create a client from the environment.
 //!
