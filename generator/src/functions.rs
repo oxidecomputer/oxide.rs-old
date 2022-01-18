@@ -309,7 +309,8 @@ pub fn generate_files(
                 example.insert(
                     "example".to_string(),
                     format!(
-                        "client.{}().{}({}).await?;",
+                        "{}\nclient.{}().{}({}).await?;",
+                        docs,
                         tag,
                         fn_name,
                         docs_params.join(", ")
@@ -319,7 +320,8 @@ pub fn generate_files(
                 example.insert(
                     "example".to_string(),
                     format!(
-                        "let {} = client.{}().{}({}).await?;",
+                        "{}\nlet {} = client.{}().{}({}).await?;",
+                        docs,
                         to_snake_case(&frt).trim_start_matches("crate_types_"),
                         tag,
                         fn_name,
@@ -336,31 +338,6 @@ pub fn generate_files(
                     fn_name
                 ),
             );
-            new_operation
-                .extensions
-                .insert("x-rust".to_string(), serde_json::json!(example));
-            match m {
-                "GET" => {
-                    new_op.get = Some(new_operation);
-                }
-                "POST" => {
-                    new_op.post = Some(new_operation);
-                }
-                "PUT" => {
-                    new_op.put = Some(new_operation);
-                }
-                "PATCH" => {
-                    new_op.patch = Some(new_operation);
-                }
-                "DELETE" => {
-                    new_op.delete = Some(new_operation);
-                }
-                _ => {}
-            }
-
-            new_api
-                .paths
-                .insert(pn.to_string(), openapiv3::ReferenceOr::Item(new_op.clone()));
 
             // If we are returning a list of things and we have page, etc as
             // params, let's get all the pages.
@@ -429,7 +406,50 @@ pub fn generate_files(
                     &fn_inner,
                     &fn_name,
                 );
+
+                let index = docs_params.iter().position(|x| *x == "page_token").unwrap();
+                docs_params.remove(index);
+                let index = docs_params.iter().position(|x| *x == "limit").unwrap();
+                docs_params.remove(index);
+
+                example.insert(
+                    "example".to_string(),
+                    format!(
+                        "{}\n\n// - OR -\n\n{}\nlet {} = client.{}().{}({}).await?;",
+                        example.get("example").unwrap(),
+                        docs,
+                        to_snake_case(&frt).trim_start_matches("crate_types_"),
+                        tag,
+                        fn_name,
+                        docs_params.join(", ")
+                    ),
+                );
             }
+
+            new_operation
+                .extensions
+                .insert("x-rust".to_string(), serde_json::json!(example));
+            match m {
+                "GET" => {
+                    new_op.get = Some(new_operation);
+                }
+                "POST" => {
+                    new_op.post = Some(new_operation);
+                }
+                "PUT" => {
+                    new_op.put = Some(new_operation);
+                }
+                "PATCH" => {
+                    new_op.patch = Some(new_operation);
+                }
+                "DELETE" => {
+                    new_op.delete = Some(new_operation);
+                }
+                _ => {}
+            }
+            new_api
+                .paths
+                .insert(pn.to_string(), openapiv3::ReferenceOr::Item(new_op.clone()));
 
             // Add this to our map of functions based on the tag name.
             tag_files.insert(tag, out.to_string());
