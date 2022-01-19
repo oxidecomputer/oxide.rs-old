@@ -113,8 +113,8 @@
           }
         },
         "x-go": {
-          "example": "// RacksGetRack\n//\n// Fetch information about a particular rack.\n//\n// Parameters:\n//\t- `rackId`\n\nrack, err := client.Hardware.RacksGetRack(rackId)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#HardwareService.RacksGetRack"
+          "example": "// GetRack\n//\n// Fetch information about a particular rack.\n//\n// Parameters:\n//\t- `rackId`\n\nrack, err := client.Hardware.GetRack(rackID)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#HardwareService.GetRack"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/hardware/racks/{rack_id}` endpoint.\n*\n* Fetch information about a particular rack.\n*\n* **Parameters:**\n*\n* * `rack_id: &str` -- human-readable free-form text about a resource.\n*/\nlet rack = client.hardware().racks_get_rack(rack_id).await?;",
@@ -217,8 +217,8 @@
           }
         },
         "x-go": {
-          "example": "// SledsGetSled\n//\n// Fetch information about a sled in the system.\n//\n// Parameters:\n//\t- `sledId`\n\nsled, err := client.Hardware.SledsGetSled(sledId)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#HardwareService.SledsGetSled"
+          "example": "// GetSled\n//\n// Fetch information about a sled in the system.\n//\n// Parameters:\n//\t- `sledId`\n\nsled, err := client.Hardware.GetSled(sledID)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#HardwareService.GetSled"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/hardware/sleds/{sled_id}` endpoint.\n*\n* Fetch information about a sled in the system.\n*\n* **Parameters:**\n*\n* * `sled_id: &str` -- human-readable free-form text about a resource.\n*/\nlet sled = client.hardware().sleds_get_sled(sled_id).await?;",
@@ -706,8 +706,8 @@
           }
         },
         "x-go": {
-          "example": "// sPutProject\n//\n// Update a specific project.\n//  * TODO-correctness: Is it valid for PUT to accept application/json that's a subset of what the resource actually represents?  If not, is that a problem? (HTTP may require that this be idempotent.)  If so, can we get around that having this be a slightly different content-type (e.g., \"application/json-patch\")?  We should see what other APIs do.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n\nproject, err := client.Organizations.sPutProject(organizationName, projectName, body)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#OrganizationsService.sPutProject"
+          "example": "// PutProject\n//\n// Update a specific project.\n//  * TODO-correctness: Is it valid for PUT to accept application/json that's a subset of what the resource actually represents?  If not, is that a problem? (HTTP may require that this be idempotent.)  If so, can we get around that having this be a slightly different content-type (e.g., \"application/json-patch\")?  We should see what other APIs do.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n\nproject, err := client.Organizations.PutProject(organizationName, projectName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#OrganizationsService.PutProject"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}` endpoint.\n*\n* Update a specific project.\n*  * TODO-correctness: Is it valid for PUT to accept application/json that's a subset of what the resource actually represents?  If not, is that a problem? (HTTP may require that this be idempotent.)  If so, can we get around that having this be a slightly different content-type (e.g., \"application/json-patch\")?  We should see what other APIs do.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n*/\nlet project = client.organizations().projects_put_project(organization_name, project_name, body).await?;",
@@ -3276,8 +3276,8 @@
         },
         "x-dropshot-pagination": true,
         "x-go": {
-          "example": "// SubnetsIpsList\n//\n// List IP addresses on a VPC subnet.\n//\n// To iterate over all pages, use the `SubnetsIpsListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `organizationName`\n//\t- `pageToken`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `subnetName`\n//\t- `vpcName`\n\nnetworkInterfaceResultsPage, err := client.Networking.SubnetsIpsList(limit, pageToken, sortBy, organizationName, projectName, subnetName, vpcName)\n\n// - OR -\n\n// SubnetsIpsListAllPages\n//\n// List IP addresses on a VPC subnet.\n//\n// This method is a wrapper around the `SubnetsIpsList` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `subnetName`\n//\t- `vpcName`\n\nNetworkInterface, err := client.Networking.SubnetsIpsListAllPages(sortBy, organizationName, projectName, subnetName, vpcName)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#NetworkingService.SubnetsIpsList"
+          "example": "// SubnetsIPsList\n//\n// List IP addresses on a VPC subnet.\n//\n// To iterate over all pages, use the `SubnetsIPsListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `organizationName`\n//\t- `pageToken`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `subnetName`\n//\t- `vpcName`\n\nnetworkInterfaceResultsPage, err := client.Networking.SubnetsIPsList(limit, pageToken, sortBy, organizationName, projectName, subnetName, vpcName)\n\n// - OR -\n\n// SubnetsIPsListAllPages\n//\n// List IP addresses on a VPC subnet.\n//\n// This method is a wrapper around the `SubnetsIPsList` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `subnetName`\n//\t- `vpcName`\n\nNetworkInterface, err := client.Networking.SubnetsIPsListAllPages(sortBy, organizationName, projectName, subnetName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#NetworkingService.SubnetsIPsList"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}/ips` endpoint.\n*\n* List IP addresses on a VPC subnet.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- human-readable free-form text about a resource.\n* * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only\n*  \n*  Currently, we only support scanning in ascending order.\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `subnet_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet vec_crate_types_network_interface = client.networking().subnets_ips_get(limit, page_token, sort_by, organization_name, project_name, subnet_name, vpc_name).await?;\n\n// - OR -\n\n/**\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}/ips` endpoint.\n*\n* As opposed to `subnets_ips_get`, this function returns all the pages of the request at once.\n*\n* List IP addresses on a VPC subnet.\n*/\nlet vec_crate_types_network_interface = client.networking().subnets_ips_get_all(sort_by, organization_name, project_name, subnet_name, vpc_name).await?;",
@@ -3474,7 +3474,7 @@
           }
         },
         "x-go": {
-          "example": "// Get\n//\n// Fetch information about a single saga (for debugging)\n//\n// Parameters:\n//\t- `sagaId`\n\nsaga, err := client.Sagas.Get(sagaId)",
+          "example": "// Get\n//\n// Fetch information about a single saga (for debugging)\n//\n// Parameters:\n//\t- `sagaId`\n\nsaga, err := client.Sagas.Get(sagaID)",
           "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SagasService.Get"
         },
         "x-rust": {
