@@ -3,7 +3,7 @@
 The Rust API client for Oxide.
 
 - [Rust docs](https://docs.rs/oxide-api)
-- [Oxide API Docs](https://docs.oxide.computer/?lang=rust)
+- [Oxide API Docs](https://docs.oxide.computer/api?lang=rust)
 
 ## Generating
 
