@@ -30,7 +30,7 @@ impl Routers {
      * * `project_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn vpc_get(
+    pub async fn get_page(
         &self,
         limit: u32,
         page_token: &str,
@@ -38,7 +38,7 @@ impl Routers {
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-    ) -> Result<Vec<crate::types::VpcRouter>> {
+    ) -> Result<Vec<crate::types::Router>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -58,7 +58,7 @@ impl Routers {
             query_
         );
 
-        let resp: crate::types::VpcRouterResultsPage = self.client.get(&url, None).await?;
+        let resp: crate::types::RouterResultsPage = self.client.get(&url, None).await?;
 
         // Return our response data.
         Ok(resp.items)
@@ -67,17 +67,17 @@ impl Routers {
     /**
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers` endpoint.
      *
-     * As opposed to `vpc_get`, this function returns all the pages of the request at once.
+     * As opposed to `get`, this function returns all the pages of the request at once.
      *
      * List VPC Custom and System Routers
      */
-    pub async fn vpc_get_all(
+    pub async fn get_all(
         &self,
         sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-    ) -> Result<Vec<crate::types::VpcRouter>> {
+    ) -> Result<Vec<crate::types::Router>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {
             query_args.push(("sort_by".to_string(), sort_by.to_string()));
@@ -91,7 +91,7 @@ impl Routers {
             query_
         );
 
-        let mut resp: crate::types::VpcRouterResultsPage = self.client.get(&url, None).await?;
+        let mut resp: crate::types::RouterResultsPage = self.client.get(&url, None).await?;
 
         let mut items = resp.items;
         let mut page = resp.next_page;
@@ -134,13 +134,13 @@ impl Routers {
      * * `project_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn vpc_post(
+    pub async fn post(
         &self,
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-        body: &crate::types::ProjectCreate,
-    ) -> Result<crate::types::VpcRouter> {
+        body: &crate::types::RouterCreate,
+    ) -> Result<crate::types::Router> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers",
             crate::progenitor_support::encode_path(organization_name),
@@ -165,13 +165,13 @@ impl Routers {
      * * `router_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn vpc_get_routers(
+    pub async fn get(
         &self,
         organization_name: &str,
         project_name: &str,
         router_name: &str,
         vpc_name: &str,
-    ) -> Result<crate::types::VpcRouter> {
+    ) -> Result<crate::types::Router> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}",
             crate::progenitor_support::encode_path(organization_name),
@@ -195,13 +195,13 @@ impl Routers {
      * * `router_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn vpc_put(
+    pub async fn put(
         &self,
         organization_name: &str,
         project_name: &str,
         router_name: &str,
         vpc_name: &str,
-        body: &crate::types::VpcRouterUpdate,
+        body: &crate::types::RouterUpdate,
     ) -> Result<()> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}",
@@ -228,7 +228,7 @@ impl Routers {
      * * `router_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn vpc_delete(
+    pub async fn delete(
         &self,
         organization_name: &str,
         project_name: &str,

@@ -105,7 +105,7 @@ impl Organizations {
      *
      * Create a new organization.
      */
-    pub async fn post(&self, body: &crate::types::ProjectCreate) -> Result<crate::types::Rack> {
+    pub async fn post(&self, body: &crate::types::RouterCreate) -> Result<crate::types::Rack> {
         let url = "/organizations".to_string();
         self.client
             .post(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))

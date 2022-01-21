@@ -27,7 +27,7 @@ impl Racks {
      *  
      *  Currently, we only support scanning in ascending order.
      */
-    pub async fn hardware_get(
+    pub async fn get_page(
         &self,
         limit: u32,
         page_token: &str,
@@ -55,11 +55,11 @@ impl Racks {
     /**
      * This function performs a `GET` to the `/hardware/racks` endpoint.
      *
-     * As opposed to `hardware_get`, this function returns all the pages of the request at once.
+     * As opposed to `get`, this function returns all the pages of the request at once.
      *
      * List racks in the system.
      */
-    pub async fn hardware_get_all(
+    pub async fn get_all(
         &self,
         sort_by: crate::types::IdSortModeAscending,
     ) -> Result<Vec<crate::types::Rack>> {
@@ -111,7 +111,7 @@ impl Racks {
      *
      * * `rack_id: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn hardware_get_racks(&self, rack_id: &str) -> Result<crate::types::Rack> {
+    pub async fn get(&self, rack_id: &str) -> Result<crate::types::Rack> {
         let url = format!(
             "/hardware/racks/{}",
             crate::progenitor_support::encode_path(rack_id),

@@ -30,7 +30,7 @@ impl Firewall {
      * * `project_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn vpc_rules_get(
+    pub async fn rules_get(
         &self,
         limit: u32,
         page_token: &str,
@@ -38,7 +38,7 @@ impl Firewall {
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-    ) -> Result<Vec<crate::types::VpcFirewallRule>> {
+    ) -> Result<Vec<crate::types::FirewallRule>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -58,7 +58,7 @@ impl Firewall {
             query_
         );
 
-        let resp: crate::types::VpcFirewallRuleResultsPage = self.client.get(&url, None).await?;
+        let resp: crate::types::FirewallRuleResultsPage = self.client.get(&url, None).await?;
 
         // Return our response data.
         Ok(resp.items)
@@ -67,17 +67,17 @@ impl Firewall {
     /**
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/firewall/rules` endpoint.
      *
-     * As opposed to `vpc_rules_get`, this function returns all the pages of the request at once.
+     * As opposed to `rules_get`, this function returns all the pages of the request at once.
      *
      * List firewall rules for a VPC.
      */
-    pub async fn vpc_rules_get_all(
+    pub async fn rules_get_all(
         &self,
         sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-    ) -> Result<Vec<crate::types::VpcFirewallRule>> {
+    ) -> Result<Vec<crate::types::FirewallRule>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {
             query_args.push(("sort_by".to_string(), sort_by.to_string()));
@@ -91,8 +91,7 @@ impl Firewall {
             query_
         );
 
-        let mut resp: crate::types::VpcFirewallRuleResultsPage =
-            self.client.get(&url, None).await?;
+        let mut resp: crate::types::FirewallRuleResultsPage = self.client.get(&url, None).await?;
 
         let mut items = resp.items;
         let mut page = resp.next_page;
@@ -135,13 +134,13 @@ impl Firewall {
      * * `project_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn vpc_rules_put(
+    pub async fn rules_put(
         &self,
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-        body: &crate::types::VpcFirewallRuleUpdate,
-    ) -> Result<crate::types::VpcFirewallRule> {
+        body: &crate::types::FirewallRuleUpdate,
+    ) -> Result<crate::types::FirewallRule> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/firewall/rules",
             crate::progenitor_support::encode_path(organization_name),

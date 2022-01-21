@@ -27,7 +27,7 @@ impl Sleds {
      *  
      *  Currently, we only support scanning in ascending order.
      */
-    pub async fn hardware_get(
+    pub async fn get_page(
         &self,
         limit: u32,
         page_token: &str,
@@ -55,11 +55,11 @@ impl Sleds {
     /**
      * This function performs a `GET` to the `/hardware/sleds` endpoint.
      *
-     * As opposed to `hardware_get`, this function returns all the pages of the request at once.
+     * As opposed to `get`, this function returns all the pages of the request at once.
      *
      * List sleds in the system.
      */
-    pub async fn hardware_get_all(
+    pub async fn get_all(
         &self,
         sort_by: crate::types::IdSortModeAscending,
     ) -> Result<Vec<crate::types::Sled>> {
@@ -111,7 +111,7 @@ impl Sleds {
      *
      * * `sled_id: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn hardware_get_sleds(&self, sled_id: &str) -> Result<crate::types::Sled> {
+    pub async fn get(&self, sled_id: &str) -> Result<crate::types::Sled> {
         let url = format!(
             "/hardware/sleds/{}",
             crate::progenitor_support::encode_path(sled_id),

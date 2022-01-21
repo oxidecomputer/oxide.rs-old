@@ -123,7 +123,7 @@ impl Projects {
     pub async fn post(
         &self,
         organization_name: &str,
-        body: &crate::types::ProjectCreate,
+        body: &crate::types::RouterCreate,
     ) -> Result<crate::types::Project> {
         let url = format!(
             "/organizations/{}/projects",
