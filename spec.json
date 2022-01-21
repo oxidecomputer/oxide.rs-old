@@ -71,8 +71,8 @@
         },
         "x-dropshot-pagination": true,
         "x-go": {
-          "example": "// HardwareList\n//\n// List racks in the system.\n//\n// To iterate over all pages, use the `HardwareListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `pageToken`\n//\t- `sortBy`\n\nrackResultsPage, err := client.Racks.HardwareList(limit, pageToken, sortBy)\n\n// - OR -\n\n// HardwareListAllPages\n//\n// List racks in the system.\n//\n// This method is a wrapper around the `HardwareList` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `sortBy`\n\nRack, err := client.Racks.HardwareListAllPages(sortBy)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RacksService.HardwareList"
+          "example": "// List\n//\n// List racks in the system.\n//\n// To iterate over all pages, use the `ListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `pageToken`\n//\t- `sortBy`\n\nrackResultsPage, err := client.Racks.List(limit, pageToken, sortBy)\n\n// - OR -\n\n// ListAllPages\n//\n// List racks in the system.\n//\n// This method is a wrapper around the `List` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `sortBy`\n\nRack, err := client.Racks.ListAllPages(sortBy)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RacksService.List"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/hardware/racks` endpoint.\n*\n* List racks in the system.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- human-readable free-form text about a resource.\n* * `sort_by: crate::types::IdSortModeAscending` -- Supported set of sort modes for scanning by id only.\n*  \n*  Currently, we only support scanning in ascending order.\n*/\nlet vec_crate_types_rack = client.racks().get_page(limit, page_token, sort_by).await?;\n\n// - OR -\n\n/**\n* This function performs a `GET` to the `/hardware/racks` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*\n* List racks in the system.\n*/\nlet vec_crate_types_rack = client.racks().get_all(sort_by).await?;",
@@ -113,8 +113,8 @@
           }
         },
         "x-go": {
-          "example": "// HardwareGet\n//\n// Fetch information about a particular rack.\n//\n// Parameters:\n//\t- `rackId`\n\nrack, err := client.Racks.HardwareGet(rackID)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RacksService.HardwareGet"
+          "example": "// Get\n//\n// Fetch information about a particular rack.\n//\n// Parameters:\n//\t- `rackId`\n\nrack, err := client.Racks.Get(rackID)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RacksService.Get"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/hardware/racks/{rack_id}` endpoint.\n*\n* Fetch information about a particular rack.\n*\n* **Parameters:**\n*\n* * `rack_id: &str` -- human-readable free-form text about a resource.\n*/\nlet rack = client.racks().get(rack_id).await?;",
@@ -175,8 +175,8 @@
         },
         "x-dropshot-pagination": true,
         "x-go": {
-          "example": "// HardwareList\n//\n// List sleds in the system.\n//\n// To iterate over all pages, use the `HardwareListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `pageToken`\n//\t- `sortBy`\n\nsledResultsPage, err := client.Sleds.HardwareList(limit, pageToken, sortBy)\n\n// - OR -\n\n// HardwareListAllPages\n//\n// List sleds in the system.\n//\n// This method is a wrapper around the `HardwareList` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `sortBy`\n\nSled, err := client.Sleds.HardwareListAllPages(sortBy)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SledsService.HardwareList"
+          "example": "// List\n//\n// List sleds in the system.\n//\n// To iterate over all pages, use the `ListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `pageToken`\n//\t- `sortBy`\n\nsledResultsPage, err := client.Sleds.List(limit, pageToken, sortBy)\n\n// - OR -\n\n// ListAllPages\n//\n// List sleds in the system.\n//\n// This method is a wrapper around the `List` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `sortBy`\n\nSled, err := client.Sleds.ListAllPages(sortBy)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SledsService.List"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/hardware/sleds` endpoint.\n*\n* List sleds in the system.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- human-readable free-form text about a resource.\n* * `sort_by: crate::types::IdSortModeAscending` -- Supported set of sort modes for scanning by id only.\n*  \n*  Currently, we only support scanning in ascending order.\n*/\nlet vec_crate_types_sled = client.sleds().get_page(limit, page_token, sort_by).await?;\n\n// - OR -\n\n/**\n* This function performs a `GET` to the `/hardware/sleds` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*\n* List sleds in the system.\n*/\nlet vec_crate_types_sled = client.sleds().get_all(sort_by).await?;",
@@ -217,8 +217,8 @@
           }
         },
         "x-go": {
-          "example": "// HardwareGet\n//\n// Fetch information about a sled in the system.\n//\n// Parameters:\n//\t- `sledId`\n\nsled, err := client.Sleds.HardwareGet(sledID)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SledsService.HardwareGet"
+          "example": "// Get\n//\n// Fetch information about a sled in the system.\n//\n// Parameters:\n//\t- `sledId`\n\nsled, err := client.Sleds.Get(sledID)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SledsService.Get"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/hardware/sleds/{sled_id}` endpoint.\n*\n* Fetch information about a sled in the system.\n*\n* **Parameters:**\n*\n* * `sled_id: &str` -- human-readable free-form text about a resource.\n*/\nlet sled = client.sleds().get(sled_id).await?;",
@@ -2029,8 +2029,8 @@
         },
         "x-dropshot-pagination": true,
         "x-go": {
-          "example": "// VPCRulesList\n//\n// List firewall rules for a VPC.\n//\n// To iterate over all pages, use the `VPCRulesListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `organizationName`\n//\t- `pageToken`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nvPCFirewallRuleResultsPage, err := client.Firewall.VPCRulesList(limit, pageToken, sortBy, organizationName, projectName, vpcName)\n\n// - OR -\n\n// VPCRulesListAllPages\n//\n// List firewall rules for a VPC.\n//\n// This method is a wrapper around the `VPCRulesList` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nVPCFirewallRule, err := client.Firewall.VPCRulesListAllPages(sortBy, organizationName, projectName, vpcName)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#FirewallService.VPCRulesList"
+          "example": "// RulesList\n//\n// List firewall rules for a VPC.\n//\n// To iterate over all pages, use the `RulesListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `organizationName`\n//\t- `pageToken`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nfirewallRuleResultsPage, err := client.Firewall.RulesList(limit, pageToken, sortBy, organizationName, projectName, vpcName)\n\n// - OR -\n\n// RulesListAllPages\n//\n// List firewall rules for a VPC.\n//\n// This method is a wrapper around the `RulesList` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nFirewallRule, err := client.Firewall.RulesListAllPages(sortBy, organizationName, projectName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#FirewallService.RulesList"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/firewall/rules` endpoint.\n*\n* List firewall rules for a VPC.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- human-readable free-form text about a resource.\n* * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only\n*  \n*  Currently, we only support scanning in ascending order.\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet vec_crate_types_firewall_rule = client.firewall().rules_get(limit, page_token, sort_by, organization_name, project_name, vpc_name).await?;\n\n// - OR -\n\n/**\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/firewall/rules` endpoint.\n*\n* As opposed to `rules_get`, this function returns all the pages of the request at once.\n*\n* List firewall rules for a VPC.\n*/\nlet vec_crate_types_firewall_rule = client.firewall().rules_get_all(sort_by, organization_name, project_name, vpc_name).await?;",
@@ -2095,8 +2095,8 @@
           }
         },
         "x-go": {
-          "example": "// VPCRulesPut\n//\n// Replace the firewall rules for a VPC\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `vpcName`\n\nvPCFirewallRuleUpdateResult, err := client.Firewall.VPCRulesPut(organizationName, projectName, vpcName, body)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#FirewallService.VPCRulesPut"
+          "example": "// RulesPut\n//\n// Replace the firewall rules for a VPC\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `vpcName`\n\nfirewallRuleUpdateResult, err := client.Firewall.RulesPut(organizationName, projectName, vpcName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#FirewallService.RulesPut"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/firewall/rules` endpoint.\n*\n* Replace the firewall rules for a VPC\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet firewall_rule = client.firewall().rules_put(organization_name, project_name, vpc_name, body).await?;",
@@ -2184,8 +2184,8 @@
         },
         "x-dropshot-pagination": true,
         "x-go": {
-          "example": "// VPCList\n//\n// List VPC Custom and System Routers\n//\n// To iterate over all pages, use the `VPCListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `organizationName`\n//\t- `pageToken`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nvPCRouterResultsPage, err := client.Routers.VPCList(limit, pageToken, sortBy, organizationName, projectName, vpcName)\n\n// - OR -\n\n// VPCListAllPages\n//\n// List VPC Custom and System Routers\n//\n// This method is a wrapper around the `VPCList` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nVPCRouter, err := client.Routers.VPCListAllPages(sortBy, organizationName, projectName, vpcName)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.VPCList"
+          "example": "// List\n//\n// List VPC Custom and System Routers\n//\n// To iterate over all pages, use the `ListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `organizationName`\n//\t- `pageToken`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nrouterResultsPage, err := client.Routers.List(limit, pageToken, sortBy, organizationName, projectName, vpcName)\n\n// - OR -\n\n// ListAllPages\n//\n// List VPC Custom and System Routers\n//\n// This method is a wrapper around the `List` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nRouter, err := client.Routers.ListAllPages(sortBy, organizationName, projectName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.List"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers` endpoint.\n*\n* List VPC Custom and System Routers\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- human-readable free-form text about a resource.\n* * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only\n*  \n*  Currently, we only support scanning in ascending order.\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet vec_crate_types_router = client.routers().get_page(limit, page_token, sort_by, organization_name, project_name, vpc_name).await?;\n\n// - OR -\n\n/**\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*\n* List VPC Custom and System Routers\n*/\nlet vec_crate_types_router = client.routers().get_all(sort_by, organization_name, project_name, vpc_name).await?;",
@@ -2250,8 +2250,8 @@
           }
         },
         "x-go": {
-          "example": "// VPCCreate\n//\n// Create a VPC Router\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `vpcName`\n\nvPCRouter, err := client.Routers.VPCCreate(organizationName, projectName, vpcName, body)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.VPCCreate"
+          "example": "// Create\n//\n// Create a VPC Router\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `vpcName`\n\nrouter, err := client.Routers.Create(organizationName, projectName, vpcName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.Create"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers` endpoint.\n*\n* Create a VPC Router\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet router = client.routers().post(organization_name, project_name, vpc_name, body).await?;",
@@ -2317,8 +2317,8 @@
           }
         },
         "x-go": {
-          "example": "// VPCGet\n//\n// Get a VPC Router\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `routerName`\n//\t- `vpcName`\n\nvPCRouter, err := client.Routers.VPCGet(organizationName, projectName, routerName, vpcName)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.VPCGet"
+          "example": "// Get\n//\n// Get a VPC Router\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `routerName`\n//\t- `vpcName`\n\nrouter, err := client.Routers.Get(organizationName, projectName, routerName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.Get"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}` endpoint.\n*\n* Get a VPC Router\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `router_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet router = client.routers().get(organization_name, project_name, router_name, vpc_name).await?;",
@@ -2385,8 +2385,8 @@
           }
         },
         "x-go": {
-          "example": "// VPCPut\n//\n// Update a VPC Router\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `routerName`\n//\t- `vpcName`\n\nif err := client.Routers.VPCPut(organizationName, projectName, routerName, vpcName, body); err != nil {\n\tpanic(err)\n}",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.VPCPut"
+          "example": "// Put\n//\n// Update a VPC Router\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `routerName`\n//\t- `vpcName`\n\nif err := client.Routers.Put(organizationName, projectName, routerName, vpcName, body); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.Put"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}` endpoint.\n*\n* Update a VPC Router\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `router_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nclient.routers().put(organization_name, project_name, router_name, vpc_name, body).await?;",
@@ -2443,8 +2443,8 @@
           }
         },
         "x-go": {
-          "example": "// VPCDelete\n//\n// Delete a router from its VPC\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `routerName`\n//\t- `vpcName`\n\nif err := client.Routers.VPCDelete(organizationName, projectName, routerName, vpcName); err != nil {\n\tpanic(err)\n}",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.VPCDelete"
+          "example": "// Delete\n//\n// Delete a router from its VPC\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `routerName`\n//\t- `vpcName`\n\nif err := client.Routers.Delete(organizationName, projectName, routerName, vpcName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.Delete"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}` endpoint.\n*\n* Delete a router from its VPC\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `router_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nclient.routers().delete(organization_name, project_name, router_name, vpc_name).await?;",
@@ -2925,8 +2925,8 @@
         },
         "x-dropshot-pagination": true,
         "x-go": {
-          "example": "// VPCList\n//\n// List subnets in a VPC.\n//\n// To iterate over all pages, use the `VPCListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `organizationName`\n//\t- `pageToken`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nvPCSubnetResultsPage, err := client.Subnets.VPCList(limit, pageToken, sortBy, organizationName, projectName, vpcName)\n\n// - OR -\n\n// VPCListAllPages\n//\n// List subnets in a VPC.\n//\n// This method is a wrapper around the `VPCList` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nVPCSubnet, err := client.Subnets.VPCListAllPages(sortBy, organizationName, projectName, vpcName)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SubnetsService.VPCList"
+          "example": "// List\n//\n// List subnets in a VPC.\n//\n// To iterate over all pages, use the `ListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`\n//\t- `organizationName`\n//\t- `pageToken`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nsubnetResultsPage, err := client.Subnets.List(limit, pageToken, sortBy, organizationName, projectName, vpcName)\n\n// - OR -\n\n// ListAllPages\n//\n// List subnets in a VPC.\n//\n// This method is a wrapper around the `List` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `sortBy`\n//\t- `vpcName`\n\nSubnet, err := client.Subnets.ListAllPages(sortBy, organizationName, projectName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SubnetsService.List"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets` endpoint.\n*\n* List subnets in a VPC.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- human-readable free-form text about a resource.\n* * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only\n*  \n*  Currently, we only support scanning in ascending order.\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet vec_crate_types_subnet = client.subnets().get_page(limit, page_token, sort_by, organization_name, project_name, vpc_name).await?;\n\n// - OR -\n\n/**\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*\n* List subnets in a VPC.\n*/\nlet vec_crate_types_subnet = client.subnets().get_all(sort_by, organization_name, project_name, vpc_name).await?;",
@@ -2991,8 +2991,8 @@
           }
         },
         "x-go": {
-          "example": "// VPCCreate\n//\n// Create a subnet in a VPC.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `vpcName`\n\nvPCSubnet, err := client.Subnets.VPCCreate(organizationName, projectName, vpcName, body)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SubnetsService.VPCCreate"
+          "example": "// Create\n//\n// Create a subnet in a VPC.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `vpcName`\n\nsubnet, err := client.Subnets.Create(organizationName, projectName, vpcName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SubnetsService.Create"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets` endpoint.\n*\n* Create a subnet in a VPC.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet subnet = client.subnets().post(organization_name, project_name, vpc_name, body).await?;",
@@ -3058,8 +3058,8 @@
           }
         },
         "x-go": {
-          "example": "// VPCGet\n//\n// Get subnet in a VPC.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `subnetName`\n//\t- `vpcName`\n\nvPCSubnet, err := client.Subnets.VPCGet(organizationName, projectName, subnetName, vpcName)",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SubnetsService.VPCGet"
+          "example": "// Get\n//\n// Get subnet in a VPC.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `subnetName`\n//\t- `vpcName`\n\nsubnet, err := client.Subnets.Get(organizationName, projectName, subnetName, vpcName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SubnetsService.Get"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}` endpoint.\n*\n* Get subnet in a VPC.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `subnet_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet subnet = client.subnets().get(organization_name, project_name, subnet_name, vpc_name).await?;",
@@ -3126,8 +3126,8 @@
           }
         },
         "x-go": {
-          "example": "// VPCPut\n//\n// Update a VPC Subnet.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `subnetName`\n//\t- `vpcName`\n\nif err := client.Subnets.VPCPut(organizationName, projectName, subnetName, vpcName, body); err != nil {\n\tpanic(err)\n}",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SubnetsService.VPCPut"
+          "example": "// Put\n//\n// Update a VPC Subnet.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `subnetName`\n//\t- `vpcName`\n\nif err := client.Subnets.Put(organizationName, projectName, subnetName, vpcName, body); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SubnetsService.Put"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}` endpoint.\n*\n* Update a VPC Subnet.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `subnet_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nclient.subnets().put(organization_name, project_name, subnet_name, vpc_name, body).await?;",
@@ -3184,8 +3184,8 @@
           }
         },
         "x-go": {
-          "example": "// VPCDelete\n//\n// Delete a subnet from a VPC.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `subnetName`\n//\t- `vpcName`\n\nif err := client.Subnets.VPCDelete(organizationName, projectName, subnetName, vpcName); err != nil {\n\tpanic(err)\n}",
-          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SubnetsService.VPCDelete"
+          "example": "// Delete\n//\n// Delete a subnet from a VPC.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `subnetName`\n//\t- `vpcName`\n\nif err := client.Subnets.Delete(organizationName, projectName, subnetName, vpcName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SubnetsService.Delete"
         },
         "x-rust": {
           "example": "/**\n* This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}` endpoint.\n*\n* Delete a subnet from a VPC.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `subnet_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nclient.subnets().delete(organization_name, project_name, subnet_name, vpc_name).await?;",
