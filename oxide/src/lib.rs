@@ -63,20 +63,27 @@
 #![allow(missing_docs)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
-pub mod hardware;
+pub mod disks;
+pub mod firewall;
+pub mod hidden;
 pub mod instances;
 pub mod metrics;
-pub mod networking;
 pub mod organizations;
 pub mod projects;
+pub mod racks;
 pub mod roles;
+pub mod routers;
+pub mod routes;
 pub mod sagas;
+pub mod sleds;
+pub mod subnets;
 #[cfg(test)]
 mod tests;
 pub mod types;
 pub mod users;
 #[doc(hidden)]
 pub mod utils;
+pub mod vpcs;
 
 use anyhow::{anyhow, Error, Result};
 
@@ -300,14 +307,24 @@ impl Client {
         .await
     }
 
-    /// Return a reference to an interface that provides access to hardware operations.
-    pub fn hardware(&self) -> hardware::Hardware {
-        hardware::Hardware::new(self.clone())
+    /// Return a reference to an interface that provides access to racks operations.
+    pub fn racks(&self) -> racks::Racks {
+        racks::Racks::new(self.clone())
+    }
+
+    /// Return a reference to an interface that provides access to sleds operations.
+    pub fn sleds(&self) -> sleds::Sleds {
+        sleds::Sleds::new(self.clone())
     }
 
     /// Return a reference to an interface that provides access to organizations operations.
     pub fn organizations(&self) -> organizations::Organizations {
         organizations::Organizations::new(self.clone())
+    }
+
+    /// Return a reference to an interface that provides access to disks operations.
+    pub fn disks(&self) -> disks::Disks {
+        disks::Disks::new(self.clone())
     }
 
     /// Return a reference to an interface that provides access to projects operations.
@@ -340,8 +357,33 @@ impl Client {
         metrics::Metrics::new(self.clone())
     }
 
-    /// Return a reference to an interface that provides access to networking operations.
-    pub fn networking(&self) -> networking::Networking {
-        networking::Networking::new(self.clone())
+    /// Return a reference to an interface that provides access to vpcs operations.
+    pub fn vpcs(&self) -> vpcs::Vpcs {
+        vpcs::Vpcs::new(self.clone())
+    }
+
+    /// Return a reference to an interface that provides access to subnets operations.
+    pub fn subnets(&self) -> subnets::Subnets {
+        subnets::Subnets::new(self.clone())
+    }
+
+    /// Return a reference to an interface that provides access to firewall operations.
+    pub fn firewall(&self) -> firewall::Firewall {
+        firewall::Firewall::new(self.clone())
+    }
+
+    /// Return a reference to an interface that provides access to routers operations.
+    pub fn routers(&self) -> routers::Routers {
+        routers::Routers::new(self.clone())
+    }
+
+    /// Return a reference to an interface that provides access to routes operations.
+    pub fn routes(&self) -> routes::Routes {
+        routes::Routes::new(self.clone())
+    }
+
+    /// Return a reference to an interface that provides access to hidden operations.
+    pub fn hidden(&self) -> hidden::Hidden {
+        hidden::Hidden::new(self.clone())
     }
 }
