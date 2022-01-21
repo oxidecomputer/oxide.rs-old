@@ -32,7 +32,7 @@ impl Users {
         limit: u32,
         page_token: &str,
         sort_by: crate::types::NameSortModeAscending,
-    ) -> Result<Vec<crate::types::User>> {
+    ) -> Result<Vec<crate::types::Rack>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -62,7 +62,7 @@ impl Users {
     pub async fn get_all(
         &self,
         sort_by: crate::types::NameSortModeAscending,
-    ) -> Result<Vec<crate::types::User>> {
+    ) -> Result<Vec<crate::types::Rack>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {
             query_args.push(("sort_by".to_string(), sort_by.to_string()));
@@ -111,7 +111,7 @@ impl Users {
      *
      * * `user_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn get(&self, user_name: &str) -> Result<crate::types::User> {
+    pub async fn get(&self, user_name: &str) -> Result<crate::types::Rack> {
         let url = format!(
             "/users/{}",
             crate::progenitor_support::encode_path(user_name),
