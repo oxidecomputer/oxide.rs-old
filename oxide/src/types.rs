@@ -1,4 +1,6 @@
 //! The data types sent to and returned from the API client.
+use std::fmt;
+
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
@@ -242,6 +244,20 @@ pub enum DiskState {
     Detaching(String),
     Destroyed,
     Faulted,
+}
+
+impl fmt::Display for DiskState {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            DiskState::Detaching(..) => write!(f, "detaching"),
+            DiskState::Attached(..) => write!(f, "attached"),
+            DiskState::Detached => write!(f, "detached"),
+            DiskState::Destroyed => write!(f, "destroyed"),
+            DiskState::Creating => write!(f, "creating"),
+            DiskState::Faulted => write!(f, "faulted"),
+            DiskState::Attaching(..) => write!(f, "attaching"),
+        }
+    }
 }
 
 /// The name and type information for a field of a timeseries schema.
@@ -1139,6 +1155,16 @@ pub enum RouteDestination {
     Subnet(String),
 }
 
+impl fmt::Display for RouteDestination {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            RouteDestination::Ip(..) => write!(f, "ip"),
+            RouteDestination::Vpc(..) => write!(f, "vpc"),
+            RouteDestination::Subnet(..) => write!(f, "subnet"),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "type", content = "value")]
@@ -1148,6 +1174,18 @@ pub enum RouteTarget {
     Subnet(String),
     Instance(String),
     InternetGateway(String),
+}
+
+impl fmt::Display for RouteTarget {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            RouteTarget::Instance(..) => write!(f, "instance"),
+            RouteTarget::InternetGateway(..) => write!(f, "internet_gateway"),
+            RouteTarget::Ip(..) => write!(f, "ip"),
+            RouteTarget::Vpc(..) => write!(f, "vpc"),
+            RouteTarget::Subnet(..) => write!(f, "subnet"),
+        }
+    }
 }
 
 /// A route defines a rule that governs where traffic should be sent based on its destination.
@@ -1366,6 +1404,18 @@ pub enum SagaErrorInfo {
     SubsagaCreateFailed(String),
 }
 
+impl fmt::Display for SagaErrorInfo {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            SagaErrorInfo::InjectedError => write!(f, "injected_error"),
+            SagaErrorInfo::ActionFailed(..) => write!(f, "action_failed"),
+            SagaErrorInfo::SerializeFailed(..) => write!(f, "serialize_failed"),
+            SagaErrorInfo::SubsagaCreateFailed(..) => write!(f, "subsaga_create_failed"),
+            SagaErrorInfo::DeserializeFailed(..) => write!(f, "deserialize_failed"),
+        }
+    }
+}
+
 /// A single page of results
 #[derive(Serialize, Default, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct SagaResultsPage {
@@ -1399,6 +1449,16 @@ pub enum SagaState {
         error_info: SagaErrorInfo,
         error_node_name: String,
     },
+}
+
+impl fmt::Display for SagaState {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            SagaState::Running => write!(f, "running"),
+            SagaState::Succeeded => write!(f, "succeeded"),
+            SagaState::Failed { .. } => write!(f, "failed"),
+        }
+    }
 }
 
 /// Client view of currently authed user.
@@ -1882,6 +1942,18 @@ pub enum FirewallRuleHostFilter {
     InternetGateway(String),
 }
 
+impl fmt::Display for FirewallRuleHostFilter {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            FirewallRuleHostFilter::Ip(..) => write!(f, "ip"),
+            FirewallRuleHostFilter::Subnet(..) => write!(f, "subnet"),
+            FirewallRuleHostFilter::Vpc(..) => write!(f, "vpc"),
+            FirewallRuleHostFilter::InternetGateway(..) => write!(f, "internet_gateway"),
+            FirewallRuleHostFilter::Instance(..) => write!(f, "instance"),
+        }
+    }
+}
+
 /**
  * The protocols that may be specified in a firewall rule's filter
  */
@@ -1988,6 +2060,16 @@ pub enum FirewallRuleTarget {
     Vpc(String),
     Subnet(String),
     Instance(String),
+}
+
+impl fmt::Display for FirewallRuleTarget {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            FirewallRuleTarget::Subnet(..) => write!(f, "subnet"),
+            FirewallRuleTarget::Instance(..) => write!(f, "instance"),
+            FirewallRuleTarget::Vpc(..) => write!(f, "vpc"),
+        }
+    }
 }
 
 /// A single rule in a VPC firewall

@@ -1,4 +1,7 @@
-use std::{cmp::Ordering, collections::BTreeMap};
+use std::{
+    cmp::Ordering,
+    collections::{BTreeMap, HashMap},
+};
 
 use anyhow::{bail, Result};
 use inflector::cases::snakecase::to_snake_case;
@@ -19,6 +22,7 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
     a("//! The data types sent to and returned from the API client.");
     a("    use schemars::JsonSchema;");
     a("    use serde::{Serialize, Deserialize};");
+    a("    use std::fmt;");
     a("");
 
     for te in ts.clone().id_to_entry.values() {
@@ -321,6 +325,8 @@ fn do_of_type(
     }
     a(&format!("pub enum {} {{", sn));
 
+    let mut types_strings: HashMap<String, (String, String)> = Default::default();
+
     for tid in omap.iter() {
         let et = ts.id_to_entry.get(tid).unwrap();
         if let TypeDetails::Object(o, _) = &et.details {
@@ -329,14 +335,19 @@ fn do_of_type(
                 // Check if we have an enum of one.
                 if let TypeDetails::Enum(e, _) = &pet.details {
                     if e.len() == 1 {
+                        let prop = struct_name(&e[0]);
+                        let mut sep = "";
                         // We have an enum of one so we can use that as the tag.
                         if o.len() == 1 {
-                            a(&format!("{},", struct_name(&e[0])));
+                            a(&format!("{},", prop));
                         } else if o.len() == 2 {
-                            a(&format!("{}(", struct_name(&e[0])));
+                            a(&format!("{}(", prop));
+                            sep = "(..)";
                         } else if o.len() > 2 {
-                            a(&format!("{} {{", struct_name(&e[0])));
+                            a(&format!("{} {{", prop));
+                            sep = "{..}";
                         }
+                        types_strings.insert(prop.clone(), (e[0].to_string(), sep.to_string()));
                         break;
                     }
                 }
@@ -373,6 +384,18 @@ fn do_of_type(
         }
     }
 
+    a("}");
+    a("");
+
+    // Now we need to implement display for the enum.
+    a(&format!("impl fmt::Display for {} {{", sn));
+    a("fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {");
+    a("match self {");
+    for (p, (t, s)) in types_strings.iter() {
+        a(&format!("{}::{}{} => write!(f, \"{}\"),", sn, p, s, t));
+    }
+    a("}");
+    a("}");
     a("}");
     a("");
 
