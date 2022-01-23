@@ -249,13 +249,13 @@ pub enum DiskState {
 impl fmt::Display for DiskState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            DiskState::Detaching(..) => write!(f, "detaching"),
             DiskState::Attached(..) => write!(f, "attached"),
-            DiskState::Detached => write!(f, "detached"),
-            DiskState::Destroyed => write!(f, "destroyed"),
-            DiskState::Creating => write!(f, "creating"),
-            DiskState::Faulted => write!(f, "faulted"),
             DiskState::Attaching(..) => write!(f, "attaching"),
+            DiskState::Creating => write!(f, "creating"),
+            DiskState::Destroyed => write!(f, "destroyed"),
+            DiskState::Detached => write!(f, "detached"),
+            DiskState::Detaching(..) => write!(f, "detaching"),
+            DiskState::Faulted => write!(f, "faulted"),
         }
     }
 }
@@ -1159,8 +1159,8 @@ impl fmt::Display for RouteDestination {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             RouteDestination::Ip(..) => write!(f, "ip"),
-            RouteDestination::Vpc(..) => write!(f, "vpc"),
             RouteDestination::Subnet(..) => write!(f, "subnet"),
+            RouteDestination::Vpc(..) => write!(f, "vpc"),
         }
     }
 }
@@ -1182,8 +1182,8 @@ impl fmt::Display for RouteTarget {
             RouteTarget::Instance(..) => write!(f, "instance"),
             RouteTarget::InternetGateway(..) => write!(f, "internet_gateway"),
             RouteTarget::Ip(..) => write!(f, "ip"),
-            RouteTarget::Vpc(..) => write!(f, "vpc"),
             RouteTarget::Subnet(..) => write!(f, "subnet"),
+            RouteTarget::Vpc(..) => write!(f, "vpc"),
         }
     }
 }
@@ -1407,11 +1407,11 @@ pub enum SagaErrorInfo {
 impl fmt::Display for SagaErrorInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            SagaErrorInfo::InjectedError => write!(f, "injected_error"),
             SagaErrorInfo::ActionFailed(..) => write!(f, "action_failed"),
+            SagaErrorInfo::DeserializeFailed(..) => write!(f, "deserialize_failed"),
+            SagaErrorInfo::InjectedError => write!(f, "injected_error"),
             SagaErrorInfo::SerializeFailed(..) => write!(f, "serialize_failed"),
             SagaErrorInfo::SubsagaCreateFailed(..) => write!(f, "subsaga_create_failed"),
-            SagaErrorInfo::DeserializeFailed(..) => write!(f, "deserialize_failed"),
         }
     }
 }
@@ -1454,9 +1454,9 @@ pub enum SagaState {
 impl fmt::Display for SagaState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
+            SagaState::Failed { .. } => write!(f, "failed"),
             SagaState::Running => write!(f, "running"),
             SagaState::Succeeded => write!(f, "succeeded"),
-            SagaState::Failed { .. } => write!(f, "failed"),
         }
     }
 }
@@ -1945,11 +1945,11 @@ pub enum FirewallRuleHostFilter {
 impl fmt::Display for FirewallRuleHostFilter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
+            FirewallRuleHostFilter::Instance(..) => write!(f, "instance"),
+            FirewallRuleHostFilter::InternetGateway(..) => write!(f, "internet_gateway"),
             FirewallRuleHostFilter::Ip(..) => write!(f, "ip"),
             FirewallRuleHostFilter::Subnet(..) => write!(f, "subnet"),
             FirewallRuleHostFilter::Vpc(..) => write!(f, "vpc"),
-            FirewallRuleHostFilter::InternetGateway(..) => write!(f, "internet_gateway"),
-            FirewallRuleHostFilter::Instance(..) => write!(f, "instance"),
         }
     }
 }
@@ -2065,8 +2065,8 @@ pub enum FirewallRuleTarget {
 impl fmt::Display for FirewallRuleTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            FirewallRuleTarget::Subnet(..) => write!(f, "subnet"),
             FirewallRuleTarget::Instance(..) => write!(f, "instance"),
+            FirewallRuleTarget::Subnet(..) => write!(f, "subnet"),
             FirewallRuleTarget::Vpc(..) => write!(f, "vpc"),
         }
     }
@@ -2306,20 +2306,18 @@ pub struct Subnet {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize",
-        rename = "ipv4_block"
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub ipv_4_block: String,
+    pub ipv4_block: String,
     /**
      * The IPv6 subnet CIDR block.
      */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize",
-        rename = "ipv6_block"
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub ipv_6_block: String,
+    pub ipv6_block: String,
     /**
      * human-readable free-form text about a resource
      */
@@ -2376,20 +2374,18 @@ pub struct SubnetCreate {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize",
-        rename = "ipv4_block"
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub ipv_4_block: String,
+    pub ipv4_block: String,
     /**
      * The IPv6 subnet CIDR block.
      */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize",
-        rename = "ipv6_block"
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub ipv_6_block: String,
+    pub ipv6_block: String,
     /**
      * human-readable free-form text about a resource
      */
@@ -2442,20 +2438,18 @@ pub struct SubnetUpdate {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize",
-        rename = "ipv4_block"
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub ipv_4_block: String,
+    pub ipv4_block: String,
     /**
      * The IPv6 subnet CIDR block.
      */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize",
-        rename = "ipv6_block"
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub ipv_6_block: String,
+    pub ipv6_block: String,
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",

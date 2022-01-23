@@ -1,7 +1,4 @@
-use std::{
-    cmp::Ordering,
-    collections::{BTreeMap, HashMap},
-};
+use std::{cmp::Ordering, collections::BTreeMap};
 
 use anyhow::{bail, Result};
 use inflector::cases::snakecase::to_snake_case;
@@ -149,7 +146,7 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                             if rt == "String"
                                 || rt.starts_with("Vec<")
                                 || rt.starts_with("Option<")
-                                || rt.starts_with("HashMap<")
+                                || rt.starts_with("BTreeMap<")
                             {
                                 a(r#"#[serde(default,"#);
                                 if rt == "String" {
@@ -158,9 +155,9 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                                 } else if rt.starts_with("Vec<") {
                                     a(r#"skip_serializing_if = "Vec::is_empty",
                                       deserialize_with = "crate::utils::deserialize_null_vector::deserialize","#);
-                                } else if rt.starts_with("std::collections::HashMap<") {
+                                } else if rt.starts_with("std::collections::BTreeMap<") {
                                     a(
-                                        r#"skip_serializing_if = "std::collections::HashMap::is_empty","#,
+                                        r#"skip_serializing_if = "std::collections::BTreeMap::is_empty","#,
                                     );
                                 } else if rt.starts_with("Option<url::Url") {
                                     a(r#"skip_serializing_if = "Option::is_none",
@@ -234,6 +231,12 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                                 || prop == "use"
                             {
                                 prop = format!("{}_", prop);
+                            }
+
+                            if prop == "ipv_4_block" {
+                                prop = "ipv4_block".to_string();
+                            } else if prop == "ipv_6_block" {
+                                prop = "ipv6_block".to_string();
                             }
 
                             // Close the serde string.
@@ -325,7 +328,7 @@ fn do_of_type(
     }
     a(&format!("pub enum {} {{", sn));
 
-    let mut types_strings: HashMap<String, (String, String)> = Default::default();
+    let mut types_strings: BTreeMap<String, (String, String)> = Default::default();
 
     for tid in omap.iter() {
         let et = ts.id_to_entry.get(tid).unwrap();
