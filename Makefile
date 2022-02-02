@@ -22,6 +22,7 @@ update-specs:
 $(SPEC):
 	curl -sSL $(SPEC_REMOTE) -o $@
 
+.PHONY: oxide
 oxide: target/debug/generator
 	./target/debug/generator -i $(SPEC) -v $(VERSION) \
 		-o oxide \
