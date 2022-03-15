@@ -295,6 +295,8 @@ fn do_of_type(
     omap.sort_unstable();
     omap.dedup();
 
+    let mut is_enum = false;
+
     for itid in omap.iter() {
         // Determine if we can do anything fancy with the resulting enum and flatten it.
         let et = ts.id_to_entry.get(itid).unwrap();
@@ -305,6 +307,7 @@ fn do_of_type(
                 let pet = ts.id_to_entry.get(prop).unwrap();
                 // Check if we have an enum of one.
                 if let TypeDetails::Enum(e, _) = &pet.details {
+                    is_enum = true;
                     if e.len() == 1 {
                         // We have an enum of one so we can use that as the tag.
                         tag = name;
@@ -333,7 +336,7 @@ fn do_of_type(
     for tid in omap.iter() {
         let et = ts.id_to_entry.get(tid).unwrap();
         if let TypeDetails::Object(o, _) = &et.details {
-            for (_, prop) in o.iter() {
+            for (key, prop) in o.iter() {
                 let pet = ts.id_to_entry.get(prop).unwrap();
                 // Check if we have an enum of one.
                 if let TypeDetails::Enum(e, _) = &pet.details {
@@ -353,6 +356,9 @@ fn do_of_type(
                         types_strings.insert(prop.clone(), (e[0].to_string(), sep.to_string()));
                         break;
                     }
+                } else if o.len() == 1 {
+                    a(&format!("{}(", struct_name(key)));
+                    types_strings.insert(key.clone(), (key.to_string(), "(..)".to_string()));
                 }
             }
             for (name, prop) in o.iter() {
@@ -376,7 +382,11 @@ fn do_of_type(
             }
 
             match o.len().cmp(&2) {
-                Ordering::Less => {}
+                Ordering::Less => {
+                    if !is_enum {
+                        a("),");
+                    }
+                }
                 Ordering::Equal => {
                     a("),");
                 }

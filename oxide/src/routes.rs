@@ -13,16 +13,16 @@ impl Routes {
     }
 
     /**
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes` endpoint.
+     * List a Router's routes.
      *
-     * List a Router's routes
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes` endpoint.
      *
      * **Parameters:**
      *
      * * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     * * `page_token: &str` -- human-readable free-form text about a resource.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
      * * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
@@ -68,11 +68,11 @@ impl Routes {
     }
 
     /**
+     * List a Router's routes.
+     *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes` endpoint.
      *
      * As opposed to `get`, this function returns all the pages of the request at once.
-     *
-     * List a Router's routes
      */
     pub async fn get_all(
         &self,
@@ -129,9 +129,9 @@ impl Routes {
     }
 
     /**
-     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes` endpoint.
+     * Create a VPC Router.
      *
-     * Create a VPC Router
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes` endpoint.
      *
      * **Parameters:**
      *
@@ -162,9 +162,9 @@ impl Routes {
     }
 
     /**
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes/{route_name}` endpoint.
+     * Get a VPC Router route.
      *
-     * Get a VPC Router route
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes/{route_name}` endpoint.
      *
      * **Parameters:**
      *
@@ -195,9 +195,9 @@ impl Routes {
     }
 
     /**
-     * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes/{route_name}` endpoint.
+     * Update a Router route.
      *
-     * Update a Router route
+     * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes/{route_name}` endpoint.
      *
      * **Parameters:**
      *
@@ -231,9 +231,9 @@ impl Routes {
     }
 
     /**
-     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes/{route_name}` endpoint.
+     * Delete a route from its router.
      *
-     * Delete a route from its router
+     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes/{route_name}` endpoint.
      *
      * **Parameters:**
      *

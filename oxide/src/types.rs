@@ -153,7 +153,7 @@ pub struct Disk {
     pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
 }
 
-/// Create-time parameters for a [`Disk`]
+/// Create-time parameters for a [`Disk`](omicron_common::api::external::Disk)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct DiskCreate {
     /**
@@ -186,7 +186,7 @@ pub struct DiskCreate {
     )]
     pub size: i64,
     /**
-     * Create-time parameters for a [`Disk`]
+     * Create-time parameters for a [`Disk`](omicron_common::api::external::Disk)
      */
     #[serde(
         default,
@@ -196,7 +196,7 @@ pub struct DiskCreate {
     pub snapshot_id: String,
 }
 
-/// Parameters for the [`Disk`] to be attached or detached to an instance
+/// Parameters for the [`Disk`](omicron_common::api::external::Disk) to be attached or detached to an instance
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct DiskIdentifier {
     /**
@@ -258,6 +258,38 @@ impl fmt::Display for DiskState {
             DiskState::Faulted => write!(f, "faulted"),
         }
     }
+}
+
+/// Error information from a response.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub struct Error {
+    /**
+     * Error information from a response.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub error_code: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub message: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub request_id: String,
 }
 
 /// The name and type information for a field of a timeseries schema.
@@ -512,7 +544,7 @@ pub struct Instance {
     pub time_run_state_updated: Option<chrono::DateTime<chrono::Utc>>,
 }
 
-/// Create-time parameters for an [`Instance`]
+/// Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct InstanceCreate {
     /**
@@ -564,6 +596,54 @@ pub struct InstanceCreate {
         deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
     )]
     pub ncpus: i64,
+    /**
+     * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
+     */
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub network_interfaces: Option<InstanceNetworkInterfaceAttachment>,
+}
+
+/// Migration parameters for an [`Instance`](omicron_common::api::external::Instance)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub struct InstanceMigrate {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub dst_sled_uuid: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "type", content = "params")]
+pub enum InstanceNetworkInterfaceAttachment {
+    Create(InstanceNetworkInterfaceCreate),
+    Default,
+    None,
+}
+
+impl fmt::Display for InstanceNetworkInterfaceAttachment {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            InstanceNetworkInterfaceAttachment::Create(..) => write!(f, "Create"),
+            InstanceNetworkInterfaceAttachment::Default => write!(f, "Default"),
+            InstanceNetworkInterfaceAttachment::None => write!(f, "None"),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub struct InstanceNetworkInterfaceCreate {
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    pub params: Vec<NetworkInterfaceCreate>,
 }
 
 /// A single page of results
@@ -602,6 +682,8 @@ pub enum InstanceState {
     Destroyed,
     #[serde(rename = "failed")]
     Failed,
+    #[serde(rename = "migrating")]
+    Migrating,
     #[serde(rename = "rebooting")]
     Rebooting,
     #[serde(rename = "repairing")]
@@ -626,6 +708,7 @@ impl std::fmt::Display for InstanceState {
             InstanceState::Creating => "creating",
             InstanceState::Destroyed => "destroyed",
             InstanceState::Failed => "failed",
+            InstanceState::Migrating => "migrating",
             InstanceState::Rebooting => "rebooting",
             InstanceState::Repairing => "repairing",
             InstanceState::Running => "running",
@@ -647,6 +730,21 @@ impl Default for InstanceState {
 impl InstanceState {
     pub fn is_noop(&self) -> bool {
         matches!(self, InstanceState::Noop)
+    }
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub enum IpNet {
+    V4(String),
+    V6(String),
+}
+
+impl fmt::Display for IpNet {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            IpNet::V4(..) => write!(f, "V4"),
+            IpNet::V6(..) => write!(f, "V6"),
+        }
     }
 }
 
@@ -836,6 +934,56 @@ pub struct NetworkInterface {
     pub vpc_id: String,
 }
 
+/// Create-time parameters for a [`NetworkInterface`](omicron_common::api::external::NetworkInterface)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub struct NetworkInterfaceCreate {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+    /**
+     * Create-time parameters for a [`NetworkInterface`](omicron_common::api::external::NetworkInterface)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub ip: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub subnet_name: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub vpc_name: String,
+}
+
 /// A single page of results
 #[derive(Serialize, Default, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct NetworkInterfaceResultsPage {
@@ -909,7 +1057,7 @@ pub struct Rack {
     pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
 }
 
-/// Create-time parameters for a [`VpcRouter`]
+/// Create-time parameters for a [`VpcRouter`](omicron_common::api::external::VpcRouter)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct RouterCreate {
     /**
@@ -955,11 +1103,11 @@ pub struct OrganizationResultsPage {
     pub next_page: String,
 }
 
-/// Updateable properties of an [`Organization`]
+/// Updateable properties of an [`Organization`](crate::external_api::views::Organization)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct OrganizationUpdate {
     /**
-     * Updateable properties of an [`Organization`]
+     * Updateable properties of an [`Organization`](crate::external_api::views::Organization)
      */
     #[serde(
         default,
@@ -1057,11 +1205,11 @@ pub struct ProjectResultsPage {
     pub next_page: String,
 }
 
-/// Updateable properties of a [`Project`]
+/// Updateable properties of a [`Project`](crate::external_api::views::Project)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct ProjectUpdate {
     /**
-     * Updateable properties of a [`Project`]
+     * Updateable properties of a [`Project`](crate::external_api::views::Project)
      */
     #[serde(
         default,
@@ -1151,6 +1299,7 @@ pub struct RoleResultsPage {
 #[serde(tag = "type", content = "value")]
 pub enum RouteDestination {
     Ip(String),
+    IpNet(IpNet),
     Vpc(String),
     Subnet(String),
 }
@@ -1159,6 +1308,7 @@ impl fmt::Display for RouteDestination {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             RouteDestination::Ip(..) => write!(f, "ip"),
+            RouteDestination::IpNet(..) => write!(f, "ip_net"),
             RouteDestination::Subnet(..) => write!(f, "subnet"),
             RouteDestination::Vpc(..) => write!(f, "vpc"),
         }
@@ -1675,6 +1825,16 @@ pub struct Vpc {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize",
+        rename = "ipv6_prefix"
+    )]
+    pub ipv_6_prefix: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
@@ -1716,7 +1876,7 @@ pub struct Vpc {
     pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
 }
 
-/// Create-time parameters for a [`Vpc`]
+/// Create-time parameters for a [`Vpc`](crate::external_api::views::Vpc)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct VpcCreate {
     /**
@@ -1737,6 +1897,18 @@ pub struct VpcCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub dns_name: String,
+    /**
+     * The IPv6 prefix for this VPC.
+     *  
+     *  All IPv6 subnets created from this VPC must be taken from this range, which sould be a Unique Local Address in the range `fd00::/48`. The default VPC Subnet will have the first `/64` range from this prefix.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize",
+        rename = "ipv6_prefix"
+    )]
+    pub ipv_6_prefix: String,
     /**
      * human-readable free-form text about a resource
      */
@@ -1827,6 +1999,15 @@ pub struct FirewallRule {
         deserialize_with = "crate::utils::date_time_format::deserialize"
     )]
     pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub vpc_id: String,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
@@ -1936,18 +2117,18 @@ pub struct FirewallRuleFilter {
 #[serde(tag = "type", content = "value")]
 pub enum FirewallRuleHostFilter {
     Ip(String),
+    IpNet(IpNet),
     Vpc(String),
     Subnet(String),
     Instance(String),
-    InternetGateway(String),
 }
 
 impl fmt::Display for FirewallRuleHostFilter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             FirewallRuleHostFilter::Instance(..) => write!(f, "instance"),
-            FirewallRuleHostFilter::InternetGateway(..) => write!(f, "internet_gateway"),
             FirewallRuleHostFilter::Ip(..) => write!(f, "ip"),
+            FirewallRuleHostFilter::IpNet(..) => write!(f, "ip_net"),
             FirewallRuleHostFilter::Subnet(..) => write!(f, "subnet"),
             FirewallRuleHostFilter::Vpc(..) => write!(f, "vpc"),
         }
@@ -1995,29 +2176,6 @@ impl FirewallRuleProtocol {
     }
 }
 
-/// A single page of results
-#[derive(Serialize, Default, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-pub struct FirewallRuleResultsPage {
-    /**
-     * list of items on this page of results
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "Vec::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
-    )]
-    pub items: Vec<FirewallRule>,
-    /**
-     * A single page of results
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub next_page: String,
-}
-
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub enum FirewallRuleStatus {
     #[serde(rename = "disabled")]
@@ -2057,6 +2215,8 @@ impl FirewallRuleStatus {
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "type", content = "value")]
 pub enum FirewallRuleTarget {
+    Ip(String),
+    IpNet(IpNet),
     Vpc(String),
     Subnet(String),
     Instance(String),
@@ -2066,6 +2226,8 @@ impl fmt::Display for FirewallRuleTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             FirewallRuleTarget::Instance(..) => write!(f, "instance"),
+            FirewallRuleTarget::Ip(..) => write!(f, "ip"),
+            FirewallRuleTarget::IpNet(..) => write!(f, "ip_net"),
             FirewallRuleTarget::Subnet(..) => write!(f, "subnet"),
             FirewallRuleTarget::Vpc(..) => write!(f, "vpc"),
         }
@@ -2094,6 +2256,15 @@ pub struct FirewallRuleUpdate {
     #[serde()]
     pub filters: FirewallRuleFilter,
     /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+    /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
@@ -2115,6 +2286,28 @@ pub struct FirewallRuleUpdate {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     pub targets: Vec<FirewallRuleTarget>,
+}
+
+/// Updateable properties of a `Vpc`'s firewall Note that VpcFirewallRules are implicitly created along with a Vpc, so there is no explicit creation.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub struct FirewallRuleUpdateParams {
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    pub rules: Vec<FirewallRuleUpdate>,
+}
+
+/// Collection of a [`Vpc`]'s firewall rules
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub struct FirewallRules {
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    pub rules: Vec<FirewallRule>,
 }
 
 /// A single page of results
@@ -2259,11 +2452,11 @@ pub struct RouterResultsPage {
     pub next_page: String,
 }
 
-/// Updateable properties of a [`VpcRouter`]
+/// Updateable properties of a [`VpcRouter`](omicron_common::api::external::VpcRouter)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct RouterUpdate {
     /**
-     * Updateable properties of a [`VpcRouter`]
+     * Updateable properties of a [`VpcRouter`](omicron_common::api::external::VpcRouter)
      */
     #[serde(
         default,
@@ -2301,7 +2494,7 @@ pub struct Subnet {
     )]
     pub id: String,
     /**
-     * The IPv4 subnet CIDR block.
+     * human-readable free-form text about a resource
      */
     #[serde(
         default,
@@ -2310,7 +2503,7 @@ pub struct Subnet {
     )]
     pub ipv4_block: String,
     /**
-     * The IPv6 subnet CIDR block.
+     * human-readable free-form text about a resource
      */
     #[serde(
         default,
@@ -2356,7 +2549,7 @@ pub struct Subnet {
     pub vpc_id: String,
 }
 
-/// Create-time parameters for a [`VpcSubnet`]
+/// Create-time parameters for a [`VpcSubnet`](crate::external_api::views::VpcSubnet)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct SubnetCreate {
     /**
@@ -2369,7 +2562,7 @@ pub struct SubnetCreate {
     )]
     pub description: String,
     /**
-     * The IPv4 subnet CIDR block.
+     * human-readable free-form text about a resource
      */
     #[serde(
         default,
@@ -2378,7 +2571,9 @@ pub struct SubnetCreate {
     )]
     pub ipv4_block: String,
     /**
-     * The IPv6 subnet CIDR block.
+     * The IPv6 prefix for this VPC.
+     *  
+     *  All IPv6 subnets created from this VPC must be taken from this range, which sould be a Unique Local Address in the range `fd00::/48`. The default VPC Subnet will have the first `/64` range from this prefix.
      */
     #[serde(
         default,
@@ -2420,11 +2615,11 @@ pub struct SubnetResultsPage {
     pub next_page: String,
 }
 
-/// Updateable properties of a [`VpcSubnet`]
+/// Updateable properties of a [`VpcSubnet`](crate::external_api::views::VpcSubnet)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct SubnetUpdate {
     /**
-     * Updateable properties of a [`VpcSubnet`]
+     * Updateable properties of a [`VpcSubnet`](crate::external_api::views::VpcSubnet)
      */
     #[serde(
         default,
@@ -2432,9 +2627,6 @@ pub struct SubnetUpdate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
-    /**
-     * The IPv4 subnet CIDR block.
-     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2442,7 +2634,9 @@ pub struct SubnetUpdate {
     )]
     pub ipv4_block: String,
     /**
-     * The IPv6 subnet CIDR block.
+     * The IPv6 prefix for this VPC.
+     *  
+     *  All IPv6 subnets created from this VPC must be taken from this range, which sould be a Unique Local Address in the range `fd00::/48`. The default VPC Subnet will have the first `/64` range from this prefix.
      */
     #[serde(
         default,
@@ -2458,11 +2652,11 @@ pub struct SubnetUpdate {
     pub name: String,
 }
 
-/// Updateable properties of a [`Vpc`]
+/// Updateable properties of a [`Vpc`](crate::external_api::views::Vpc)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct VpcUpdate {
     /**
-     * Updateable properties of a [`Vpc`]
+     * Updateable properties of a [`Vpc`](crate::external_api::views::Vpc)
      */
     #[serde(
         default,

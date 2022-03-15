@@ -13,16 +13,16 @@ impl Roles {
     }
 
     /**
-     * This function performs a `GET` to the `/roles` endpoint.
+     * List the built-in roles.
      *
-     * List the built-in roles
+     * This function performs a `GET` to the `/roles` endpoint.
      *
      * **Parameters:**
      *
      * * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     * * `page_token: &str` -- human-readable free-form text about a resource.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
      */
     pub async fn get_page(&self, limit: u32, page_token: &str) -> Result<Vec<crate::types::Role>> {
         let mut query_args: Vec<(String, String)> = Default::default();
@@ -42,11 +42,11 @@ impl Roles {
     }
 
     /**
+     * List the built-in roles.
+     *
      * This function performs a `GET` to the `/roles` endpoint.
      *
      * As opposed to `get`, this function returns all the pages of the request at once.
-     *
-     * List the built-in roles
      */
     pub async fn get_all(&self) -> Result<Vec<crate::types::Role>> {
         let url = "/roles".to_string();
@@ -83,9 +83,9 @@ impl Roles {
     }
 
     /**
-     * This function performs a `GET` to the `/roles/{role_name}` endpoint.
+     * Fetch a specific built-in role.
      *
-     * Fetch a specific built-in role
+     * This function performs a `GET` to the `/roles/{role_name}` endpoint.
      *
      * **Parameters:**
      *

@@ -31,9 +31,9 @@ impl Hidden {
     }
 
     /**
-     * This function performs a `GET` to the `/session/me` endpoint.
+     * Fetch the user associated with the current session.
      *
-     * Fetch the user associated with the current session
+     * This function performs a `GET` to the `/session/me` endpoint.
      */
     pub async fn session_me(&self) -> Result<crate::types::SessionUser> {
         let url = "/session/me".to_string();

@@ -13,16 +13,16 @@ impl Sleds {
     }
 
     /**
-     * This function performs a `GET` to the `/hardware/sleds` endpoint.
-     *
      * List sleds in the system.
+     *
+     * This function performs a `GET` to the `/hardware/sleds` endpoint.
      *
      * **Parameters:**
      *
      * * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     * * `page_token: &str` -- human-readable free-form text about a resource.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
      * * `sort_by: crate::types::IdSortModeAscending` -- Supported set of sort modes for scanning by id only.
      *  
      *  Currently, we only support scanning in ascending order.
@@ -53,11 +53,11 @@ impl Sleds {
     }
 
     /**
+     * List sleds in the system.
+     *
      * This function performs a `GET` to the `/hardware/sleds` endpoint.
      *
      * As opposed to `get`, this function returns all the pages of the request at once.
-     *
-     * List sleds in the system.
      */
     pub async fn get_all(
         &self,
@@ -103,9 +103,9 @@ impl Sleds {
     }
 
     /**
-     * This function performs a `GET` to the `/hardware/sleds/{sled_id}` endpoint.
-     *
      * Fetch information about a sled in the system.
+     *
+     * This function performs a `GET` to the `/hardware/sleds/{sled_id}` endpoint.
      *
      * **Parameters:**
      *
