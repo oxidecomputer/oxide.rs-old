@@ -13,16 +13,16 @@ impl Metrics {
     }
 
     /**
-     * This function performs a `GET` to the `/timeseries/schema` endpoint.
+     * List all timeseries schema.
      *
-     * List all timeseries schema
+     * This function performs a `GET` to the `/timeseries/schema` endpoint.
      *
      * **Parameters:**
      *
      * * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     * * `page_token: &str` -- human-readable free-form text about a resource.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
      */
     pub async fn timeseries_schema_get(
         &self,
@@ -46,11 +46,11 @@ impl Metrics {
     }
 
     /**
+     * List all timeseries schema.
+     *
      * This function performs a `GET` to the `/timeseries/schema` endpoint.
      *
      * As opposed to `timeseries_schema_get`, this function returns all the pages of the request at once.
-     *
-     * List all timeseries schema
      */
     pub async fn timeseries_schema_get_all(&self) -> Result<Vec<crate::types::TimeseriesSchema>> {
         let url = "/timeseries/schema".to_string();

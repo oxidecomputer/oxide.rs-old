@@ -13,16 +13,16 @@ impl Users {
     }
 
     /**
-     * This function performs a `GET` to the `/users` endpoint.
+     * List the built-in system users.
      *
-     * List the built-in system users
+     * This function performs a `GET` to the `/users` endpoint.
      *
      * **Parameters:**
      *
      * * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     * * `page_token: &str` -- human-readable free-form text about a resource.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
      * * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
@@ -53,11 +53,11 @@ impl Users {
     }
 
     /**
+     * List the built-in system users.
+     *
      * This function performs a `GET` to the `/users` endpoint.
      *
      * As opposed to `get`, this function returns all the pages of the request at once.
-     *
-     * List the built-in system users
      */
     pub async fn get_all(
         &self,
@@ -103,9 +103,9 @@ impl Users {
     }
 
     /**
-     * This function performs a `GET` to the `/users/{user_name}` endpoint.
+     * Fetch a specific built-in system user.
      *
-     * Fetch a specific built-in system user
+     * This function performs a `GET` to the `/users/{user_name}` endpoint.
      *
      * **Parameters:**
      *

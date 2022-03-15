@@ -63,26 +63,78 @@
 #![allow(missing_docs)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
+/// Virtual disks are used to store instance-local data which includes the operating system.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod disks;
+/// Firewall operation controls the flow of network data into a VPC.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod firewall;
+/// TODO operations that will not ship to customers.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod hidden;
+/// Virtual machine instances are the basic unit of computation. These operations are used for provisioning, controlling, and destroying instances.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod instances;
+/// Metrics provide insight into the operation of the Oxide deployment. These include telemetry on hardware and software components that can be used to understand the current state as well as to diagnose issues.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod metrics;
+/// Organizations represent a subset of users and projects in an Oxide deployment.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod organizations;
+/// Projects are a grouping of associated resources such as instances and disks within an organization for purposes of billing and access control.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod projects;
+/// These operations pertain to hardware inventory and management. Racks are the unit of expansion of an Oxide deployment. Racks are in turn composed of sleds, switches, power supplies, and a cabled backplane.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod racks;
+/// Roles are a component of Identity and Access Management (IAM) that allow a user or agent account access to additional permissions.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod roles;
+/// Routers direct the flow of network traffic into, out of, and within a VPC via routes.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod routers;
+/// Routes define router policy.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod routes;
+/// Sagas are the abstraction used to represent multi-step operations within the Oxide deployment. These operations can be used to query saga status and report errors.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod sagas;
+/// This tag should be moved into hardware.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod sleds;
+/// This tag should be moved into a generic network tag.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod subnets;
 #[cfg(test)]
 mod tests;
 pub mod types;
+/// This tag should be moved into a operations tag.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod updates;
+/// This tag should be moved into an IAM tag.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod users;
 #[doc(hidden)]
 pub mod utils;
+/// A Virtual Private Cloud (VPC) is an isolated network environment that should probaby be moved into a more generic networking tag.
+///
+///FROM: http://oxide.computer/docs/#xxx
 pub mod vpcs;
 
 use anyhow::{anyhow, Error, Result};
@@ -307,83 +359,122 @@ impl Client {
         .await
     }
 
-    /// Return a reference to an interface that provides access to racks operations.
-    pub fn racks(&self) -> racks::Racks {
-        racks::Racks::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to sleds operations.
-    pub fn sleds(&self) -> sleds::Sleds {
-        sleds::Sleds::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to organizations operations.
-    pub fn organizations(&self) -> organizations::Organizations {
-        organizations::Organizations::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to disks operations.
+    /// Virtual disks are used to store instance-local data which includes the operating system.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
     pub fn disks(&self) -> disks::Disks {
         disks::Disks::new(self.clone())
     }
 
-    /// Return a reference to an interface that provides access to projects operations.
-    pub fn projects(&self) -> projects::Projects {
-        projects::Projects::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to users operations.
-    pub fn users(&self) -> users::Users {
-        users::Users::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to roles operations.
-    pub fn roles(&self) -> roles::Roles {
-        roles::Roles::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to instances operations.
-    pub fn instances(&self) -> instances::Instances {
-        instances::Instances::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to sagas operations.
-    pub fn sagas(&self) -> sagas::Sagas {
-        sagas::Sagas::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to metrics operations.
-    pub fn metrics(&self) -> metrics::Metrics {
-        metrics::Metrics::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to vpcs operations.
-    pub fn vpcs(&self) -> vpcs::Vpcs {
-        vpcs::Vpcs::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to subnets operations.
-    pub fn subnets(&self) -> subnets::Subnets {
-        subnets::Subnets::new(self.clone())
-    }
-
-    /// Return a reference to an interface that provides access to firewall operations.
+    /// Firewall operation controls the flow of network data into a VPC.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
     pub fn firewall(&self) -> firewall::Firewall {
         firewall::Firewall::new(self.clone())
     }
 
-    /// Return a reference to an interface that provides access to routers operations.
+    /// TODO operations that will not ship to customers.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn hidden(&self) -> hidden::Hidden {
+        hidden::Hidden::new(self.clone())
+    }
+
+    /// Virtual machine instances are the basic unit of computation. These operations are used for provisioning, controlling, and destroying instances.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn instances(&self) -> instances::Instances {
+        instances::Instances::new(self.clone())
+    }
+
+    /// Metrics provide insight into the operation of the Oxide deployment. These include telemetry on hardware and software components that can be used to understand the current state as well as to diagnose issues.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn metrics(&self) -> metrics::Metrics {
+        metrics::Metrics::new(self.clone())
+    }
+
+    /// Organizations represent a subset of users and projects in an Oxide deployment.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn organizations(&self) -> organizations::Organizations {
+        organizations::Organizations::new(self.clone())
+    }
+
+    /// Projects are a grouping of associated resources such as instances and disks within an organization for purposes of billing and access control.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn projects(&self) -> projects::Projects {
+        projects::Projects::new(self.clone())
+    }
+
+    /// These operations pertain to hardware inventory and management. Racks are the unit of expansion of an Oxide deployment. Racks are in turn composed of sleds, switches, power supplies, and a cabled backplane.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn racks(&self) -> racks::Racks {
+        racks::Racks::new(self.clone())
+    }
+
+    /// Roles are a component of Identity and Access Management (IAM) that allow a user or agent account access to additional permissions.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn roles(&self) -> roles::Roles {
+        roles::Roles::new(self.clone())
+    }
+
+    /// Routers direct the flow of network traffic into, out of, and within a VPC via routes.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
     pub fn routers(&self) -> routers::Routers {
         routers::Routers::new(self.clone())
     }
 
-    /// Return a reference to an interface that provides access to routes operations.
+    /// Routes define router policy.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
     pub fn routes(&self) -> routes::Routes {
         routes::Routes::new(self.clone())
     }
 
-    /// Return a reference to an interface that provides access to hidden operations.
-    pub fn hidden(&self) -> hidden::Hidden {
-        hidden::Hidden::new(self.clone())
+    /// Sagas are the abstraction used to represent multi-step operations within the Oxide deployment. These operations can be used to query saga status and report errors.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn sagas(&self) -> sagas::Sagas {
+        sagas::Sagas::new(self.clone())
+    }
+
+    /// This tag should be moved into hardware.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn sleds(&self) -> sleds::Sleds {
+        sleds::Sleds::new(self.clone())
+    }
+
+    /// This tag should be moved into a generic network tag.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn subnets(&self) -> subnets::Subnets {
+        subnets::Subnets::new(self.clone())
+    }
+
+    /// This tag should be moved into a operations tag.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn updates(&self) -> updates::Updates {
+        updates::Updates::new(self.clone())
+    }
+
+    /// This tag should be moved into an IAM tag.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn users(&self) -> users::Users {
+        users::Users::new(self.clone())
+    }
+
+    /// A Virtual Private Cloud (VPC) is an isolated network environment that should probaby be moved into a more generic networking tag.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn vpcs(&self) -> vpcs::Vpcs {
+        vpcs::Vpcs::new(self.clone())
     }
 }

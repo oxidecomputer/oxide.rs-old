@@ -13,16 +13,16 @@ impl Subnets {
     }
 
     /**
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets` endpoint.
-     *
      * List subnets in a VPC.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets` endpoint.
      *
      * **Parameters:**
      *
      * * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     * * `page_token: &str` -- human-readable free-form text about a resource.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
      * * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
@@ -65,11 +65,11 @@ impl Subnets {
     }
 
     /**
+     * List subnets in a VPC.
+     *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets` endpoint.
      *
      * As opposed to `get`, this function returns all the pages of the request at once.
-     *
-     * List subnets in a VPC.
      */
     pub async fn get_all(
         &self,
@@ -124,9 +124,9 @@ impl Subnets {
     }
 
     /**
-     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets` endpoint.
-     *
      * Create a subnet in a VPC.
+     *
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets` endpoint.
      *
      * **Parameters:**
      *
@@ -154,9 +154,9 @@ impl Subnets {
     }
 
     /**
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}` endpoint.
-     *
      * Get subnet in a VPC.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}` endpoint.
      *
      * **Parameters:**
      *
@@ -184,9 +184,9 @@ impl Subnets {
     }
 
     /**
-     * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}` endpoint.
-     *
      * Update a VPC Subnet.
+     *
+     * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}` endpoint.
      *
      * **Parameters:**
      *
@@ -202,7 +202,7 @@ impl Subnets {
         subnet_name: &str,
         vpc_name: &str,
         body: &crate::types::SubnetUpdate,
-    ) -> Result<()> {
+    ) -> Result<crate::types::Subnet> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets/{}",
             crate::progenitor_support::encode_path(organization_name),
@@ -217,9 +217,9 @@ impl Subnets {
     }
 
     /**
-     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}` endpoint.
-     *
      * Delete a subnet from a VPC.
+     *
+     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}` endpoint.
      *
      * **Parameters:**
      *
@@ -247,16 +247,16 @@ impl Subnets {
     }
 
     /**
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}/ips` endpoint.
+     * List network interfaces in a VPC subnet.
      *
-     * List IP addresses on a VPC subnet.
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}/network-interfaces` endpoint.
      *
      * **Parameters:**
      *
      * * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     * * `page_token: &str` -- human-readable free-form text about a resource.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
      * * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
@@ -265,7 +265,7 @@ impl Subnets {
      * * `subnet_name: &str` -- human-readable free-form text about a resource.
      * * `vpc_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn ips_get(
+    pub async fn network_interfaces_get(
         &self,
         limit: u32,
         page_token: &str,
@@ -287,7 +287,7 @@ impl Subnets {
         }
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
-            "/organizations/{}/projects/{}/vpcs/{}/subnets/{}/ips?{}",
+            "/organizations/{}/projects/{}/vpcs/{}/subnets/{}/network-interfaces?{}",
             crate::progenitor_support::encode_path(organization_name),
             crate::progenitor_support::encode_path(project_name),
             crate::progenitor_support::encode_path(vpc_name),
@@ -302,13 +302,13 @@ impl Subnets {
     }
 
     /**
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}/ips` endpoint.
+     * List network interfaces in a VPC subnet.
      *
-     * As opposed to `ips_get`, this function returns all the pages of the request at once.
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/subnets/{subnet_name}/network-interfaces` endpoint.
      *
-     * List IP addresses on a VPC subnet.
+     * As opposed to `network_interfaces_get`, this function returns all the pages of the request at once.
      */
-    pub async fn ips_get_all(
+    pub async fn network_interfaces_get_all(
         &self,
         sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
@@ -322,7 +322,7 @@ impl Subnets {
         }
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
-            "/organizations/{}/projects/{}/vpcs/{}/subnets/{}/ips?{}",
+            "/organizations/{}/projects/{}/vpcs/{}/subnets/{}/network-interfaces?{}",
             crate::progenitor_support::encode_path(organization_name),
             crate::progenitor_support::encode_path(project_name),
             crate::progenitor_support::encode_path(vpc_name),

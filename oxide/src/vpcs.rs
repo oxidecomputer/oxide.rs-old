@@ -13,21 +13,21 @@ impl Vpcs {
     }
 
     /**
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs` endpoint.
-     *
      * List VPCs in a project.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs` endpoint.
      *
      * **Parameters:**
      *
      * * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     * * `page_token: &str` -- human-readable free-form text about a resource.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
      * * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
      * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `project_name: &str` -- The project's unique name within the organization.
      */
     pub async fn get_page(
         &self,
@@ -62,11 +62,11 @@ impl Vpcs {
     }
 
     /**
+     * List VPCs in a project.
+     *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs` endpoint.
      *
      * As opposed to `get`, this function returns all the pages of the request at once.
-     *
-     * List VPCs in a project.
      */
     pub async fn get_all(
         &self,
@@ -119,14 +119,14 @@ impl Vpcs {
     }
 
     /**
-     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/vpcs` endpoint.
-     *
      * Create a VPC in a project.
+     *
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/vpcs` endpoint.
      *
      * **Parameters:**
      *
      * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `project_name: &str` -- The project's unique name within the organization.
      */
     pub async fn post(
         &self,
@@ -146,9 +146,9 @@ impl Vpcs {
     }
 
     /**
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}` endpoint.
-     *
      * Get a VPC in a project.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}` endpoint.
      *
      * **Parameters:**
      *
@@ -173,9 +173,9 @@ impl Vpcs {
     }
 
     /**
-     * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}` endpoint.
-     *
      * Update a VPC.
+     *
+     * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}` endpoint.
      *
      * **Parameters:**
      *
@@ -189,7 +189,7 @@ impl Vpcs {
         project_name: &str,
         vpc_name: &str,
         body: &crate::types::VpcUpdate,
-    ) -> Result<()> {
+    ) -> Result<crate::types::Vpc> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}",
             crate::progenitor_support::encode_path(organization_name),
@@ -203,9 +203,9 @@ impl Vpcs {
     }
 
     /**
-     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}` endpoint.
-     *
      * Delete a vpc from a project.
+     *
+     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}` endpoint.
      *
      * **Parameters:**
      *

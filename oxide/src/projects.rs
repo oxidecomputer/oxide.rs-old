@@ -13,16 +13,16 @@ impl Projects {
     }
 
     /**
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects` endpoint.
-     *
      * List all projects.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects` endpoint.
      *
      * **Parameters:**
      *
      * * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     * * `page_token: &str` -- human-readable free-form text about a resource.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name or id.
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      */
@@ -57,11 +57,11 @@ impl Projects {
     }
 
     /**
+     * List all projects.
+     *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects` endpoint.
      *
      * As opposed to `get`, this function returns all the pages of the request at once.
-     *
-     * List all projects.
      */
     pub async fn get_all(
         &self,
@@ -112,9 +112,9 @@ impl Projects {
     }
 
     /**
-     * This function performs a `POST` to the `/organizations/{organization_name}/projects` endpoint.
-     *
      * Create a new project.
+     *
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects` endpoint.
      *
      * **Parameters:**
      *
@@ -136,14 +136,14 @@ impl Projects {
     }
 
     /**
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}` endpoint.
+     * Fetch a specific project.
      *
-     * Fetch a specific project
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}` endpoint.
      *
      * **Parameters:**
      *
      * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `project_name: &str` -- The project's unique name within the organization.
      */
     pub async fn get(
         &self,
@@ -160,15 +160,14 @@ impl Projects {
     }
 
     /**
-     * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}` endpoint.
-     *
      * Update a specific project.
-     *  * TODO-correctness: Is it valid for PUT to accept application/json that's a subset of what the resource actually represents?  If not, is that a problem? (HTTP may require that this be idempotent.)  If so, can we get around that having this be a slightly different content-type (e.g., "application/json-patch")?  We should see what other APIs do.
+     *
+     * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}` endpoint.
      *
      * **Parameters:**
      *
      * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `project_name: &str` -- The project's unique name within the organization.
      */
     pub async fn put(
         &self,
@@ -188,14 +187,14 @@ impl Projects {
     }
 
     /**
-     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}` endpoint.
-     *
      * Delete a specific project.
+     *
+     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}` endpoint.
      *
      * **Parameters:**
      *
      * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `project_name: &str` -- The project's unique name within the organization.
      */
     pub async fn delete(&self, organization_name: &str, project_name: &str) -> Result<()> {
         let url = format!(
