@@ -113,7 +113,7 @@ pub struct Disk {
     pub project_id: String,
     /**
      * A count of bytes, typically used either for memory or storage capacity
-     *
+     *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
     #[serde(
@@ -176,7 +176,7 @@ pub struct DiskCreate {
     pub name: String,
     /**
      * A count of bytes, typically used either for memory or storage capacity
-     *
+     *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
     #[serde(
@@ -403,7 +403,7 @@ impl FieldType {
 
 /**
  * Supported set of sort modes for scanning by id only.
- *
+ *   
  *   Currently, we only support scanning in ascending order.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
@@ -470,7 +470,7 @@ pub struct Instance {
     pub id: String,
     /**
      * A count of bytes, typically used either for memory or storage capacity
-     *
+     *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
     #[serde(
@@ -490,7 +490,7 @@ pub struct Instance {
     pub name: String,
     /**
      * A count of bytes, typically used either for memory or storage capacity
-     *
+     *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
     #[serde(
@@ -510,7 +510,7 @@ pub struct Instance {
     pub project_id: String,
     /**
      * Running state of an Instance (primarily: booted or stopped)
-     *
+     *  
      *  This typically reflects whether it's starting, running, stopping, or stopped, but also includes states related to the Instance's lifecycle
      */
     #[serde()]
@@ -567,7 +567,7 @@ pub struct InstanceCreate {
     pub hostname: String,
     /**
      * A count of bytes, typically used either for memory or storage capacity
-     *
+     *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
     #[serde(
@@ -587,7 +587,7 @@ pub struct InstanceCreate {
     pub name: String,
     /**
      * A count of bytes, typically used either for memory or storage capacity
-     *
+     *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
     #[serde(
@@ -671,7 +671,7 @@ pub struct InstanceResultsPage {
 
 /**
  * Running state of an Instance (primarily: booted or stopped)
- *
+ *   
  *   This typically reflects whether it's starting, running, stopping, or stopped, but also includes states related to the Instance's lifecycle
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
@@ -804,7 +804,7 @@ impl NameSortMode {
 
 /**
  * Supported set of sort modes for scanning by name only
- *
+ *   
  *   Currently, we only support scanning in ascending order.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
@@ -1363,7 +1363,7 @@ pub struct Route {
     pub id: String,
     /**
      * The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
-     *
+     *  
      *  See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
      */
     #[serde()]
@@ -1437,7 +1437,7 @@ pub struct RouteCreateParams {
 
 /**
  * The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
- *
+ *   
  *   See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
@@ -1899,7 +1899,7 @@ pub struct VpcCreate {
     pub dns_name: String,
     /**
      * The IPv6 prefix for this VPC.
-     *
+     *  
      *  All IPv6 subnets created from this VPC must be taken from this range, which sould be a Unique Local Address in the range `fd00::/48`. The default VPC Subnet will have the first `/64` range from this prefix.
      */
     #[serde(
@@ -1961,7 +1961,7 @@ pub struct FirewallRule {
     pub name: String,
     /**
      * A count of bytes, typically used either for memory or storage capacity
-     *
+     *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
     #[serde(
@@ -2266,7 +2266,7 @@ pub struct FirewallRuleUpdate {
     pub name: String,
     /**
      * A count of bytes, typically used either for memory or storage capacity
-     *
+     *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
     #[serde(
@@ -2572,7 +2572,7 @@ pub struct SubnetCreate {
     pub ipv4_block: String,
     /**
      * The IPv6 prefix for this VPC.
-     *
+     *  
      *  All IPv6 subnets created from this VPC must be taken from this range, which sould be a Unique Local Address in the range `fd00::/48`. The default VPC Subnet will have the first `/64` range from this prefix.
      */
     #[serde(
@@ -2635,7 +2635,7 @@ pub struct SubnetUpdate {
     pub ipv4_block: String,
     /**
      * The IPv6 prefix for this VPC.
-     *
+     *  
      *  All IPv6 subnets created from this VPC must be taken from this range, which sould be a Unique Local Address in the range `fd00::/48`. The default VPC Subnet will have the first `/64` range from this prefix.
      */
     #[serde(
