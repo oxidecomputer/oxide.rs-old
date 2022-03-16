@@ -1825,10 +1825,9 @@ pub struct Vpc {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize",
-        rename = "ipv6_prefix"
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub ipv_6_prefix: String,
+    pub ipv6_prefix: String,
     /**
      * human-readable free-form text about a resource
      */
@@ -1905,10 +1904,9 @@ pub struct VpcCreate {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize",
-        rename = "ipv6_prefix"
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub ipv_6_prefix: String,
+    pub ipv6_prefix: String,
     /**
      * human-readable free-form text about a resource
      */

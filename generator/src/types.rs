@@ -237,6 +237,10 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                                 prop = "ipv4_block".to_string();
                             } else if prop == "ipv_6_block" {
                                 prop = "ipv6_block".to_string();
+                            } else if prop == "ipv_6_prefix" {
+                                prop = "ipv6_prefix".to_string();
+                            } else if prop == "ipv_4_prefix" {
+                                prop = "ipv4_prefix".to_string();
                             }
 
                             // Close the serde string.
