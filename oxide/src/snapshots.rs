@@ -2,20 +2,20 @@ use anyhow::Result;
 
 use crate::Client;
 
-pub struct Routers {
+pub struct Snapshots {
     pub client: Client,
 }
 
-impl Routers {
+impl Snapshots {
     #[doc(hidden)]
     pub fn new(client: Client) -> Self {
-        Routers { client }
+        Snapshots { client }
     }
 
     /**
-     * List VPC Custom and System Routers.
+     * List snapshots in a project.
      *
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers` endpoint.
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/snapshots` endpoint.
      *
      * **Parameters:**
      *
@@ -27,8 +27,7 @@ impl Routers {
      *  
      *  Currently, we only support scanning in ascending order.
      * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
-     * * `vpc_name: &str` -- human-readable free-form text about a resource.
+     * * `project_name: &str` -- The project's unique name within the organization.
      */
     pub async fn get_page(
         &self,
@@ -37,8 +36,7 @@ impl Routers {
         sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
         project_name: &str,
-        vpc_name: &str,
-    ) -> Result<Vec<crate::types::Router>> {
+    ) -> Result<Vec<crate::types::Snapshot>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -51,23 +49,22 @@ impl Routers {
         }
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
-            "/organizations/{}/projects/{}/vpcs/{}/routers?{}",
+            "/organizations/{}/projects/{}/snapshots?{}",
             crate::progenitor_support::encode_path(organization_name),
             crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
             query_
         );
 
-        let resp: crate::types::RouterResultsPage = self.client.get(&url, None).await?;
+        let resp: crate::types::SnapshotResultsPage = self.client.get(&url, None).await?;
 
         // Return our response data.
         Ok(resp.items)
     }
 
     /**
-     * List VPC Custom and System Routers.
+     * List snapshots in a project.
      *
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers` endpoint.
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/snapshots` endpoint.
      *
      * As opposed to `get`, this function returns all the pages of the request at once.
      */
@@ -76,22 +73,20 @@ impl Routers {
         sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
         project_name: &str,
-        vpc_name: &str,
-    ) -> Result<Vec<crate::types::Router>> {
+    ) -> Result<Vec<crate::types::Snapshot>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {
             query_args.push(("sort_by".to_string(), sort_by.to_string()));
         }
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
-            "/organizations/{}/projects/{}/vpcs/{}/routers?{}",
+            "/organizations/{}/projects/{}/snapshots?{}",
             crate::progenitor_support::encode_path(organization_name),
             crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
             query_
         );
 
-        let mut resp: crate::types::RouterResultsPage = self.client.get(&url, None).await?;
+        let mut resp: crate::types::SnapshotResultsPage = self.client.get(&url, None).await?;
 
         let mut items = resp.items;
         let mut page = resp.next_page;
@@ -124,28 +119,25 @@ impl Routers {
     }
 
     /**
-     * Create a VPC Router.
+     * Create a snapshot of a disk.
      *
-     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers` endpoint.
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/snapshots` endpoint.
      *
      * **Parameters:**
      *
      * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
-     * * `vpc_name: &str` -- human-readable free-form text about a resource.
+     * * `project_name: &str` -- The project's unique name within the organization.
      */
     pub async fn post(
         &self,
         organization_name: &str,
         project_name: &str,
-        vpc_name: &str,
-        body: &crate::types::RouterCreate,
-    ) -> Result<crate::types::Router> {
+        body: &crate::types::SnapshotCreate,
+    ) -> Result<crate::types::Snapshot> {
         let url = format!(
-            "/organizations/{}/projects/{}/vpcs/{}/routers",
+            "/organizations/{}/projects/{}/snapshots",
             crate::progenitor_support::encode_path(organization_name),
             crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
         );
 
         self.client
@@ -154,93 +146,54 @@ impl Routers {
     }
 
     /**
-     * Get a VPC Router.
+     * Get a snapshot in a project.
      *
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}` endpoint.
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/snapshots/{snapshot_name}` endpoint.
      *
      * **Parameters:**
      *
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
-     * * `router_name: &str` -- human-readable free-form text about a resource.
-     * * `vpc_name: &str` -- human-readable free-form text about a resource.
+     * * `snapshot_name: &str` -- human-readable free-form text about a resource.
      */
     pub async fn get(
         &self,
         organization_name: &str,
         project_name: &str,
-        router_name: &str,
-        vpc_name: &str,
-    ) -> Result<crate::types::Router> {
+        snapshot_name: &str,
+    ) -> Result<crate::types::Snapshot> {
         let url = format!(
-            "/organizations/{}/projects/{}/vpcs/{}/routers/{}",
+            "/organizations/{}/projects/{}/snapshots/{}",
             crate::progenitor_support::encode_path(organization_name),
             crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
+            crate::progenitor_support::encode_path(snapshot_name),
         );
 
         self.client.get(&url, None).await
     }
 
     /**
-     * Update a VPC Router.
+     * Delete a snapshot from a project.
      *
-     * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
-     * * `router_name: &str` -- human-readable free-form text about a resource.
-     * * `vpc_name: &str` -- human-readable free-form text about a resource.
-     */
-    pub async fn put(
-        &self,
-        organization_name: &str,
-        project_name: &str,
-        router_name: &str,
-        vpc_name: &str,
-        body: &crate::types::RouterUpdate,
-    ) -> Result<crate::types::Router> {
-        let url = format!(
-            "/organizations/{}/projects/{}/vpcs/{}/routers/{}",
-            crate::progenitor_support::encode_path(organization_name),
-            crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
-        );
-
-        self.client
-            .put(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))
-            .await
-    }
-
-    /**
-     * Delete a router from its VPC.
-     *
-     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}` endpoint.
+     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/snapshots/{snapshot_name}` endpoint.
      *
      * **Parameters:**
      *
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      * * `project_name: &str` -- human-readable free-form text about a resource.
-     * * `router_name: &str` -- human-readable free-form text about a resource.
-     * * `vpc_name: &str` -- human-readable free-form text about a resource.
+     * * `snapshot_name: &str` -- human-readable free-form text about a resource.
      */
     pub async fn delete(
         &self,
         organization_name: &str,
         project_name: &str,
-        router_name: &str,
-        vpc_name: &str,
+        snapshot_name: &str,
     ) -> Result<()> {
         let url = format!(
-            "/organizations/{}/projects/{}/vpcs/{}/routers/{}",
+            "/organizations/{}/projects/{}/snapshots/{}",
             crate::progenitor_support::encode_path(organization_name),
             crate::progenitor_support::encode_path(project_name),
-            crate::progenitor_support::encode_path(vpc_name),
-            crate::progenitor_support::encode_path(router_name),
+            crate::progenitor_support::encode_path(snapshot_name),
         );
 
         self.client.delete(&url, None).await

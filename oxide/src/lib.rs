@@ -115,6 +115,10 @@ pub mod sagas;
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod sleds;
+/// Snapshots of Virtual Disks at a particular point in time.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod snapshots;
 /// This tag should be moved into a generic network tag.
 ///
 ///FROM: http://oxide.computer/docs/#xxx
@@ -448,6 +452,13 @@ impl Client {
     ///FROM: http://oxide.computer/docs/#xxx
     pub fn sleds(&self) -> sleds::Sleds {
         sleds::Sleds::new(self.clone())
+    }
+
+    /// Snapshots of Virtual Disks at a particular point in time.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn snapshots(&self) -> snapshots::Snapshots {
+        snapshots::Snapshots::new(self.clone())
     }
 
     /// This tag should be moved into a generic network tag.

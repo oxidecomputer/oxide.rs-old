@@ -215,7 +215,7 @@ impl Routes {
         router_name: &str,
         vpc_name: &str,
         body: &crate::types::RouteUpdateParams,
-    ) -> Result<()> {
+    ) -> Result<crate::types::Route> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes/{}",
             crate::progenitor_support::encode_path(organization_name),
