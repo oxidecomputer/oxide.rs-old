@@ -1057,7 +1057,7 @@ pub struct Rack {
     pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
 }
 
-/// Create-time parameters for a [`VpcRouter`](omicron_common::api::external::VpcRouter)
+/// Create-time parameters for a [`VpcRouter`](crate::external_api::views::VpcRouter)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct RouterCreate {
     /**
@@ -1696,6 +1696,140 @@ pub struct SledResultsPage {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     pub items: Vec<Sled>,
+    /**
+     * A single page of results
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub next_page: String,
+}
+
+/// Client view of a Snapshot
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub struct Snapshot {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub disk_id: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub project_id: String,
+    /**
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub size: i64,
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::utils::date_time_format::deserialize"
+    )]
+    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::utils::date_time_format::deserialize"
+    )]
+    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+}
+
+/// Create-time parameters for a [`Snapshot`](omicron_common::api::external::Snapshot)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub struct SnapshotCreate {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub disk: String,
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+}
+
+/// A single page of results
+#[derive(Serialize, Default, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub struct SnapshotResultsPage {
+    /**
+     * list of items on this page of results
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    pub items: Vec<Snapshot>,
     /**
      * A single page of results
      */
@@ -2450,11 +2584,11 @@ pub struct RouterResultsPage {
     pub next_page: String,
 }
 
-/// Updateable properties of a [`VpcRouter`](omicron_common::api::external::VpcRouter)
+/// Updateable properties of a [`VpcRouter`](crate::external_api::views::VpcRouter)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 pub struct RouterUpdate {
     /**
-     * Updateable properties of a [`VpcRouter`](omicron_common::api::external::VpcRouter)
+     * Updateable properties of a [`VpcRouter`](crate::external_api::views::VpcRouter)
      */
     #[serde(
         default,

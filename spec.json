@@ -2320,6 +2320,290 @@
         }
       }
     },
+    "/organizations/{organization_name}/projects/{project_name}/snapshots": {
+      "get": {
+        "tags": [
+          "snapshots"
+        ],
+        "summary": "List snapshots in a project.",
+        "operationId": "project_snapshots_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of items returned by a single call",
+            "schema": {
+              "nullable": true,
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 1
+            },
+            "style": "form"
+          },
+          {
+            "in": "query",
+            "name": "page_token",
+            "description": "Token returned by previous call to retreive the subsequent page",
+            "schema": {
+              "nullable": true,
+              "type": "string"
+            },
+            "style": "form"
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "schema": {
+              "$ref": "#/components/schemas/NameSortMode"
+            },
+            "style": "form"
+          },
+          {
+            "in": "path",
+            "name": "organization_name",
+            "description": "The organization's unique name.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "style": "simple"
+          },
+          {
+            "in": "path",
+            "name": "project_name",
+            "description": "The project's unique name within the organization.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SnapshotResultsPage"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-dropshot-pagination": true,
+        "x-go": {
+          "example": "// List: List snapshots in a project.\n//\n// To iterate over all pages, use the `ListAllPages` method, instead.\n//\n// Parameters:\n//\t- `limit`: Maximum number of items returned by a single call\n//\t- `organizationName`: The organization's unique name.\n//\t- `pageToken`: Token returned by previous call to retreive the subsequent page\n//\t- `projectName`: The project's unique name within the organization.\n//\t- `sortBy`\nsnapshotResultsPage, err := client.Snapshots.List(limit, pageToken, sortBy, organizationName, projectName)\n\n// - OR -\n\n// ListAllPages: List snapshots in a project.\n//\n// This method is a wrapper around the `List` method.\n// This method returns all the pages at once.\n//\n// Parameters:\n//\t- `organizationName`: The organization's unique name.\n//\t- `projectName`: The project's unique name within the organization.\n//\t- `sortBy`\nSnapshot, err := client.Snapshots.ListAllPages(sortBy, organizationName, projectName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SnapshotsService.List"
+        },
+        "x-ts": {
+          "example": "let resp = client.projectSnapshotsGet(ProjectSnapshotsGetParams{orgName, projectName}, params);"
+        },
+        "x-rust": {
+          "example": "/**\n* List snapshots in a project.\n*\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/snapshots` endpoint.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.\n* * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only\n*  \n*  Currently, we only support scanning in ascending order.\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- The project's unique name within the organization.\n*/\nlet vec_crate_types_snapshot = client.snapshots().get_page(limit, page_token, sort_by, organization_name, project_name).await?;\n\n// - OR -\n\n/**\n* List snapshots in a project.\n*\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/snapshots` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*/\nlet vec_crate_types_snapshot = client.snapshots().get_all(sort_by, organization_name, project_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/snapshots/struct.Snapshots.html#method.get_page"
+        }
+      },
+      "post": {
+        "tags": [
+          "snapshots"
+        ],
+        "summary": "Create a snapshot of a disk.",
+        "operationId": "project_snapshots_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "organization_name",
+            "description": "The organization's unique name.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "style": "simple"
+          },
+          {
+            "in": "path",
+            "name": "project_name",
+            "description": "The project's unique name within the organization.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SnapshotCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "successful creation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Snapshot"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-go": {
+          "example": "// Create: Create a snapshot of a disk.\n//\n// Parameters:\n//\t- `organizationName`: The organization's unique name.\n//\t- `projectName`: The project's unique name within the organization.\nsnapshot, err := client.Snapshots.Create(organizationName, projectName, body)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SnapshotsService.Create"
+        },
+        "x-ts": {
+          "example": "let resp = client.projectSnapshotsPost(ProjectSnapshotsPostParams{orgName, projectName}, data, params);"
+        },
+        "x-rust": {
+          "example": "/**\n* Create a snapshot of a disk.\n*\n* This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/snapshots` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- The project's unique name within the organization.\n*/\nlet snapshot = client.snapshots().post(organization_name, project_name, body).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/snapshots/struct.Snapshots.html#method.post"
+        }
+      }
+    },
+    "/organizations/{organization_name}/projects/{project_name}/snapshots/{snapshot_name}": {
+      "get": {
+        "tags": [
+          "snapshots"
+        ],
+        "summary": "Get a snapshot in a project.",
+        "operationId": "project_snapshots_get_snapshot",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "organization_name",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "style": "simple"
+          },
+          {
+            "in": "path",
+            "name": "project_name",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "style": "simple"
+          },
+          {
+            "in": "path",
+            "name": "snapshot_name",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Snapshot"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-go": {
+          "example": "// Get: Get a snapshot in a project.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `snapshotName`\nsnapshot, err := client.Snapshots.Get(organizationName, projectName, snapshotName)",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SnapshotsService.Get"
+        },
+        "x-ts": {
+          "example": "let resp = client.projectSnapshotsGetSnapshot(ProjectSnapshotsGetSnapshotParams{orgName, projectName, snapshotName}, params);"
+        },
+        "x-rust": {
+          "example": "/**\n* Get a snapshot in a project.\n*\n* This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/snapshots/{snapshot_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `snapshot_name: &str` -- human-readable free-form text about a resource.\n*/\nlet snapshot = client.snapshots().get(organization_name, project_name, snapshot_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/snapshots/struct.Snapshots.html#method.get"
+        }
+      },
+      "delete": {
+        "tags": [
+          "snapshots"
+        ],
+        "summary": "Delete a snapshot from a project.",
+        "operationId": "project_snapshots_delete_snapshot",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "organization_name",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "style": "simple"
+          },
+          {
+            "in": "path",
+            "name": "project_name",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "style": "simple"
+          },
+          {
+            "in": "path",
+            "name": "snapshot_name",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Name"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "successful deletion"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
+          },
+          "5XX": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "x-go": {
+          "example": "// Delete: Delete a snapshot from a project.\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `snapshotName`\nif err := client.Snapshots.Delete(organizationName, projectName, snapshotName); err != nil {\n\tpanic(err)\n}",
+          "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#SnapshotsService.Delete"
+        },
+        "x-ts": {
+          "example": "let resp = client.projectSnapshotsDeleteSnapshot(ProjectSnapshotsDeleteSnapshotParams{orgName, projectName, snapshotName}, params);"
+        },
+        "x-rust": {
+          "example": "/**\n* Delete a snapshot from a project.\n*\n* This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/snapshots/{snapshot_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `snapshot_name: &str` -- human-readable free-form text about a resource.\n*/\nclient.snapshots().delete(organization_name, project_name, snapshot_name).await?;",
+          "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/snapshots/struct.Snapshots.html#method.delete"
+        }
+      }
+    },
     "/organizations/{organization_name}/projects/{project_name}/vpcs": {
       "get": {
         "tags": [
@@ -3124,8 +3408,15 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "resource updated"
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VpcRouter"
+                }
+              }
+            }
           },
           "4XX": {
             "$ref": "#/components/responses/Error"
@@ -3135,14 +3426,14 @@
           }
         },
         "x-go": {
-          "example": "// Put: Update a VPC Router\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `routerName`\n//\t- `vpcName`\nif err := client.Routers.Put(organizationName, projectName, routerName, vpcName, body); err != nil {\n\tpanic(err)\n}",
+          "example": "// Put: Update a VPC Router\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `routerName`\n//\t- `vpcName`\nrouter, err := client.Routers.Put(organizationName, projectName, routerName, vpcName, body)",
           "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutersService.Put"
         },
         "x-ts": {
           "example": "let resp = client.vpcRoutersPutRouter(VpcRoutersPutRouterParams{orgName, projectName, routerName, vpcName}, data, params);"
         },
         "x-rust": {
-          "example": "/**\n* Update a VPC Router.\n*\n* This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `router_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nclient.routers().put(organization_name, project_name, router_name, vpc_name, body).await?;",
+          "example": "/**\n* Update a VPC Router.\n*\n* This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `router_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet router = client.routers().put(organization_name, project_name, router_name, vpc_name, body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/routers/struct.Routers.html#method.put"
         }
       },
@@ -3553,8 +3844,15 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "resource updated"
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RouterRoute"
+                }
+              }
+            }
           },
           "4XX": {
             "$ref": "#/components/responses/Error"
@@ -3564,14 +3862,14 @@
           }
         },
         "x-go": {
-          "example": "// rsPut: Update a Router route\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `routeName`\n//\t- `routerName`\n//\t- `vpcName`\nif err := client.Routes.rsPut(organizationName, projectName, routeName, routerName, vpcName, body); err != nil {\n\tpanic(err)\n}",
+          "example": "// rsPut: Update a Router route\n//\n// Parameters:\n//\t- `organizationName`\n//\t- `projectName`\n//\t- `routeName`\n//\t- `routerName`\n//\t- `vpcName`\nrouterRoute, err := client.Routes.rsPut(organizationName, projectName, routeName, routerName, vpcName, body)",
           "libDocsLink": "https://pkg.go.dev/github.com/oxidecomputer/oxide.go/#RoutesService.rsPut"
         },
         "x-ts": {
           "example": "let resp = client.routersRoutesPutRoute(RoutersRoutesPutRouteParams{orgName, projectName, routeName, routerName, vpcName}, data, params);"
         },
         "x-rust": {
-          "example": "/**\n* Update a Router route.\n*\n* This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes/{route_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `route_name: &str` -- human-readable free-form text about a resource.\n* * `router_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nclient.routes().put(organization_name, project_name, route_name, router_name, vpc_name, body).await?;",
+          "example": "/**\n* Update a Router route.\n*\n* This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/routers/{router_name}/routes/{route_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n* * `project_name: &str` -- human-readable free-form text about a resource.\n* * `route_name: &str` -- human-readable free-form text about a resource.\n* * `router_name: &str` -- human-readable free-form text about a resource.\n* * `vpc_name: &str` -- human-readable free-form text about a resource.\n*/\nlet route = client.routes().put(organization_name, project_name, route_name, router_name, vpc_name, body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/routes/struct.Routes.html#method.put"
         }
       },
@@ -6349,6 +6647,106 @@
           "items"
         ]
       },
+      "Snapshot": {
+        "description": "Client view of a Snapshot",
+        "type": "object",
+        "properties": {
+          "description": {
+            "description": "human-readable free-form text about a resource",
+            "type": "string"
+          },
+          "disk_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "id": {
+            "description": "unique, immutable, system-controlled identifier for each resource",
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "description": "unique, mutable, user-controlled identifier for each resource",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Name"
+              }
+            ]
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "size": {
+            "$ref": "#/components/schemas/ByteCount"
+          },
+          "time_created": {
+            "description": "timestamp when this resource was created",
+            "type": "string",
+            "format": "date-time"
+          },
+          "time_modified": {
+            "description": "timestamp when this resource was last modified",
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "description",
+          "disk_id",
+          "id",
+          "name",
+          "project_id",
+          "size",
+          "time_created",
+          "time_modified"
+        ]
+      },
+      "SnapshotCreate": {
+        "description": "Create-time parameters for a [`Snapshot`](omicron_common::api::external::Snapshot)",
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "disk": {
+            "description": "The name of the disk to be snapshotted",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Name"
+              }
+            ]
+          },
+          "name": {
+            "$ref": "#/components/schemas/Name"
+          }
+        },
+        "required": [
+          "description",
+          "disk",
+          "name"
+        ]
+      },
+      "SnapshotResultsPage": {
+        "description": "A single page of results",
+        "type": "object",
+        "properties": {
+          "items": {
+            "description": "list of items on this page of results",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Snapshot"
+            }
+          },
+          "next_page": {
+            "nullable": true,
+            "description": "token used to fetch the next page of results (if any)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "items"
+        ]
+      },
       "TimeseriesName": {
         "title": "The name of a timeseries",
         "description": "Names are constructed by concatenating the target and metric names with ':'. Target and metric names must be lowercase alphanumeric characters with '_' separating words.",
@@ -7098,7 +7496,7 @@
         ]
       },
       "VpcRouterCreate": {
-        "description": "Create-time parameters for a [`VpcRouter`](omicron_common::api::external::VpcRouter)",
+        "description": "Create-time parameters for a [`VpcRouter`](crate::external_api::views::VpcRouter)",
         "type": "object",
         "properties": {
           "description": {
@@ -7142,7 +7540,7 @@
         ]
       },
       "VpcRouterUpdate": {
-        "description": "Updateable properties of a [`VpcRouter`](omicron_common::api::external::VpcRouter)",
+        "description": "Updateable properties of a [`VpcRouter`](crate::external_api::views::VpcRouter)",
         "type": "object",
         "properties": {
           "description": {
@@ -7428,6 +7826,13 @@
     {
       "name": "sleds",
       "description": "This tag should be moved into hardware",
+      "externalDocs": {
+        "url": "http://oxide.computer/docs/#xxx"
+      }
+    },
+    {
+      "name": "snapshots",
+      "description": "Snapshots of Virtual Disks at a particular point in time.",
       "externalDocs": {
         "url": "http://oxide.computer/docs/#xxx"
       }
