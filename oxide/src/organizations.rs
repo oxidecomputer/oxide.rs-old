@@ -30,7 +30,7 @@ impl Organizations {
         limit: u32,
         page_token: &str,
         sort_by: crate::types::NameOrIdSortMode,
-    ) -> Result<Vec<crate::types::Rack>> {
+    ) -> Result<Vec<crate::types::Organization>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -60,7 +60,7 @@ impl Organizations {
     pub async fn get_all(
         &self,
         sort_by: crate::types::NameOrIdSortMode,
-    ) -> Result<Vec<crate::types::Rack>> {
+    ) -> Result<Vec<crate::types::Organization>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {
             query_args.push(("sort_by".to_string(), sort_by.to_string()));
@@ -105,7 +105,10 @@ impl Organizations {
      *
      * This function performs a `POST` to the `/organizations` endpoint.
      */
-    pub async fn post(&self, body: &crate::types::RouterCreate) -> Result<crate::types::Rack> {
+    pub async fn post(
+        &self,
+        body: &crate::types::OrganizationCreate,
+    ) -> Result<crate::types::Organization> {
         let url = "/organizations".to_string();
         self.client
             .post(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))
@@ -121,7 +124,7 @@ impl Organizations {
      *
      * * `organization_name: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn get(&self, organization_name: &str) -> Result<crate::types::Rack> {
+    pub async fn get(&self, organization_name: &str) -> Result<crate::types::Organization> {
         let url = format!(
             "/organizations/{}",
             crate::progenitor_support::encode_path(organization_name),
@@ -143,7 +146,7 @@ impl Organizations {
         &self,
         organization_name: &str,
         body: &crate::types::OrganizationUpdate,
-    ) -> Result<crate::types::Rack> {
+    ) -> Result<crate::types::Organization> {
         let url = format!(
             "/organizations/{}",
             crate::progenitor_support::encode_path(organization_name),

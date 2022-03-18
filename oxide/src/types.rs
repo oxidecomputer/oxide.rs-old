@@ -1167,9 +1167,9 @@ pub struct NetworkInterfaceResultsPage {
     pub next_page: String,
 }
 
-/// Client view of an [`Rack`]
+/// Client view of an [`Organization`]
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct Rack {
+pub struct Organization {
     /**
      * human-readable free-form text about a resource
      */
@@ -1213,9 +1213,9 @@ pub struct Rack {
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
-/// Create-time parameters for a [`VpcRouter`](crate::external_api::views::VpcRouter)
+/// Create-time parameters for an [`Organization`](crate::external_api::views::Organization)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct RouterCreate {
+pub struct OrganizationCreate {
     /**
      * human-readable free-form text about a resource
      */
@@ -1249,7 +1249,7 @@ pub struct OrganizationResultsPage {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub items: Vec<Rack>,
+    pub items: Vec<Organization>,
 
     /**
      * A single page of results
@@ -1397,7 +1397,7 @@ pub struct RackResultsPage {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub items: Vec<Rack>,
+    pub items: Vec<Organization>,
 
     /**
      * A single page of results
@@ -2110,7 +2110,7 @@ pub struct UserResultsPage {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub items: Vec<Rack>,
+    pub items: Vec<Organization>,
 
     /**
      * A single page of results

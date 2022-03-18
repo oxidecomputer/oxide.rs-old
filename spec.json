@@ -88,7 +88,7 @@
           "example": "let resp = client.hardwareRacksGet(query, params);"
         },
         "x-rust": {
-          "example": "/**\n* List racks in the system.\n*\n* This function performs a `GET` to the `/hardware/racks` endpoint.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.\n* * `sort_by: crate::types::IdSortMode` -- Supported set of sort modes for scanning by id only.\n*  \n*  Currently, we only support scanning in ascending order.\n*/\nlet vec_crate_types_rack = client.racks().get_page(limit, page_token, sort_by).await?;\n\n// - OR -\n\n/**\n* List racks in the system.\n*\n* This function performs a `GET` to the `/hardware/racks` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*/\nlet vec_crate_types_rack = client.racks().get_all(sort_by).await?;",
+          "example": "/**\n* List racks in the system.\n*\n* This function performs a `GET` to the `/hardware/racks` endpoint.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.\n* * `sort_by: crate::types::IdSortMode` -- Supported set of sort modes for scanning by id only.\n*  \n*  Currently, we only support scanning in ascending order.\n*/\nlet vec_crate_types_organization = client.racks().get_page(limit, page_token, sort_by).await?;\n\n// - OR -\n\n/**\n* List racks in the system.\n*\n* This function performs a `GET` to the `/hardware/racks` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*/\nlet vec_crate_types_organization = client.racks().get_all(sort_by).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/racks/struct.Racks.html#method.get_page"
         }
       }
@@ -139,7 +139,7 @@
           "example": "let resp = client.hardwareRacksGetRack(HardwareRacksGetRackParams{rackId}, params);"
         },
         "x-rust": {
-          "example": "/**\n* Fetch information about a particular rack.\n*\n* This function performs a `GET` to the `/hardware/racks/{rack_id}` endpoint.\n*\n* **Parameters:**\n*\n* * `rack_id: &str` -- human-readable free-form text about a resource.\n*/\nlet rack = client.racks().get(rack_id).await?;",
+          "example": "/**\n* Fetch information about a particular rack.\n*\n* This function performs a `GET` to the `/hardware/racks/{rack_id}` endpoint.\n*\n* **Parameters:**\n*\n* * `rack_id: &str` -- human-readable free-form text about a resource.\n*/\nlet organization = client.racks().get(rack_id).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/racks/struct.Racks.html#method.get"
         }
       }
@@ -390,7 +390,7 @@
           "example": "let resp = client.organizationsGet(query, params);"
         },
         "x-rust": {
-          "example": "/**\n* List all organizations.\n*\n* This function performs a `GET` to the `/organizations` endpoint.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.\n* * `sort_by: crate::types::NameOrIdSortMode` -- Supported set of sort modes for scanning by name or id.\n*/\nlet vec_crate_types_rack = client.organizations().get_page(limit, page_token, sort_by).await?;\n\n// - OR -\n\n/**\n* List all organizations.\n*\n* This function performs a `GET` to the `/organizations` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*/\nlet vec_crate_types_rack = client.organizations().get_all(sort_by).await?;",
+          "example": "/**\n* List all organizations.\n*\n* This function performs a `GET` to the `/organizations` endpoint.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.\n* * `sort_by: crate::types::NameOrIdSortMode` -- Supported set of sort modes for scanning by name or id.\n*/\nlet vec_crate_types_organization = client.organizations().get_page(limit, page_token, sort_by).await?;\n\n// - OR -\n\n/**\n* List all organizations.\n*\n* This function performs a `GET` to the `/organizations` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*/\nlet vec_crate_types_organization = client.organizations().get_all(sort_by).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/organizations/struct.Organizations.html#method.get_page"
         }
       },
@@ -436,7 +436,7 @@
           "example": "let resp = client.organizationsPost(query, data, params);"
         },
         "x-rust": {
-          "example": "/**\n* Create a new organization.\n*\n* This function performs a `POST` to the `/organizations` endpoint.\n*/\nlet rack = client.organizations().post(body).await?;",
+          "example": "/**\n* Create a new organization.\n*\n* This function performs a `POST` to the `/organizations` endpoint.\n*/\nlet organization = client.organizations().post(body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/organizations/struct.Organizations.html#method.post"
         }
       }
@@ -486,7 +486,7 @@
           "example": "let resp = client.organizationsGetOrganization(OrganizationsGetOrganizationParams{orgName}, params);"
         },
         "x-rust": {
-          "example": "/**\n* Fetch a specific organization.\n*\n* This function performs a `GET` to the `/organizations/{organization_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n*/\nlet rack = client.organizations().get(organization_name).await?;",
+          "example": "/**\n* Fetch a specific organization.\n*\n* This function performs a `GET` to the `/organizations/{organization_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n*/\nlet organization = client.organizations().get(organization_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/organizations/struct.Organizations.html#method.get"
         }
       },
@@ -544,7 +544,7 @@
           "example": "let resp = client.organizationsPutOrganization(OrganizationsPutOrganizationParams{orgName}, data, params);"
         },
         "x-rust": {
-          "example": "/**\n* Update a specific organization.\n*\n* This function performs a `PUT` to the `/organizations/{organization_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n*/\nlet rack = client.organizations().put(organization_name, body).await?;",
+          "example": "/**\n* Update a specific organization.\n*\n* This function performs a `PUT` to the `/organizations/{organization_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `organization_name: &str` -- human-readable free-form text about a resource.\n*/\nlet organization = client.organizations().put(organization_name, body).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/organizations/struct.Organizations.html#method.put"
         }
       },
@@ -4889,7 +4889,7 @@
           "example": "let resp = client.usersGet(query, params);"
         },
         "x-rust": {
-          "example": "/**\n* List the built-in system users.\n*\n* This function performs a `GET` to the `/users` endpoint.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.\n* * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only\n*  \n*  Currently, we only support scanning in ascending order.\n*/\nlet vec_crate_types_rack = client.users().get_page(limit, page_token, sort_by).await?;\n\n// - OR -\n\n/**\n* List the built-in system users.\n*\n* This function performs a `GET` to the `/users` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*/\nlet vec_crate_types_rack = client.users().get_all(sort_by).await?;",
+          "example": "/**\n* List the built-in system users.\n*\n* This function performs a `GET` to the `/users` endpoint.\n*\n* **Parameters:**\n*\n* * `limit: u32` -- A count of bytes, typically used either for memory or storage capacity\n*  \n*  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.\n* * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.\n* * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only\n*  \n*  Currently, we only support scanning in ascending order.\n*/\nlet vec_crate_types_organization = client.users().get_page(limit, page_token, sort_by).await?;\n\n// - OR -\n\n/**\n* List the built-in system users.\n*\n* This function performs a `GET` to the `/users` endpoint.\n*\n* As opposed to `get`, this function returns all the pages of the request at once.\n*/\nlet vec_crate_types_organization = client.users().get_all(sort_by).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/users/struct.Users.html#method.get_page"
         }
       }
@@ -4939,7 +4939,7 @@
           "example": "let resp = client.usersGetUser(UsersGetUserParams{userName}, params);"
         },
         "x-rust": {
-          "example": "/**\n* Fetch a specific built-in system user.\n*\n* This function performs a `GET` to the `/users/{user_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `user_name: &str` -- human-readable free-form text about a resource.\n*/\nlet rack = client.users().get(user_name).await?;",
+          "example": "/**\n* Fetch a specific built-in system user.\n*\n* This function performs a `GET` to the `/users/{user_name}` endpoint.\n*\n* **Parameters:**\n*\n* * `user_name: &str` -- human-readable free-form text about a resource.\n*/\nlet organization = client.users().get(user_name).await?;",
           "libDocsLink": "https://docs.rs/oxide-api/latest/oxide_api/users/struct.Users.html#method.get"
         }
       }

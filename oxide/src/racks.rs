@@ -32,7 +32,7 @@ impl Racks {
         limit: u32,
         page_token: &str,
         sort_by: crate::types::IdSortMode,
-    ) -> Result<Vec<crate::types::Rack>> {
+    ) -> Result<Vec<crate::types::Organization>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -62,7 +62,7 @@ impl Racks {
     pub async fn get_all(
         &self,
         sort_by: crate::types::IdSortMode,
-    ) -> Result<Vec<crate::types::Rack>> {
+    ) -> Result<Vec<crate::types::Organization>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {
             query_args.push(("sort_by".to_string(), sort_by.to_string()));
@@ -111,7 +111,7 @@ impl Racks {
      *
      * * `rack_id: &str` -- human-readable free-form text about a resource.
      */
-    pub async fn get(&self, rack_id: &str) -> Result<crate::types::Rack> {
+    pub async fn get(&self, rack_id: &str) -> Result<crate::types::Organization> {
         let url = format!(
             "/hardware/racks/{}",
             crate::progenitor_support::encode_path(rack_id),

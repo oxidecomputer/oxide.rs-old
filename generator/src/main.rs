@@ -1121,64 +1121,6 @@ impl TypeSpace {
                             // Return early.
                             return Ok(tid.clone());
                         }
-
-                        if !new_name.is_empty() && new_name.len() < existing_name.len() {
-                            // Let's make sure we don't already have a type with this name.
-                            if let Some(nidd) = self.name_to_id.get(&new_name) {
-                                let nid = nidd.clone();
-
-                                // Well we already have an id for this type.
-                                // Let's get the details.
-                                let nt = self.id_to_entry.get(&nid).unwrap();
-
-                                // Make sure the type we found is not something
-                                // we care about.
-                                if (nt.details.is_enum()
-                                    || nt.details.is_object()
-                                    || nt.details.is_named_type()
-                                    || nt.details.is_one_of()
-                                    || details.is_any_of()
-                                    || details.is_all_of())
-                                    && nt.details != details
-                                {
-                                    // Return early we definitely don't want to do any funny business.
-                                    return Ok(tid.clone());
-                                }
-                                let ntdetails = nt.details.clone();
-
-                                // We have some other type...
-                                // Let's name it our old name.
-                                self.id_to_entry.insert(
-                                    nid.clone(),
-                                    TypeEntry {
-                                        id: nid.clone(),
-                                        name: Some(existing_name.to_string()),
-                                        details: ntdetails,
-                                    },
-                                );
-                                self.name_to_id.insert(existing_name, nid.clone());
-                            }
-
-                            // Let's keep the new_name instead.
-                            // This ensure's that since we can't always know the order in which we
-                            // parse types, that we will always have the cleaner set of named types.
-
-                            // Update the type entry in our set.
-                            self.id_to_entry.insert(
-                                id.clone(),
-                                TypeEntry {
-                                    id: id.clone(),
-                                    name: Some(new_name.to_string()),
-                                    details,
-                                },
-                            );
-                            self.name_to_id.insert(new_name, id.clone());
-
-                            // Remove the old name from the set.
-                            // TODO: somehow don't remove any of the ones we need to keep.
-                            // self.name_to_id.remove(&existing_name);
-                            return Ok(id);
-                        }
                     }
 
                     return Ok(tid.clone());
