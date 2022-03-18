@@ -32,10 +32,10 @@ impl Disks {
     pub async fn get_page(
         &self,
         limit: u32,
-        page_token: &str,
-        sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
+        page_token: &str,
         project_name: &str,
+        sort_by: crate::types::NameSortModeAscending,
     ) -> Result<Vec<crate::types::Disk>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
@@ -70,9 +70,9 @@ impl Disks {
      */
     pub async fn get_all(
         &self,
-        sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
         project_name: &str,
+        sort_by: crate::types::NameSortModeAscending,
     ) -> Result<Vec<crate::types::Disk>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {

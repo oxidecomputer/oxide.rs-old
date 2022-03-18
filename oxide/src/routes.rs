@@ -34,11 +34,11 @@ impl Routes {
     pub async fn get_page(
         &self,
         limit: u32,
-        page_token: &str,
-        sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
+        page_token: &str,
         project_name: &str,
         router_name: &str,
+        sort_by: crate::types::NameSortModeAscending,
         vpc_name: &str,
     ) -> Result<Vec<crate::types::Route>> {
         let mut query_args: Vec<(String, String)> = Default::default();
@@ -76,10 +76,10 @@ impl Routes {
      */
     pub async fn get_all(
         &self,
-        sort_by: crate::types::NameSortModeAscending,
         organization_name: &str,
         project_name: &str,
         router_name: &str,
+        sort_by: crate::types::NameSortModeAscending,
         vpc_name: &str,
     ) -> Result<Vec<crate::types::Route>> {
         let mut query_args: Vec<(String, String)> = Default::default();

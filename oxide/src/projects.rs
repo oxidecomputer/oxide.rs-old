@@ -29,9 +29,9 @@ impl Projects {
     pub async fn get_page(
         &self,
         limit: u32,
+        organization_name: &str,
         page_token: &str,
         sort_by: crate::types::NameSortMode,
-        organization_name: &str,
     ) -> Result<Vec<crate::types::Project>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
@@ -65,8 +65,8 @@ impl Projects {
      */
     pub async fn get_all(
         &self,
-        sort_by: crate::types::NameSortMode,
         organization_name: &str,
+        sort_by: crate::types::NameSortMode,
     ) -> Result<Vec<crate::types::Project>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {

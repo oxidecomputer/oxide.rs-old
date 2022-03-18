@@ -209,8 +209,7 @@ pub fn generate_files(
             /*
              * Get the function parameters.
              */
-            let (fn_params_str, query_params) =
-                get_fn_params(ts, o, parameters, false, op.parameters.clone())?;
+            let (fn_params_str, query_params) = get_fn_params(ts, o, false)?;
 
             /*
              * Generate the URL for the request.
@@ -349,8 +348,7 @@ pub fn generate_files(
                     oid.trim_start_matches(&tag).trim_start_matches('_'),
                 )?;
 
-                let (fn_params_str, query_params) =
-                    get_fn_params(ts, o, parameters, true, op.parameters.clone())?;
+                let (fn_params_str, query_params) = get_fn_params(ts, o, true)?;
 
                 let tmp = parse(p)?;
                 let template = tmp.compile(query_params);
@@ -633,13 +631,35 @@ fn get_response_type(
     ))
 }
 
+fn sort_parameters(o: &openapiv3::Operation) -> Result<BTreeMap<String, openapiv3::Parameter>> {
+    let mut parameters = BTreeMap::new();
+
+    for param in o.parameters.iter() {
+        let param = param.item()?;
+
+        let parameter_data = match get_parameter_data(param) {
+            Some(s) => s,
+            None => return Ok(parameters),
+        };
+
+        parameters.insert(parameter_data.name.to_string(), param.clone());
+    }
+
+    let mut sorted_keys = parameters.keys().collect::<Vec<_>>();
+    sorted_keys.sort();
+    let mut sorted_parameters: BTreeMap<String, openapiv3::Parameter> = BTreeMap::new();
+    for k in sorted_keys {
+        sorted_parameters.insert(k.to_string(), parameters.get(k).unwrap().clone());
+    }
+
+    Ok(sorted_parameters)
+}
+
 #[allow(clippy::type_complexity)]
 fn get_fn_params(
     ts: &mut TypeSpace,
     o: &openapiv3::Operation,
-    parameters: &BTreeMap<String, &openapiv3::Parameter>,
     all_pages: bool,
-    global_params: Vec<openapiv3::ReferenceOr<openapiv3::Parameter>>,
 ) -> Result<(Vec<String>, BTreeMap<String, (String, String)>)> {
     /*
      * Query parameters are sorted lexicographically to ensure a stable
@@ -648,29 +668,13 @@ fn get_fn_params(
     let mut fn_params_str: Vec<String> = Default::default();
     let mut fn_params: Vec<String> = Default::default();
     let mut query_params: BTreeMap<String, (String, String)> = Default::default();
-    let mut gp = global_params;
-    let mut op = o.parameters.clone();
-    gp.append(&mut op);
-    for par in gp.iter() {
-        let mut param_name = "".to_string();
-        let item = match par {
-            openapiv3::ReferenceOr::Reference { reference } => {
-                param_name = struct_name(&reference.replace("#/components/parameters/", ""));
-                // Get the parameter from our BTreeMap.
-                if let Some(param) = parameters.get(&param_name) {
-                    param
-                } else {
-                    bail!("could not find parameter with reference: {}", reference);
-                }
-            }
-            openapiv3::ReferenceOr::Item(item) => item,
-        };
-
+    let gp = sort_parameters(o)?;
+    for (param_name, item) in gp.iter() {
         let parameter_data = get_parameter_data(item).unwrap();
         let nam = &to_snake_case(&parameter_data.name);
 
         if !fn_params.contains(nam) && !fn_params.contains(&format!("{}_", nam)) {
-            let typ = parameter_data.render_type(&param_name, ts)?;
+            let typ = parameter_data.render_type(param_name, ts)?;
             if nam == "ref"
                 || nam == "type"
                 || nam == "foo"
