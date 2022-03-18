@@ -114,7 +114,7 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                 TypeDetails::Basic(..) => {}
                 TypeDetails::Unknown => {}
                 TypeDetails::NamedType(..) => {}
-                TypeDetails::ComponentSchema(tid, schema_data) => {
+                TypeDetails::ComponentSchema(tid, _schema_data) => {
                     a(&format!(
                         "pub type {} = {};",
                         sn,
@@ -129,7 +129,7 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
 
     // Iterate over anything we missed.
     if let Some(components) = &api.components {
-        for (i, (sn, s)) in components.schemas.iter().enumerate() {
+        for (_i, (sn, s)) in components.schemas.iter().enumerate() {
             let id = ts.select(Some(sn.as_str()), s, "")?;
 
             let rendered = ts.render_type(&id, true)?;
