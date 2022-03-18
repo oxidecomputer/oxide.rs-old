@@ -651,7 +651,7 @@ pub struct DisplayOptionDateTime(pub Option<chrono::DateTime<chrono::Utc>>);
 impl std::fmt::Display for DisplayOptionDateTime {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self.0 {
-            Some(ref v) => write!(f, "{}", chrono_humanize::HumanTime::from(chrono::Utc::now() - *v)),
+            Some(ref v) => write!(f, "{}", chrono_humanize::HumanTime::from(*v - chrono::Utc::now())),
             None => write!(f, "")
         }
     }
