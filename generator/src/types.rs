@@ -8,7 +8,7 @@ use crate::{render_param, struct_name, TypeDetails, TypeId, TypeSpace};
 /*
  * Declare named types we know about:
  */
-pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
+pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<String> {
     let mut out = String::new();
 
     let mut a = |s: &str| {
@@ -115,16 +115,6 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                 TypeDetails::Unknown => {}
                 TypeDetails::NamedType(..) => {}
                 TypeDetails::ComponentSchema(tid, schema_data) => {
-                    let desc = if let Some(description) = &schema_data.description {
-                        format!("/// {}", description.replace('\n', "\n/// "))
-                    } else {
-                        "".to_string()
-                    };
-
-                    if !desc.is_empty() {
-                        a(&desc);
-                    }
-
                     a(&format!(
                         "pub type {} = {};",
                         sn,
@@ -133,6 +123,33 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                 }
                 TypeDetails::Array(..) => {}
                 TypeDetails::Optional(..) => {}
+            }
+        }
+    }
+
+    // Iterate over anything we missed.
+    if let Some(components) = &api.components {
+        for (i, (sn, s)) in components.schemas.iter().enumerate() {
+            let id = ts.select(Some(sn.as_str()), s, "")?;
+
+            let rendered = ts.render_type(&id, true)?;
+
+            let et = ts.id_to_entry.get(&id).unwrap();
+            let mut desc = "".to_string();
+            if let TypeDetails::Basic(_, schema_data) = &et.details {
+                desc = if let Some(description) = &schema_data.description {
+                    format!("/// {}", description.replace('\n', "\n/// "))
+                } else {
+                    "".to_string()
+                };
+            }
+
+            if rendered == "String" {
+                if !desc.is_empty() {
+                    a(&desc);
+                }
+
+                a(&format!("pub type {} = {};", sn, rendered));
             }
         }
     }

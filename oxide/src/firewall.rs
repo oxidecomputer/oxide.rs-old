@@ -19,9 +19,9 @@ impl Firewall {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
-     * * `vpc_name: &str` -- human-readable free-form text about a resource.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn rules_get(
         &self,
@@ -46,9 +46,9 @@ impl Firewall {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
-     * * `vpc_name: &str` -- human-readable free-form text about a resource.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn rules_put(
         &self,

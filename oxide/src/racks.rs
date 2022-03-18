@@ -107,7 +107,7 @@ impl Racks {
      *
      * **Parameters:**
      *
-     * * `rack_id: &str` -- human-readable free-form text about a resource.
+     * * `rack_id: &str` -- The rack's unique ID.
      */
     pub async fn get(&self, rack_id: &str) -> Result<crate::types::Rack> {
         let url = format!(

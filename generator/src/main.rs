@@ -633,54 +633,54 @@ impl PartialEq for TypeDetails {
         }
 
         match self {
-            TypeDetails::Basic(s, _d) => {
-                if let TypeDetails::Basic(os, _od) = other {
-                    return s == os;
+            TypeDetails::Basic(s, d) => {
+                if let TypeDetails::Basic(os, od) = other {
+                    return s == os && d == od;
                 }
             }
-            TypeDetails::NamedType(i, _d) => {
-                if let TypeDetails::NamedType(oi, _od) = other {
-                    return i == oi;
+            TypeDetails::NamedType(i, d) => {
+                if let TypeDetails::NamedType(oi, od) = other {
+                    return i == oi && d == od;
                 }
             }
-            TypeDetails::ComponentSchema(i, _d) => {
-                if let TypeDetails::NamedType(oi, _od) = other {
-                    return i == oi;
+            TypeDetails::ComponentSchema(i, d) => {
+                if let TypeDetails::NamedType(oi, od) = other {
+                    return i == oi && d == od;
                 }
             }
-            TypeDetails::Enum(s, _d) => {
-                if let TypeDetails::Enum(os, _od) = other {
-                    return s == os;
+            TypeDetails::Enum(i, d) => {
+                if let TypeDetails::Enum(oi, od) = other {
+                    return i == oi && d == od;
                 }
             }
-            TypeDetails::Array(i, _d) => {
-                if let TypeDetails::Array(oi, _od) = other {
-                    return i == oi;
+            TypeDetails::Array(i, d) => {
+                if let TypeDetails::Array(oi, od) = other {
+                    return i == oi && d == od;
                 }
             }
-            TypeDetails::Optional(i, _d) => {
-                if let TypeDetails::Optional(oi, _od) = other {
-                    return i == oi;
+            TypeDetails::Optional(i, d) => {
+                if let TypeDetails::Optional(oi, od) = other {
+                    return i == oi && d == od;
                 }
             }
-            TypeDetails::Object(s, _d) => {
-                if let TypeDetails::Object(os, _od) = other {
-                    return s == os;
+            TypeDetails::Object(i, d) => {
+                if let TypeDetails::Object(oi, od) = other {
+                    return i == oi && d == od;
                 }
             }
-            TypeDetails::OneOf(s, _d) => {
-                if let TypeDetails::OneOf(os, _od) = other {
-                    return s == os;
+            TypeDetails::OneOf(i, d) => {
+                if let TypeDetails::OneOf(oi, od) = other {
+                    return i == oi && d == od;
                 }
             }
-            TypeDetails::AnyOf(s, _d) => {
-                if let TypeDetails::AnyOf(os, _od) = other {
-                    return s == os;
+            TypeDetails::AnyOf(i, d) => {
+                if let TypeDetails::AnyOf(oi, od) = other {
+                    return i == oi && d == od;
                 }
             }
-            TypeDetails::AllOf(s, _d) => {
-                if let TypeDetails::AllOf(os, _od) = other {
-                    return s == os;
+            TypeDetails::AllOf(i, d) => {
+                if let TypeDetails::AllOf(oi, od) = other {
+                    return i == oi && d == od;
                 }
             }
             TypeDetails::Unknown => {
@@ -3147,7 +3147,7 @@ rustdoc-args = ["--cfg", "docsrs"]
             /*
              * Create the Rust source types file containing the generated types:
              */
-            let types = types::generate_types(&mut ts)?;
+            let types = types::generate_types(&api, &mut ts)?;
             let mut typesrs = src.clone();
             typesrs.push("types.rs");
             save(typesrs, types.as_str())?;

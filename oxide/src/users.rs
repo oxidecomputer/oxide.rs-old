@@ -107,7 +107,7 @@ impl Users {
      *
      * **Parameters:**
      *
-     * * `user_name: &str` -- human-readable free-form text about a resource.
+     * * `user_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn get(&self, user_name: &str) -> Result<crate::types::User> {
         let url = format!(

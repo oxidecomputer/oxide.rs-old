@@ -120,7 +120,7 @@ impl Organizations {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn get(&self, organization_name: &str) -> Result<crate::types::Organization> {
         let url = format!(
@@ -138,7 +138,7 @@ impl Organizations {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn put(
         &self,
@@ -162,7 +162,7 @@ impl Organizations {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn delete(&self, organization_name: &str) -> Result<()> {
         let url = format!(

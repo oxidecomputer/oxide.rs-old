@@ -24,8 +24,8 @@ impl Instances {
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- The project's unique name within the organization.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn get_page(
         &self,
@@ -123,8 +123,8 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- The project's unique name within the organization.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn post(
         &self,
@@ -150,9 +150,9 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn get(
         &self,
@@ -177,9 +177,9 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn delete(
         &self,
@@ -209,9 +209,9 @@ impl Instances {
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn disks_get(
         &self,
@@ -311,9 +311,9 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn disks_attach(
         &self,
@@ -339,9 +339,9 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn disks_detach(
         &self,
@@ -369,9 +369,9 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn migrate(
         &self,
@@ -404,9 +404,9 @@ impl Instances {
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn network_interfaces_get(
         &self,
@@ -509,9 +509,9 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn network_interfaces_post(
         &self,
@@ -539,10 +539,10 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `interface_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `interface_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn network_interfaces_get_interface(
         &self,
@@ -569,10 +569,10 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `interface_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `interface_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn network_interfaces_delete_interface(
         &self,
@@ -599,9 +599,9 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn reboot(
         &self,
@@ -626,9 +626,9 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn start(
         &self,
@@ -653,9 +653,9 @@ impl Instances {
      *
      * **Parameters:**
      *
-     * * `instance_name: &str` -- human-readable free-form text about a resource.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn stop(
         &self,

@@ -107,7 +107,7 @@ impl Sleds {
      *
      * **Parameters:**
      *
-     * * `sled_id: &str` -- human-readable free-form text about a resource.
+     * * `sled_id: &str` -- The sled's unique ID.
      */
     pub async fn get(&self, sled_id: &str) -> Result<crate::types::Sled> {
         let url = format!(

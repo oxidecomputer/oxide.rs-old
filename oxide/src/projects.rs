@@ -22,7 +22,7 @@ impl Projects {
      * * `limit: u32` -- Maximum number of items returned by a single call.
      * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
      * * `sort_by: crate::types::NameOrIdSortMode` -- Supported set of sort modes for scanning by name or id.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn get_page(
         &self,
@@ -116,7 +116,7 @@ impl Projects {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn post(
         &self,
@@ -140,8 +140,8 @@ impl Projects {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- The project's unique name within the organization.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn get(
         &self,
@@ -164,8 +164,8 @@ impl Projects {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- The project's unique name within the organization.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn put(
         &self,
@@ -191,8 +191,8 @@ impl Projects {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- The project's unique name within the organization.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn delete(&self, organization_name: &str, project_name: &str) -> Result<()> {
         let url = format!(

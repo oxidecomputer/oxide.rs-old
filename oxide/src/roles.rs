@@ -87,7 +87,7 @@ impl Roles {
      *
      * **Parameters:**
      *
-     * * `role_name: &str` -- human-readable free-form text about a resource.
+     * * `role_name: &str` -- The built-in role's unique name.
      */
     pub async fn get(&self, role_name: &str) -> Result<crate::types::Role> {
         let url = format!(

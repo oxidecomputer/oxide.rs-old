@@ -107,7 +107,7 @@ impl Sagas {
      *
      * **Parameters:**
      *
-     * * `saga_id: &str` -- human-readable free-form text about a resource.
+     * * `saga_id: &str`
      */
     pub async fn get(&self, saga_id: &str) -> Result<crate::types::Saga> {
         let url = format!("/sagas/{}", crate::progenitor_support::encode_path(saga_id),);

@@ -24,8 +24,8 @@ impl Snapshots {
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- The project's unique name within the organization.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn get_page(
         &self,
@@ -123,8 +123,8 @@ impl Snapshots {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- The project's unique name within the organization.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn post(
         &self,
@@ -150,9 +150,9 @@ impl Snapshots {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
-     * * `snapshot_name: &str` -- human-readable free-form text about a resource.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `snapshot_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn get(
         &self,
@@ -177,9 +177,9 @@ impl Snapshots {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- human-readable free-form text about a resource.
-     * * `project_name: &str` -- human-readable free-form text about a resource.
-     * * `snapshot_name: &str` -- human-readable free-form text about a resource.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `snapshot_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
     pub async fn delete(
         &self,
