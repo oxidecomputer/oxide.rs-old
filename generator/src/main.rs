@@ -1195,7 +1195,7 @@ impl TypeSpace {
              * entry, we can just keep this one.
              */
             if let Some(et) = self.id_to_entry.get(&id) {
-                if et.details != details {
+                if et.details != details && name != "name sort mode" {
                     // We can get here if there are two objects with the same name
                     // that have properties that are different.
                     if !parent_name.is_empty() {
@@ -1663,7 +1663,7 @@ impl TypeSpace {
                         enums.sort_unstable();
                         enums.dedup();
 
-                        if enums.len() == 1 {
+                        if enums.len() == 1 && !name.ends_with("sort mode") {
                             // If the length is 1, we can just use the enum name.
                             name = clean_name(&format!("{}_{}", name, enums[0].as_str()));
                         }
@@ -2449,9 +2449,6 @@ fn struct_name(s: &str) -> String {
         // Change the number to words for the enum, etc.
         // This fixes Zoom and hopefully does not break anyone else.
         to_pascal_case(&english_numbers::convert_all_fmt(i))
-    } else if t == "Option" || t == "Self" {
-        // Fix any reserved words.
-        format!("{}Data", t)
     } else {
         t
     }

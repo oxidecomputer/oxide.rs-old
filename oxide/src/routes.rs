@@ -23,7 +23,7 @@ impl Routes {
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-     * * `sort_by: crate::types::NameSortModeAscending` -- Supported set of sort modes for scanning by name only
+     * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
      * * `organization_name: &str` -- human-readable free-form text about a resource.
@@ -38,7 +38,7 @@ impl Routes {
         page_token: &str,
         project_name: &str,
         router_name: &str,
-        sort_by: crate::types::NameSortModeAscending,
+        sort_by: crate::types::NameSortMode,
         vpc_name: &str,
     ) -> Result<Vec<crate::types::Route>> {
         let mut query_args: Vec<(String, String)> = Default::default();
@@ -79,7 +79,7 @@ impl Routes {
         organization_name: &str,
         project_name: &str,
         router_name: &str,
-        sort_by: crate::types::NameSortModeAscending,
+        sort_by: crate::types::NameSortMode,
         vpc_name: &str,
     ) -> Result<Vec<crate::types::Route>> {
         let mut query_args: Vec<(String, String)> = Default::default();
