@@ -883,14 +883,16 @@ pub struct LoginParams {
 }
 
 /**
- * Supported set of sort modes for scanning by name only
- *   
- *   Currently, we only support scanning in ascending order.
+ * Supported set of sort modes for scanning by name or id
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum NameSortMode {
+    #[serde(rename = "id-ascending")]
+    IdAscending,
     #[serde(rename = "name-ascending")]
     NameAscending,
+    #[serde(rename = "name-descending")]
+    NameDescending,
     #[serde(rename = "")]
     Noop,
     #[serde(other)]
@@ -900,7 +902,9 @@ pub enum NameSortMode {
 impl std::fmt::Display for NameSortMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
+            NameSortMode::IdAscending => "id-ascending",
             NameSortMode::NameAscending => "name-ascending",
+            NameSortMode::NameDescending => "name-descending",
             NameSortMode::Noop => "",
             NameSortMode::FallthroughString => "*",
         }
@@ -916,8 +920,14 @@ impl Default for NameSortMode {
 impl std::str::FromStr for NameSortMode {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "id-ascending" {
+            return Ok(NameSortMode::IdAscending);
+        }
         if s == "name-ascending" {
             return Ok(NameSortMode::NameAscending);
+        }
+        if s == "name-descending" {
+            return Ok(NameSortMode::NameDescending);
         }
         anyhow::bail!("invalid string: {}", s);
     }

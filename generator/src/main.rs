@@ -1195,7 +1195,10 @@ impl TypeSpace {
              * entry, we can just keep this one.
              */
             if let Some(et) = self.id_to_entry.get(&id) {
-                if et.details != details && name != "name sort mode" {
+                if name == "name sort mode" {
+                    return Ok(id);
+                }
+                if et.details != details {
                     // We can get here if there are two objects with the same name
                     // that have properties that are different.
                     if !parent_name.is_empty() {
