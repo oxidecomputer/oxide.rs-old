@@ -1195,9 +1195,6 @@ impl TypeSpace {
              * entry, we can just keep this one.
              */
             if let Some(et) = self.id_to_entry.get(&id) {
-                if name == "name sort mode" {
-                    return Ok(id);
-                }
                 if et.details != details {
                     // We can get here if there are two objects with the same name
                     // that have properties that are different.
@@ -2474,7 +2471,6 @@ fn clean_name(t: &str) -> String {
             .replace("160000", "submodule_commit")
             .replace("120000", "symlink_path_blob")
             .replace(" an ", " ")
-            .replace(" or ", " ")
             .replace(" for ", " ")
             .replace(" to ", " ")
             .replace(" your ", " ")
@@ -2491,7 +2487,6 @@ fn clean_name(t: &str) -> String {
     .replace("s_uuid", "")
     .replace("_id_or_uuid", "")
     .replace("_uuid", "")
-    .replace("_id_", "_")
     .replace("vpc_firewall_rule", "firewall_rule")
     .replace("vpc_router", "router")
     .replace("vpc_subnet", "subnet")

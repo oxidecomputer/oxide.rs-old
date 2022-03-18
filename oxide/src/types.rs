@@ -886,7 +886,7 @@ pub struct LoginParams {
  * Supported set of sort modes for scanning by name or id
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub enum NameSortMode {
+pub enum NameOrIdSortMode {
     #[serde(rename = "id-ascending")]
     IdAscending,
     #[serde(rename = "name-ascending")]
@@ -899,12 +899,64 @@ pub enum NameSortMode {
     FallthroughString,
 }
 
+impl std::fmt::Display for NameOrIdSortMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            NameOrIdSortMode::IdAscending => "id-ascending",
+            NameOrIdSortMode::NameAscending => "name-ascending",
+            NameOrIdSortMode::NameDescending => "name-descending",
+            NameOrIdSortMode::Noop => "",
+            NameOrIdSortMode::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for NameOrIdSortMode {
+    fn default() -> NameOrIdSortMode {
+        NameOrIdSortMode::Noop
+    }
+}
+impl std::str::FromStr for NameOrIdSortMode {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "id-ascending" {
+            return Ok(NameOrIdSortMode::IdAscending);
+        }
+        if s == "name-ascending" {
+            return Ok(NameOrIdSortMode::NameAscending);
+        }
+        if s == "name-descending" {
+            return Ok(NameOrIdSortMode::NameDescending);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
+impl NameOrIdSortMode {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, NameOrIdSortMode::Noop)
+    }
+}
+
+/**
+ * Supported set of sort modes for scanning by name only
+ *   
+ *   Currently, we only support scanning in ascending order.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum NameSortMode {
+    #[serde(rename = "name-ascending")]
+    NameAscending,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
 impl std::fmt::Display for NameSortMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            NameSortMode::IdAscending => "id-ascending",
             NameSortMode::NameAscending => "name-ascending",
-            NameSortMode::NameDescending => "name-descending",
             NameSortMode::Noop => "",
             NameSortMode::FallthroughString => "*",
         }
@@ -920,14 +972,8 @@ impl Default for NameSortMode {
 impl std::str::FromStr for NameSortMode {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "id-ascending" {
-            return Ok(NameSortMode::IdAscending);
-        }
         if s == "name-ascending" {
             return Ok(NameSortMode::NameAscending);
-        }
-        if s == "name-descending" {
-            return Ok(NameSortMode::NameDescending);
         }
         anyhow::bail!("invalid string: {}", s);
     }

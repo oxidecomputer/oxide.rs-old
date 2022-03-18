@@ -23,13 +23,13 @@ impl Organizations {
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-     * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name or id.
+     * * `sort_by: crate::types::NameOrIdSortMode` -- Supported set of sort modes for scanning by name or id.
      */
     pub async fn get_page(
         &self,
         limit: u32,
         page_token: &str,
-        sort_by: crate::types::NameSortMode,
+        sort_by: crate::types::NameOrIdSortMode,
     ) -> Result<Vec<crate::types::Rack>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
@@ -59,7 +59,7 @@ impl Organizations {
      */
     pub async fn get_all(
         &self,
-        sort_by: crate::types::NameSortMode,
+        sort_by: crate::types::NameOrIdSortMode,
     ) -> Result<Vec<crate::types::Rack>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {
