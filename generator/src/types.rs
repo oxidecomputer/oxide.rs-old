@@ -144,7 +144,7 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                 };
             }
 
-            if rendered == "String" {
+            if rendered == "String" || rendered.starts_with('u') || rendered.starts_with('i') {
                 if !desc.is_empty() {
                     a(&desc);
                 }
