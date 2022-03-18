@@ -182,12 +182,8 @@ pub struct Disk {
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub size: i64,
+    #[serde(default)]
+    pub size: u64,
 
     /**
      * Client view of an [`Disk`]
@@ -243,12 +239,8 @@ pub struct DiskCreate {
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub size: i64,
+    #[serde(default)]
+    pub size: u64,
 
     /**
      * Create-time parameters for a [`Disk`](omicron_common::api::external::Disk)
@@ -672,24 +664,14 @@ pub struct Instance {
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub memory: i64,
+    #[serde(default)]
+    pub memory: u64,
 
     /**
-     * A count of bytes, typically used either for memory or storage capacity
-     *  
-     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     * The number of CPUs in an Instance
      */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub ncpus: i64,
+    #[serde()]
+    pub ncpus: u16,
 
     /**
      * human-readable free-form text about a resource
@@ -785,24 +767,14 @@ pub struct InstanceCreate {
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub memory: i64,
+    #[serde(default)]
+    pub memory: u64,
 
     /**
-     * A count of bytes, typically used either for memory or storage capacity
-     *  
-     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     * The number of CPUs in an Instance
      */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub ncpus: i64,
+    #[serde()]
+    pub ncpus: u16,
 
     /**
      * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
@@ -2028,12 +2000,8 @@ pub struct Snapshot {
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
      */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub size: i64,
+    #[serde(default)]
+    pub size: u64,
 
     /**
      * timestamp when this resource was created
@@ -2616,16 +2584,10 @@ pub struct VpcFirewallRule {
     pub filters: VpcFirewallRuleFilter,
 
     /**
-     * A count of bytes, typically used either for memory or storage capacity
-     *  
-     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     * The number of CPUs in an Instance
      */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub priority: i64,
+    #[serde()]
+    pub priority: u16,
 
     #[serde(default, skip_serializing_if = "VpcFirewallRuleStatus::is_noop")]
     pub status: VpcFirewallRuleStatus,
@@ -2780,16 +2742,10 @@ pub struct VpcFirewallRuleUpdate {
     pub filters: VpcFirewallRuleFilter,
 
     /**
-     * A count of bytes, typically used either for memory or storage capacity
-     *  
-     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     * The number of CPUs in an Instance
      */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub priority: i64,
+    #[serde()]
+    pub priority: u16,
 
     #[serde(default, skip_serializing_if = "VpcFirewallRuleStatus::is_noop")]
     pub status: VpcFirewallRuleStatus,

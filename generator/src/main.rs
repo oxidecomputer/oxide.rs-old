@@ -288,57 +288,67 @@ impl ParameterDataExt for openapiv3::ParameterData {
                             }
                             SchemaKind::Type(openapiv3::Type::Number(_)) => "f64".to_string(), /* TODO: make this more exhaustive. */
                             SchemaKind::Type(Type::Integer(it)) => {
-                                let mut uint;
-                                let width;
-
-                                use openapiv3::VariantOrUnknownOrEmpty::Unknown;
-                                if let Unknown(f) = &it.format {
-                                    match f.as_str() {
-                                        "uint" | "uint32" => {
-                                            uint = true;
-                                            width = 32;
+                                let format = match &it.format {
+                                    openapiv3::VariantOrUnknownOrEmpty::Item(
+                                        openapiv3::IntegerFormat::Int32,
+                                    ) => "i32",
+                                    openapiv3::VariantOrUnknownOrEmpty::Item(
+                                        openapiv3::IntegerFormat::Int64,
+                                    ) => "i64",
+                                    openapiv3::VariantOrUnknownOrEmpty::Empty => "i64",
+                                    openapiv3::VariantOrUnknownOrEmpty::Unknown(f) => {
+                                        let uint;
+                                        let width;
+                                        match f.as_str() {
+                                            "uint" | "uint32" => {
+                                                uint = true;
+                                                width = 32;
+                                            }
+                                            "uint8" => {
+                                                uint = true;
+                                                width = 8;
+                                            }
+                                            "uint16" => {
+                                                uint = true;
+                                                width = 16;
+                                            }
+                                            "uint64" => {
+                                                uint = true;
+                                                width = 64;
+                                            }
+                                            "int8" => {
+                                                uint = false;
+                                                width = 8;
+                                            }
+                                            "int16" => {
+                                                uint = false;
+                                                width = 16;
+                                            }
+                                            /* int32 and int64 are build it and parse as the integer type */
+                                            f => anyhow::bail!("unknown integer format {}", f),
                                         }
-                                        "uint64" => {
-                                            uint = true;
-                                            width = 32;
+
+                                        if uint {
+                                            match width {
+                                                8 => "u8",
+                                                16 => "u16",
+                                                32 => "u32",
+                                                64 => "u64",
+                                                _ => anyhow::bail!("unknown uint width {}", width),
+                                            }
+                                        } else {
+                                            match width {
+                                                8 => "i8",
+                                                16 => "i16",
+                                                32 => "i32",
+                                                64 => "i64",
+                                                _ => anyhow::bail!("unknown int width {}", width),
+                                            }
                                         }
-                                        f => bail!("XXX unknown integer format {}", f),
                                     }
-                                } else {
-                                    // The format was empty, let's assume it's just a normal
-                                    // i64.
-                                    uint = false;
-                                    width = 64;
-                                }
+                                };
 
-                                if it.multiple_of.is_some() {
-                                    bail!("XXX multiple_of");
-                                }
-                                if it.exclusive_minimum || it.exclusive_maximum {
-                                    bail!("XXX exclusive");
-                                }
-
-                                if let Some(min) = it.minimum {
-                                    if min == 0 {
-                                        uint = true;
-                                    } else {
-                                        // TODO: handle this later
-                                        println!("XXX invalid minimum: {}", min);
-                                    }
-                                }
-
-                                if it.maximum.is_some() {
-                                    // TODO: handle this later
-                                    println!("XXX maximum is not supported");
-                                }
-                                if !it.enumeration.is_empty() {
-                                    bail!("XXX enumeration {}: {:?}", self.name, it);
-                                }
-                                if uint {
-                                    format!("u{}", width)
-                                } else {
-                                    format!("i{}", width)
-                                }
+                                format.to_string()
                             }
                             openapiv3::SchemaKind::OneOf { one_of: _ } => "&str".to_string(), /* TODO: make this smarter. */
                             openapiv3::SchemaKind::Any(_) => "&str".to_string(), /* TODO: make this smarter. */
@@ -1819,10 +1829,72 @@ impl TypeSpace {
                     Some(uid.to_string()),
                     TypeDetails::Basic("f64".to_string(), s.schema_data.clone()),
                 )),
-                openapiv3::Type::Integer(_) => Ok((
-                    Some(uid.to_string()),
-                    TypeDetails::Basic("i64".to_string(), s.schema_data.clone()),
-                )),
+                openapiv3::Type::Integer(it) => {
+                    let format = match &it.format {
+                        openapiv3::VariantOrUnknownOrEmpty::Item(
+                            openapiv3::IntegerFormat::Int32,
+                        ) => "i32",
+                        openapiv3::VariantOrUnknownOrEmpty::Item(
+                            openapiv3::IntegerFormat::Int64,
+                        ) => "i64",
+                        openapiv3::VariantOrUnknownOrEmpty::Empty => "i64",
+                        openapiv3::VariantOrUnknownOrEmpty::Unknown(f) => {
+                            let uint;
+                            let width;
+                            match f.as_str() {
+                                "uint" | "uint32" => {
+                                    uint = true;
+                                    width = 32;
+                                }
+                                "uint8" => {
+                                    uint = true;
+                                    width = 8;
+                                }
+                                "uint16" => {
+                                    uint = true;
+                                    width = 16;
+                                }
+                                "uint64" => {
+                                    uint = true;
+                                    width = 64;
+                                }
+                                "int8" => {
+                                    uint = false;
+                                    width = 8;
+                                }
+                                "int16" => {
+                                    uint = false;
+                                    width = 16;
+                                }
+                                /* int32 and int64 are build it and parse as the integer type */
+                                f => anyhow::bail!("unknown integer format {}", f),
+                            }
+
+                            if uint {
+                                match width {
+                                    8 => "u8",
+                                    16 => "u16",
+                                    32 => "u32",
+                                    64 => "u64",
+                                    _ => anyhow::bail!("unknown uint width {}", width),
+                                }
+                            } else {
+                                match width {
+                                    8 => "i8",
+                                    16 => "i16",
+                                    32 => "i32",
+                                    64 => "i64",
+                                    _ => anyhow::bail!("unknown int width {}", width),
+                                }
+                            }
+                        }
+                    };
+
+                    Ok((
+                        Some(uid.to_string()),
+                        TypeDetails::Basic(format.to_string(), s.schema_data.clone()),
+                    ))
+                }
             },
             openapiv3::SchemaKind::AllOf { all_of } => {
                 // TODO: this is a stop gap for now, we should figure out a better solution later.
