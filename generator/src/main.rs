@@ -540,6 +540,8 @@ pub enum TypeDetails {
     ),
     AnyOf(Vec<TypeId>, openapiv3::SchemaData),
     AllOf(Vec<TypeId>, openapiv3::SchemaData),
+    Placeholder(TypeId),
+    ComponentSchema(TypeId, openapiv3::SchemaData),
 }
 
 #[allow(dead_code)]
@@ -590,6 +592,7 @@ impl TypeDetails {
         let desc = match self {
             TypeDetails::Basic(_, d) => d.description.as_ref(),
             TypeDetails::NamedType(_, d) => d.description.as_ref(),
+            TypeDetails::ComponentSchema(_, d) => d.description.as_ref(),
             TypeDetails::Enum(_, d) => d.description.as_ref(),
             TypeDetails::Array(_, d) => d.description.as_ref(),
             TypeDetails::Optional(_, d) => d.description.as_ref(),
@@ -598,6 +601,7 @@ impl TypeDetails {
             TypeDetails::AnyOf(_, d) => d.description.as_ref(),
             TypeDetails::AllOf(_, d) => d.description.as_ref(),
             TypeDetails::Unknown => None,
+            TypeDetails::Placeholder(..) => None,
         };
 
         if let Some(n) = desc {
@@ -625,6 +629,11 @@ impl PartialEq for TypeDetails {
                 }
             }
             TypeDetails::NamedType(i, _d) => {
+                if let TypeDetails::NamedType(oi, _od) = other {
+                    return i == oi;
+                }
+            }
+            TypeDetails::ComponentSchema(i, _d) => {
                 if let TypeDetails::NamedType(oi, _od) = other {
                     return i == oi;
                 }
@@ -666,6 +675,11 @@ impl PartialEq for TypeDetails {
             }
             TypeDetails::Unknown => {
                 return self == other;
+            }
+            TypeDetails::Placeholder(i) => {
+                if let TypeDetails::Placeholder(oi) = other {
+                    return i == oi;
+                }
             }
         }
 
@@ -743,6 +757,19 @@ impl TypeSpace {
                      */
                     format!("named type of {}", self.describe(itid))
                 }
+                TypeDetails::ComponentSchema(itid, _) => {
+                    if let Some(ite) = self.id_to_entry.get(itid) {
+                        if let Some(n) = &ite.name {
+                            return format!("component schema of {} <{}>", n, itid.0);
+                        }
+                    }
+
+                    /*
+                     * If there is no name attached, we should try a
+                     * recursive describe.
+                     */
+                    format!("component schema of {}", self.describe(itid))
+                }
                 TypeDetails::Enum(..) => {
                     if let Some(n) = &te.name {
                         format!("enum {}", n)
@@ -807,6 +834,19 @@ impl TypeSpace {
                 TypeDetails::Unknown => {
                     format!("[UNKNOWN {}]", tid.0)
                 }
+                TypeDetails::Placeholder(tid) => {
+                    if let Some(ite) = self.id_to_entry.get(tid) {
+                        if let Some(n) = &ite.name {
+                            return format!("placeholder of {} <{}>", n, tid.0);
+                        }
+                    }
+
+                    /*
+                     * If there is no name attached, we should try a
+                     * recursive describe.
+                     */
+                    format!("placeholder of {}", self.describe(tid))
+                }
             }
         } else {
             format!("[UNMAPPED {}]", tid.0)
@@ -818,6 +858,17 @@ impl TypeSpace {
             match &te.details {
                 TypeDetails::Basic(_, schema_data) => Some(schema_data),
                 TypeDetails::NamedType(id, schema_data) => {
+                    let def: openapiv3::SchemaData = Default::default();
+                    if def == *schema_data
+                        && schema_data.description.is_none()
+                        && !schema_data.nullable
+                    {
+                        self.get_schema_data_for_id(id)
+                    } else {
+                        Some(schema_data)
+                    }
+                }
+                TypeDetails::ComponentSchema(id, schema_data) => {
                     let def: openapiv3::SchemaData = Default::default();
                     if def == *schema_data
                         && schema_data.description.is_none()
@@ -843,6 +894,7 @@ impl TypeSpace {
                 TypeDetails::AnyOf(_, schema_data) => Some(schema_data),
                 TypeDetails::AllOf(_, schema_data) => Some(schema_data),
                 TypeDetails::Unknown => None,
+                TypeDetails::Placeholder(..) => None,
             }
         } else {
             None
@@ -880,6 +932,7 @@ impl TypeSpace {
             match &te.details {
                 TypeDetails::Basic(t, _) => Ok(t.to_string()),
                 TypeDetails::NamedType(itid, _) => self.render_type(itid, in_mod),
+                TypeDetails::ComponentSchema(itid, _) => self.render_type(itid, in_mod),
                 TypeDetails::Enum(..) => {
                     if let Some(n) = &te.name {
                         let struct_name = struct_name(n);
@@ -1006,6 +1059,12 @@ impl TypeSpace {
                 TypeDetails::Unknown => {
                     bail!("type {:?} is unknown", tid);
                 }
+                TypeDetails::Placeholder(tid) => {
+                    bail!(
+                        "type {:?} is a placeholder, this should have been populated by now",
+                        tid
+                    );
+                }
             }
         } else {
             panic!("could not resolve type ID {:?}", tid);
@@ -1061,7 +1120,11 @@ impl TypeSpace {
     }
 
     fn select_ref(&mut self, _name: Option<&str>, reference: &str) -> Result<TypeId> {
-        let ref_ = reference.to_string();
+        let ref_ = reference
+            .split('/')
+            .last()
+            .ok_or_else(|| anyhow::anyhow!("invalid reference {}", reference))?
+            .to_string();
 
         /*
          * As this is a reference, all we can do for now is determine
@@ -1076,7 +1139,7 @@ impl TypeSpace {
         // a schema that is not yet populated.
         // Let's make some generic details, assign an id and then later in
         // populate ref we can replace this ID with the real one.
-        let details = TypeDetails::NamedType(self.assign(), Default::default());
+        let details = TypeDetails::Placeholder(self.assign());
         self.add_if_not_exists(Some(ref_), details, "", true)
     }
 
@@ -1095,33 +1158,6 @@ impl TypeSpace {
         if !is_reference {
             for (tid, te) in self.id_to_entry.iter() {
                 if te.details == details {
-                    let _id = tid.clone();
-
-                    // We have a match! Okay, now we want to keep the shorter
-                    // name of the two structs and ensure that is the one we have
-                    // in our set.
-                    // Only do this if we have an Enum or an Object.
-                    let existing_name = if let Some(n) = &te.name {
-                        n.to_string()
-                    } else {
-                        "".to_string()
-                    };
-                    let new_name = if let Some(n) = &name {
-                        n.to_string()
-                    } else {
-                        "".to_string()
-                    };
-                    if (details.is_object()
-                        || details.is_enum()
-                        || details.is_one_of()
-                        || details.is_any_of()
-                        || details.is_all_of())
-                        && existing_name == new_name
-                    {
-                        // Return early.
-                        return Ok(tid.clone());
-                    }
-
                     return Ok(tid.clone());
                 }
             }
@@ -1289,25 +1325,27 @@ impl TypeSpace {
             "".to_string()
         };
 
-        let ref_ = format!("#/components/{}s/{}", type_.trim_end_matches('s'), nam);
-
         let details = if let Some(id) = id {
-            TypeDetails::NamedType(id, Default::default())
+            if let Some(et) = self.id_to_entry.get(&id) {
+                et.details.clone()
+            } else {
+                TypeDetails::Placeholder(id)
+            }
         } else {
-            TypeDetails::NamedType(self.id_for_name("String"), Default::default())
+            bail!("no id for ref type_ `{}` name `{}`", type_, nam);
         };
 
         // Lets check if we already have this reference added.
         // This would have happened if we were parsing all the schemas and something
         // was referenced that had not yet been parsed.
-        if let Some(rid) = self.name_to_id.get(&ref_) {
+        if let Some(rid) = self.name_to_id.get(&nam) {
             // Okay we have the id for the reference.
             // Let's update it's named type.
             self.id_to_entry.insert(
                 rid.clone(),
                 TypeEntry {
                     id: rid.clone(),
-                    name: Some(ref_.to_string()),
+                    name: Some(nam.to_string()),
                     details,
                 },
             );
@@ -1315,7 +1353,7 @@ impl TypeSpace {
             return Ok(rid.clone());
         }
 
-        self.add_if_not_exists(Some(ref_), details, "", true)
+        self.add_if_not_exists(Some(nam), details, type_, true)
     }
 
     fn select(

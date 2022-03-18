@@ -97,6 +97,33 @@ impl DatumType {
     }
 }
 
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "state", content = "instance")]
+pub enum DiskState {
+    Creating,
+    Detached,
+    Attaching(String),
+    Attached(String),
+    Detaching(String),
+    Destroyed,
+    Faulted,
+}
+
+impl fmt::Display for DiskState {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            DiskState::Attached(..) => write!(f, "attached"),
+            DiskState::Attaching(..) => write!(f, "attaching"),
+            DiskState::Creating => write!(f, "creating"),
+            DiskState::Destroyed => write!(f, "destroyed"),
+            DiskState::Detached => write!(f, "detached"),
+            DiskState::Detaching(..) => write!(f, "detaching"),
+            DiskState::Faulted => write!(f, "faulted"),
+        }
+    }
+}
+
 /// Client view of an [`Disk`]
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct Disk {
@@ -273,33 +300,6 @@ pub struct DiskResultsPage {
     pub next_page: String,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
-#[serde(tag = "state", content = "instance")]
-pub enum DiskState {
-    Creating,
-    Detached,
-    Attaching(String),
-    Attached(String),
-    Detaching(String),
-    Destroyed,
-    Faulted,
-}
-
-impl fmt::Display for DiskState {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            DiskState::Attached(..) => write!(f, "attached"),
-            DiskState::Attaching(..) => write!(f, "attaching"),
-            DiskState::Creating => write!(f, "creating"),
-            DiskState::Destroyed => write!(f, "destroyed"),
-            DiskState::Detached => write!(f, "detached"),
-            DiskState::Detaching(..) => write!(f, "detaching"),
-            DiskState::Faulted => write!(f, "faulted"),
-        }
-    }
-}
-
 /// Error information from a response.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Error {
@@ -332,32 +332,6 @@ pub struct Error {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub request_id: String,
-}
-
-/// The name and type information for a field of a timeseries schema.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct FieldSchema {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
-
-    /**
-     * The source from which a field is derived, the target or metric.
-     */
-    #[serde()]
-    pub source: FieldSource,
-
-    /**
-     * The `FieldType` identifies the data type of a target or metric field.
-     */
-    #[serde()]
-    pub ty: FieldType,
 }
 
 /**
@@ -478,6 +452,32 @@ impl FieldType {
     }
 }
 
+/// The name and type information for a field of a timeseries schema.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct FieldSchema {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * The source from which a field is derived, the target or metric.
+     */
+    #[serde(default, skip_serializing_if = "FieldSource::is_noop")]
+    pub source: FieldSource,
+
+    /**
+     * The `FieldType` identifies the data type of a target or metric field.
+     */
+    #[serde(default, skip_serializing_if = "FieldType::is_noop")]
+    pub ty: FieldType,
+}
+
 /**
  * Supported set of sort modes for scanning by id only.
  *   
@@ -522,244 +522,6 @@ impl IdSortMode {
     pub fn is_noop(&self) -> bool {
         matches!(self, IdSortMode::Noop)
     }
-}
-
-/// Client view of an [`Instance`]
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct Instance {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub id: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub hostname: String,
-
-    /**
-     * A count of bytes, typically used either for memory or storage capacity
-     *  
-     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub memory: i64,
-
-    /**
-     * A count of bytes, typically used either for memory or storage capacity
-     *  
-     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub ncpus: i64,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub project_id: String,
-
-    /**
-     * Running state of an Instance (primarily: booted or stopped)
-     *  
-     *  This typically reflects whether it's starting, running, stopping, or stopped, but also includes states related to the Instance's lifecycle
-     */
-    #[serde()]
-    pub run_state: InstanceState,
-
-    /**
-     * timestamp when this resource was created
-     */
-    #[serde()]
-    pub time_created: crate::utils::DisplayOptionDateTime,
-
-    /**
-     * timestamp when this resource was created
-     */
-    #[serde()]
-    pub time_modified: crate::utils::DisplayOptionDateTime,
-
-    /**
-     * timestamp when this resource was created
-     */
-    #[serde()]
-    pub time_run_state_updated: crate::utils::DisplayOptionDateTime,
-}
-
-/// Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct InstanceCreate {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub hostname: String,
-
-    /**
-     * A count of bytes, typically used either for memory or storage capacity
-     *  
-     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub memory: i64,
-
-    /**
-     * A count of bytes, typically used either for memory or storage capacity
-     *  
-     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub ncpus: i64,
-
-    /**
-     * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
-     */
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    #[header(hidden = true)]
-    pub network_interfaces: Option<InstanceNetworkInterfaceAttachment>,
-}
-
-/// Migration parameters for an [`Instance`](omicron_common::api::external::Instance)
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct InstanceMigrate {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub dst_sled_uuid: String,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
-#[serde(tag = "type", content = "params")]
-pub enum InstanceNetworkInterfaceAttachment {
-    Create(InstanceNetworkInterfaceCreate),
-    Default,
-    None,
-}
-
-impl fmt::Display for InstanceNetworkInterfaceAttachment {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            InstanceNetworkInterfaceAttachment::Create(..) => write!(f, "Create"),
-            InstanceNetworkInterfaceAttachment::Default => write!(f, "Default"),
-            InstanceNetworkInterfaceAttachment::None => write!(f, "None"),
-        }
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct InstanceNetworkInterfaceCreate {
-    #[serde(
-        default,
-        skip_serializing_if = "Vec::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub params: Vec<NetworkInterfaceCreate>,
-}
-
-/// A single page of results
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct InstanceResultsPage {
-    /**
-     * list of items on this page of results
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "Vec::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub items: Vec<Instance>,
-
-    /**
-     * A single page of results
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub next_page: String,
 }
 
 /**
@@ -860,6 +622,298 @@ impl InstanceState {
     pub fn is_noop(&self) -> bool {
         matches!(self, InstanceState::Noop)
     }
+}
+
+/// Client view of an [`Instance`]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct Instance {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub hostname: String,
+
+    /**
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub memory: i64,
+
+    /**
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub ncpus: i64,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub project_id: String,
+
+    /**
+     * Running state of an Instance (primarily: booted or stopped)
+     *  
+     *  This typically reflects whether it's starting, running, stopping, or stopped, but also includes states related to the Instance's lifecycle
+     */
+    #[serde(default, skip_serializing_if = "InstanceState::is_noop")]
+    pub run_state: InstanceState,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_run_state_updated: crate::utils::DisplayOptionDateTime,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "type", content = "params")]
+pub enum InstanceNetworkInterfaceAttachment {
+    Create(InstanceNetworkInterfaceCreate),
+    Default,
+    None,
+}
+
+impl fmt::Display for InstanceNetworkInterfaceAttachment {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            InstanceNetworkInterfaceAttachment::Create(..) => write!(f, "Create"),
+            InstanceNetworkInterfaceAttachment::Default => write!(f, "Default"),
+            InstanceNetworkInterfaceAttachment::None => write!(f, "None"),
+        }
+    }
+}
+
+/// Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct InstanceCreate {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub hostname: String,
+
+    /**
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub memory: i64,
+
+    /**
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub ncpus: i64,
+
+    /**
+     * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
+     */
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[header(hidden = true)]
+    pub network_interfaces: Option<InstanceNetworkInterfaceAttachment>,
+}
+
+/// Migration parameters for an [`Instance`](omicron_common::api::external::Instance)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct InstanceMigrate {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub dst_sled_uuid: String,
+}
+
+/// Create-time parameters for a [`NetworkInterface`](omicron_common::api::external::NetworkInterface)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct NetworkInterfaceCreate {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * Create-time parameters for a [`NetworkInterface`](omicron_common::api::external::NetworkInterface)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub ip: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub subnet_name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub vpc_name: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct InstanceNetworkInterfaceCreate {
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub params: Vec<NetworkInterfaceCreate>,
+}
+
+/// A single page of results
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct InstanceResultsPage {
+    /**
+     * list of items on this page of results
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub items: Vec<Instance>,
+
+    /**
+     * A single page of results
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub next_page: String,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
@@ -1088,60 +1142,6 @@ pub struct NetworkInterface {
     pub vpc_id: String,
 }
 
-/// Create-time parameters for a [`NetworkInterface`](omicron_common::api::external::NetworkInterface)
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct NetworkInterfaceCreate {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
-
-    /**
-     * Create-time parameters for a [`NetworkInterface`](omicron_common::api::external::NetworkInterface)
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub ip: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub subnet_name: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub vpc_name: String,
-}
-
 /// A single page of results
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct NetworkInterfaceResultsPage {
@@ -1339,6 +1339,30 @@ pub struct Project {
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
+/// Create-time parameters for an [`Organization`](crate::external_api::views::Organization)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct ProjectCreate {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+}
+
 /// A single page of results
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct ProjectResultsPage {
@@ -1385,6 +1409,52 @@ pub struct ProjectUpdate {
     pub description: String,
 }
 
+/// Client view of an [`Organization`]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct Rack {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+}
+
 /// A single page of results
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct RackResultsPage {
@@ -1397,7 +1467,7 @@ pub struct RackResultsPage {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub items: Vec<Organization>,
+    pub items: Vec<Rack>,
 
     /**
      * A single page of results
@@ -1503,106 +1573,6 @@ impl fmt::Display for RouteTarget {
     }
 }
 
-/// A route defines a rule that governs where traffic should be sent based on its destination.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub struct RouterRoute {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub id: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
-
-    #[serde()]
-    pub destination: RouteDestination,
-
-    /**
-     * The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
-     *  
-     *  See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
-     */
-    #[serde()]
-    pub kind: RouterRouteKind,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub router_id: String,
-
-    #[serde()]
-    pub target: RouteTarget,
-
-    /**
-     * timestamp when this resource was created
-     */
-    #[serde()]
-    pub time_created: crate::utils::DisplayOptionDateTime,
-
-    /**
-     * timestamp when this resource was created
-     */
-    #[serde()]
-    pub time_modified: crate::utils::DisplayOptionDateTime,
-}
-
-/// Create-time parameters for a [`RouterRoute`]
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub struct RouterRouteCreateParams {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
-
-    #[serde()]
-    pub destination: RouteDestination,
-
-    #[serde()]
-    pub target: RouteTarget,
-}
-
 /**
  * The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
  *   
@@ -1667,6 +1637,106 @@ impl RouterRouteKind {
     }
 }
 
+/// A route defines a rule that governs where traffic should be sent based on its destination.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub struct RouterRoute {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    #[serde()]
+    pub destination: RouteDestination,
+
+    /**
+     * The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
+     *  
+     *  See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
+     */
+    #[serde(default, skip_serializing_if = "RouterRouteKind::is_noop")]
+    pub kind: RouterRouteKind,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub router_id: String,
+
+    #[serde()]
+    pub target: RouteTarget,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+}
+
+/// Create-time parameters for a [`RouterRoute`]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub struct RouterRouteCreateParams {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    #[serde()]
+    pub destination: RouteDestination,
+
+    #[serde()]
+    pub target: RouteTarget,
+}
+
 /// A single page of results
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct RouterRouteResultsPage {
@@ -1717,6 +1787,28 @@ pub struct RouterRouteUpdateParams {
 
     #[serde()]
     pub target: RouteTarget,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "state")]
+pub enum SagaState {
+    Running,
+    Succeeded,
+    Failed {
+        error_info: SagaErrorInfo,
+        error_node_name: String,
+    },
+}
+
+impl fmt::Display for SagaState {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            SagaState::Failed { .. } => write!(f, "failed"),
+            SagaState::Running => write!(f, "running"),
+            SagaState::Succeeded => write!(f, "succeeded"),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
@@ -1781,28 +1873,6 @@ pub struct SagaResultsPage {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub next_page: String,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
-#[serde(tag = "state")]
-pub enum SagaState {
-    Running,
-    Succeeded,
-    Failed {
-        error_info: SagaErrorInfo,
-        error_node_name: String,
-    },
-}
-
-impl fmt::Display for SagaState {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            SagaState::Failed { .. } => write!(f, "failed"),
-            SagaState::Running => write!(f, "running"),
-            SagaState::Succeeded => write!(f, "succeeded"),
-        }
-    }
 }
 
 /// Client view of currently authed user.
@@ -2051,7 +2121,7 @@ pub struct TimeseriesSchema {
     /**
      * The type of an individual datum of a metric.
      */
-    #[serde()]
+    #[serde(default, skip_serializing_if = "DatumType::is_noop")]
     pub datum_type: DatumType,
 
     #[serde(
@@ -2098,6 +2168,52 @@ pub struct TimeseriesSchemaResultsPage {
     pub next_page: String,
 }
 
+/// Client view of an [`Organization`]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct User {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+}
+
 /// A single page of results
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct UserResultsPage {
@@ -2110,7 +2226,7 @@ pub struct UserResultsPage {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub items: Vec<Organization>,
+    pub items: Vec<User>,
 
     /**
      * A single page of results
@@ -2255,101 +2371,6 @@ pub struct VpcCreate {
     pub ipv6_prefix: String,
 }
 
-/// A single rule in a VPC firewall
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct VpcFirewallRule {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub id: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
-
-    #[serde()]
-    pub action: VpcFirewallRuleAction,
-
-    #[serde()]
-    pub direction: VpcFirewallRuleDirection,
-
-    /**
-     * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
-     */
-    #[serde()]
-    #[header(hidden = true)]
-    pub filters: VpcFirewallRuleFilter,
-
-    /**
-     * A count of bytes, typically used either for memory or storage capacity
-     *  
-     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub priority: i64,
-
-    #[serde()]
-    pub status: VpcFirewallRuleStatus,
-
-    /**
-     * list of sets of instances that the rule applies to
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "Vec::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub targets: Vec<VpcFirewallRuleTarget>,
-
-    /**
-     * timestamp when this resource was created
-     */
-    #[serde()]
-    pub time_created: crate::utils::DisplayOptionDateTime,
-
-    /**
-     * timestamp when this resource was created
-     */
-    #[serde()]
-    pub time_modified: crate::utils::DisplayOptionDateTime,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub vpc_id: String,
-}
-
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum VpcFirewallRuleAction {
     #[serde(rename = "allow")]
@@ -2478,6 +2499,171 @@ pub struct VpcFirewallRuleFilter {
     pub protocols: Vec<VpcFirewallRuleProtocol>,
 }
 
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum VpcFirewallRuleStatus {
+    #[serde(rename = "disabled")]
+    Disabled,
+    #[serde(rename = "enabled")]
+    Enabled,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for VpcFirewallRuleStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            VpcFirewallRuleStatus::Disabled => "disabled",
+            VpcFirewallRuleStatus::Enabled => "enabled",
+            VpcFirewallRuleStatus::Noop => "",
+            VpcFirewallRuleStatus::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for VpcFirewallRuleStatus {
+    fn default() -> VpcFirewallRuleStatus {
+        VpcFirewallRuleStatus::Disabled
+    }
+}
+impl std::str::FromStr for VpcFirewallRuleStatus {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "disabled" {
+            return Ok(VpcFirewallRuleStatus::Disabled);
+        }
+        if s == "enabled" {
+            return Ok(VpcFirewallRuleStatus::Enabled);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
+impl VpcFirewallRuleStatus {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, VpcFirewallRuleStatus::Noop)
+    }
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "type", content = "value")]
+pub enum VpcFirewallRuleTarget {
+    Ip(String),
+    IpNet(IpNet),
+    Vpc(String),
+    Subnet(String),
+    Instance(String),
+}
+
+impl fmt::Display for VpcFirewallRuleTarget {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            VpcFirewallRuleTarget::Instance(..) => write!(f, "instance"),
+            VpcFirewallRuleTarget::Ip(..) => write!(f, "ip"),
+            VpcFirewallRuleTarget::IpNet(..) => write!(f, "ip_net"),
+            VpcFirewallRuleTarget::Subnet(..) => write!(f, "subnet"),
+            VpcFirewallRuleTarget::Vpc(..) => write!(f, "vpc"),
+        }
+    }
+}
+
+/// A single rule in a VPC firewall
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct VpcFirewallRule {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    #[serde(default, skip_serializing_if = "VpcFirewallRuleAction::is_noop")]
+    pub action: VpcFirewallRuleAction,
+
+    #[serde(default, skip_serializing_if = "VpcFirewallRuleDirection::is_noop")]
+    pub direction: VpcFirewallRuleDirection,
+
+    /**
+     * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
+     */
+    #[serde()]
+    #[header(hidden = true)]
+    pub filters: VpcFirewallRuleFilter,
+
+    /**
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub priority: i64,
+
+    #[serde(default, skip_serializing_if = "VpcFirewallRuleStatus::is_noop")]
+    pub status: VpcFirewallRuleStatus,
+
+    /**
+     * list of sets of instances that the rule applies to
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub targets: Vec<VpcFirewallRuleTarget>,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub vpc_id: String,
+}
+
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "type", content = "value")]
@@ -2557,76 +2743,6 @@ impl VpcFirewallRuleProtocol {
     }
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub enum VpcFirewallRuleStatus {
-    #[serde(rename = "disabled")]
-    Disabled,
-    #[serde(rename = "enabled")]
-    Enabled,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for VpcFirewallRuleStatus {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            VpcFirewallRuleStatus::Disabled => "disabled",
-            VpcFirewallRuleStatus::Enabled => "enabled",
-            VpcFirewallRuleStatus::Noop => "",
-            VpcFirewallRuleStatus::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for VpcFirewallRuleStatus {
-    fn default() -> VpcFirewallRuleStatus {
-        VpcFirewallRuleStatus::Disabled
-    }
-}
-impl std::str::FromStr for VpcFirewallRuleStatus {
-    type Err = anyhow::Error;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "disabled" {
-            return Ok(VpcFirewallRuleStatus::Disabled);
-        }
-        if s == "enabled" {
-            return Ok(VpcFirewallRuleStatus::Enabled);
-        }
-        anyhow::bail!("invalid string: {}", s);
-    }
-}
-impl VpcFirewallRuleStatus {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, VpcFirewallRuleStatus::Noop)
-    }
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
-#[serde(tag = "type", content = "value")]
-pub enum VpcFirewallRuleTarget {
-    Ip(String),
-    IpNet(IpNet),
-    Vpc(String),
-    Subnet(String),
-    Instance(String),
-}
-
-impl fmt::Display for VpcFirewallRuleTarget {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            VpcFirewallRuleTarget::Instance(..) => write!(f, "instance"),
-            VpcFirewallRuleTarget::Ip(..) => write!(f, "ip"),
-            VpcFirewallRuleTarget::IpNet(..) => write!(f, "ip_net"),
-            VpcFirewallRuleTarget::Subnet(..) => write!(f, "subnet"),
-            VpcFirewallRuleTarget::Vpc(..) => write!(f, "vpc"),
-        }
-    }
-}
-
 /// A single rule in a VPC firewall
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcFirewallRuleUpdate {
@@ -2650,10 +2766,10 @@ pub struct VpcFirewallRuleUpdate {
     )]
     pub description: String,
 
-    #[serde()]
+    #[serde(default, skip_serializing_if = "VpcFirewallRuleAction::is_noop")]
     pub action: VpcFirewallRuleAction,
 
-    #[serde()]
+    #[serde(default, skip_serializing_if = "VpcFirewallRuleDirection::is_noop")]
     pub direction: VpcFirewallRuleDirection,
 
     /**
@@ -2675,7 +2791,7 @@ pub struct VpcFirewallRuleUpdate {
     )]
     pub priority: i64,
 
-    #[serde()]
+    #[serde(default, skip_serializing_if = "VpcFirewallRuleStatus::is_noop")]
     pub status: VpcFirewallRuleStatus,
 
     /**
@@ -2739,65 +2855,6 @@ pub struct VpcResultsPage {
     pub next_page: String,
 }
 
-/// A VPC router defines a series of rules that indicate where traffic should be sent depending on its destination.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct VpcRouter {
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub id: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
-
-    #[serde()]
-    pub kind: VpcRouterKind,
-
-    /**
-     * timestamp when this resource was created
-     */
-    #[serde()]
-    pub time_created: crate::utils::DisplayOptionDateTime,
-
-    /**
-     * timestamp when this resource was created
-     */
-    #[serde()]
-    pub time_modified: crate::utils::DisplayOptionDateTime,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub vpc_id: String,
-}
-
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum VpcRouterKind {
     #[serde(rename = "custom")]
@@ -2843,6 +2900,89 @@ impl VpcRouterKind {
     pub fn is_noop(&self) -> bool {
         matches!(self, VpcRouterKind::Noop)
     }
+}
+
+/// A VPC router defines a series of rules that indicate where traffic should be sent depending on its destination.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct VpcRouter {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    #[serde(default, skip_serializing_if = "VpcRouterKind::is_noop")]
+    pub kind: VpcRouterKind,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub vpc_id: String,
+}
+
+/// Create-time parameters for an [`Organization`](crate::external_api::views::Organization)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct VpcRouterCreate {
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
 }
 
 /// A single page of results

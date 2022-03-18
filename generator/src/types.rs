@@ -16,6 +16,9 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
         out.push('\n');
     };
 
+    // Make sure we don't generate duplicate types.
+    let mut seen: BTreeMap<String, bool> = BTreeMap::new();
+
     a("//! The data types sent to and returned from the API client.");
     a("    use schemars::JsonSchema;");
     a("    use serde::{Serialize, Deserialize};");
@@ -26,6 +29,12 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
     for te in ts.clone().id_to_entry.values() {
         if let Some(sn) = te.name.as_deref() {
             let sn = struct_name(sn);
+
+            if seen.contains_key(sn.as_str()) {
+                continue;
+            }
+
+            seen.insert(sn.clone(), true);
 
             match &te.details {
                 TypeDetails::Enum(vals, schema_data) => {
@@ -42,6 +51,7 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                     );
                     a(&p);
                 }
+                TypeDetails::Placeholder(..) => {}
                 TypeDetails::OneOf(omap, _) => a(&do_of_type(ts, omap, sn)),
                 TypeDetails::AnyOf(omap, _) => a(&do_all_of_type(ts, omap, sn)),
                 TypeDetails::AllOf(omap, _) => a(&do_all_of_type(ts, omap, sn)),
@@ -104,6 +114,23 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                 TypeDetails::Basic(..) => {}
                 TypeDetails::Unknown => {}
                 TypeDetails::NamedType(..) => {}
+                TypeDetails::ComponentSchema(tid, schema_data) => {
+                    let desc = if let Some(description) = &schema_data.description {
+                        format!("/// {}", description.replace('\n', "\n/// "))
+                    } else {
+                        "".to_string()
+                    };
+
+                    if !desc.is_empty() {
+                        a(&desc);
+                    }
+
+                    a(&format!(
+                        "pub type {} = {};",
+                        sn,
+                        ts.render_type(tid, true)?
+                    ));
+                }
                 TypeDetails::Array(..) => {}
                 TypeDetails::Optional(..) => {}
             }

@@ -139,7 +139,7 @@ impl Routers {
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-        body: &crate::types::OrganizationCreate,
+        body: &crate::types::VpcRouterCreate,
     ) -> Result<crate::types::VpcRouter> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers",
