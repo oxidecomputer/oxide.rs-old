@@ -2200,10 +2200,6 @@ fn render_param(
     a(r#"fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {"#);
     a(r#"match &*self {"#);
     for e in &enums {
-        if struct_name(e).is_empty() {
-            // TODO: do something for empty(?)
-            continue;
-        }
         a(&format!(r#"{}::{} => "{}","#, sn, struct_name(e), e));
     }
     if !required && default.is_none() {
@@ -2238,6 +2234,22 @@ fn render_param(
         a("}");
         a("}");
     }
+
+    // Let's implement FromStr for clap so we can use enums there.
+    a(&format!("impl std::str::FromStr for {} {{", sn));
+    a("type Err = anyhow::Error;");
+    a("fn from_str(s: &str) -> Result<Self, Self::Err> {");
+    for e in &enums {
+        a(&format!(
+            r#"if s == "{}" {{ return Ok({}::{}); }}"#,
+            e,
+            sn,
+            struct_name(e),
+        ));
+    }
+    a(r#"anyhow::bail!("invalid string: {}", s);"#);
+    a("}");
+    a("}");
 
     // Add a method to check if it is empty if it has this Noop state.
     if !required && default.is_none() {

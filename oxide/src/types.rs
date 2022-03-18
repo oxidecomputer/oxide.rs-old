@@ -58,6 +58,39 @@ impl Default for DatumType {
         DatumType::Noop
     }
 }
+impl std::str::FromStr for DatumType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "Bool" {
+            return Ok(DatumType::Bool);
+        }
+        if s == "Bytes" {
+            return Ok(DatumType::Bytes);
+        }
+        if s == "CumulativeF64" {
+            return Ok(DatumType::CumulativeF64);
+        }
+        if s == "CumulativeI64" {
+            return Ok(DatumType::CumulativeI64);
+        }
+        if s == "F64" {
+            return Ok(DatumType::F64);
+        }
+        if s == "HistogramF64" {
+            return Ok(DatumType::HistogramF64);
+        }
+        if s == "HistogramI64" {
+            return Ok(DatumType::HistogramI64);
+        }
+        if s == "I64" {
+            return Ok(DatumType::I64);
+        }
+        if s == "String" {
+            return Ok(DatumType::String);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
 impl DatumType {
     pub fn is_noop(&self) -> bool {
         matches!(self, DatumType::Noop)
@@ -352,6 +385,18 @@ impl Default for FieldSource {
         FieldSource::Noop
     }
 }
+impl std::str::FromStr for FieldSource {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "Metric" {
+            return Ok(FieldSource::Metric);
+        }
+        if s == "Target" {
+            return Ok(FieldSource::Target);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
 impl FieldSource {
     pub fn is_noop(&self) -> bool {
         matches!(self, FieldSource::Noop)
@@ -399,6 +444,27 @@ impl Default for FieldType {
         FieldType::Noop
     }
 }
+impl std::str::FromStr for FieldType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "Bool" {
+            return Ok(FieldType::Bool);
+        }
+        if s == "I64" {
+            return Ok(FieldType::I64);
+        }
+        if s == "IpAddr" {
+            return Ok(FieldType::IpAddr);
+        }
+        if s == "String" {
+            return Ok(FieldType::String);
+        }
+        if s == "Uuid" {
+            return Ok(FieldType::Uuid);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
 impl FieldType {
     pub fn is_noop(&self) -> bool {
         matches!(self, FieldType::Noop)
@@ -434,6 +500,15 @@ impl std::fmt::Display for IdSortModeAscending {
 impl Default for IdSortModeAscending {
     fn default() -> IdSortModeAscending {
         IdSortModeAscending::Noop
+    }
+}
+impl std::str::FromStr for IdSortModeAscending {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "id-ascending" {
+            return Ok(IdSortModeAscending::IdAscending);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 impl IdSortModeAscending {
@@ -737,6 +812,42 @@ impl Default for InstanceState {
         InstanceState::Noop
     }
 }
+impl std::str::FromStr for InstanceState {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "creating" {
+            return Ok(InstanceState::Creating);
+        }
+        if s == "destroyed" {
+            return Ok(InstanceState::Destroyed);
+        }
+        if s == "failed" {
+            return Ok(InstanceState::Failed);
+        }
+        if s == "migrating" {
+            return Ok(InstanceState::Migrating);
+        }
+        if s == "rebooting" {
+            return Ok(InstanceState::Rebooting);
+        }
+        if s == "repairing" {
+            return Ok(InstanceState::Repairing);
+        }
+        if s == "running" {
+            return Ok(InstanceState::Running);
+        }
+        if s == "starting" {
+            return Ok(InstanceState::Starting);
+        }
+        if s == "stopped" {
+            return Ok(InstanceState::Stopped);
+        }
+        if s == "stopping" {
+            return Ok(InstanceState::Stopping);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
 impl InstanceState {
     pub fn is_noop(&self) -> bool {
         matches!(self, InstanceState::Noop)
@@ -806,6 +917,21 @@ impl Default for NameSortMode {
         NameSortMode::Noop
     }
 }
+impl std::str::FromStr for NameSortMode {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "id-ascending" {
+            return Ok(NameSortMode::IdAscending);
+        }
+        if s == "name-ascending" {
+            return Ok(NameSortMode::NameAscending);
+        }
+        if s == "name-descending" {
+            return Ok(NameSortMode::NameDescending);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
 impl NameSortMode {
     pub fn is_noop(&self) -> bool {
         matches!(self, NameSortMode::Noop)
@@ -841,6 +967,15 @@ impl std::fmt::Display for NameSortModeAscending {
 impl Default for NameSortModeAscending {
     fn default() -> NameSortModeAscending {
         NameSortModeAscending::Noop
+    }
+}
+impl std::str::FromStr for NameSortModeAscending {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "name-ascending" {
+            return Ok(NameSortModeAscending::NameAscending);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 impl NameSortModeAscending {
@@ -1496,6 +1631,24 @@ impl std::fmt::Display for RouteKind {
 impl Default for RouteKind {
     fn default() -> RouteKind {
         RouteKind::Noop
+    }
+}
+impl std::str::FromStr for RouteKind {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "custom" {
+            return Ok(RouteKind::Custom);
+        }
+        if s == "default" {
+            return Ok(RouteKind::Default);
+        }
+        if s == "vpc_peering" {
+            return Ok(RouteKind::VpcPeering);
+        }
+        if s == "vpc_subnet" {
+            return Ok(RouteKind::Subnet);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 impl RouteKind {
@@ -2212,6 +2365,18 @@ impl Default for FirewallRuleAction {
         FirewallRuleAction::Noop
     }
 }
+impl std::str::FromStr for FirewallRuleAction {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "allow" {
+            return Ok(FirewallRuleAction::Allow);
+        }
+        if s == "deny" {
+            return Ok(FirewallRuleAction::Deny);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
 impl FirewallRuleAction {
     pub fn is_noop(&self) -> bool {
         matches!(self, FirewallRuleAction::Noop)
@@ -2245,6 +2410,18 @@ impl std::fmt::Display for FirewallRuleDirection {
 impl Default for FirewallRuleDirection {
     fn default() -> FirewallRuleDirection {
         FirewallRuleDirection::Noop
+    }
+}
+impl std::str::FromStr for FirewallRuleDirection {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "inbound" {
+            return Ok(FirewallRuleDirection::Inbound);
+        }
+        if s == "outbound" {
+            return Ok(FirewallRuleDirection::Outbound);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 impl FirewallRuleDirection {
@@ -2343,6 +2520,21 @@ impl Default for FirewallRuleProtocol {
         FirewallRuleProtocol::Noop
     }
 }
+impl std::str::FromStr for FirewallRuleProtocol {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "ICMP" {
+            return Ok(FirewallRuleProtocol::Icmp);
+        }
+        if s == "TCP" {
+            return Ok(FirewallRuleProtocol::Tcp);
+        }
+        if s == "UDP" {
+            return Ok(FirewallRuleProtocol::Udp);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
 impl FirewallRuleProtocol {
     pub fn is_noop(&self) -> bool {
         matches!(self, FirewallRuleProtocol::Noop)
@@ -2376,6 +2568,18 @@ impl std::fmt::Display for FirewallRuleStatus {
 impl Default for FirewallRuleStatus {
     fn default() -> FirewallRuleStatus {
         FirewallRuleStatus::Noop
+    }
+}
+impl std::str::FromStr for FirewallRuleStatus {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "disabled" {
+            return Ok(FirewallRuleStatus::Disabled);
+        }
+        if s == "enabled" {
+            return Ok(FirewallRuleStatus::Enabled);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 impl FirewallRuleStatus {
@@ -2601,6 +2805,18 @@ impl std::fmt::Display for RouterKind {
 impl Default for RouterKind {
     fn default() -> RouterKind {
         RouterKind::Noop
+    }
+}
+impl std::str::FromStr for RouterKind {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "custom" {
+            return Ok(RouterKind::Custom);
+        }
+        if s == "system" {
+            return Ok(RouterKind::System);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 impl RouterKind {
