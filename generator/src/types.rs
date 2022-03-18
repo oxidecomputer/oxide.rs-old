@@ -452,7 +452,7 @@ fn do_of_type(
     // Now we need to implement display for the enum.
     a(&format!("impl fmt::Display for {} {{", sn));
     a("fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {");
-    a("   write!(f, \"{}\", serde_json::json!(self).to_string())");
+    a("   write!(f, \"{}\", serde_json::json!(self))");
     a("}");
     a("}");
     a("");

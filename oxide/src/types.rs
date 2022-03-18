@@ -112,7 +112,7 @@ pub enum DiskState {
 
 impl fmt::Display for DiskState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self).to_string())
+        write!(f, "{}", serde_json::json!(self))
     }
 }
 
@@ -720,7 +720,7 @@ pub enum InstanceNetworkInterfaceAttachment {
 
 impl fmt::Display for InstanceNetworkInterfaceAttachment {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self).to_string())
+        write!(f, "{}", serde_json::json!(self))
     }
 }
 
@@ -898,7 +898,7 @@ pub enum IpNet {
 
 impl fmt::Display for IpNet {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self).to_string())
+        write!(f, "{}", serde_json::json!(self))
     }
 }
 
@@ -1519,7 +1519,7 @@ pub enum RouteDestination {
 
 impl fmt::Display for RouteDestination {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self).to_string())
+        write!(f, "{}", serde_json::json!(self))
     }
 }
 
@@ -1543,7 +1543,7 @@ pub enum RouteTarget {
 
 impl fmt::Display for RouteTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self).to_string())
+        write!(f, "{}", serde_json::json!(self))
     }
 }
 
@@ -1784,7 +1784,7 @@ pub enum SagaState {
 
 impl fmt::Display for SagaState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self).to_string())
+        write!(f, "{}", serde_json::json!(self))
     }
 }
 
@@ -1824,7 +1824,7 @@ pub enum SagaErrorInfo {
 
 impl fmt::Display for SagaErrorInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self).to_string())
+        write!(f, "{}", serde_json::json!(self))
     }
 }
 
@@ -2540,7 +2540,7 @@ pub enum VpcFirewallRuleTarget {
 
 impl fmt::Display for VpcFirewallRuleTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self).to_string())
+        write!(f, "{}", serde_json::json!(self))
     }
 }
 
@@ -2653,7 +2653,7 @@ pub enum VpcFirewallRuleHostFilter {
 
 impl fmt::Display for VpcFirewallRuleHostFilter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self).to_string())
+        write!(f, "{}", serde_json::json!(self))
     }
 }
 
