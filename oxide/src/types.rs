@@ -108,25 +108,8 @@ pub struct Disk {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub device_path: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
     pub id: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -136,6 +119,27 @@ pub struct Disk {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub device_path: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -145,6 +149,7 @@ pub struct Disk {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub project_id: String,
+
     /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
@@ -156,6 +161,7 @@ pub struct Disk {
         deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
     )]
     pub size: i64,
+
     /**
      * Client view of an [`Disk`]
      */
@@ -165,8 +171,10 @@ pub struct Disk {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub snapshot_id: String,
+
     #[serde()]
     pub state: DiskState,
+
     /**
      * timestamp when this resource was created
      */
@@ -177,6 +185,7 @@ pub struct Disk {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -200,7 +209,8 @@ pub struct DiskCreate {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
+    pub name: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -209,7 +219,8 @@ pub struct DiskCreate {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub name: String,
+    pub description: String,
+
     /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
@@ -221,6 +232,7 @@ pub struct DiskCreate {
         deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
     )]
     pub size: i64,
+
     /**
      * Create-time parameters for a [`Disk`](omicron_common::api::external::Disk)
      */
@@ -259,6 +271,7 @@ pub struct DiskResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Disk>,
+
     /**
      * A single page of results
      */
@@ -309,6 +322,7 @@ pub struct Error {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub error_code: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -318,6 +332,7 @@ pub struct Error {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub message: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -341,11 +356,13 @@ pub struct FieldSchema {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
     /**
      * The source from which a field is derived, the target or metric.
      */
     #[serde()]
     pub source: FieldSource,
+
     /**
      * The `FieldType` identifies the data type of a target or metric field.
      */
@@ -528,7 +545,28 @@ pub struct Instance {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
+    pub id: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
     pub description: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -538,15 +576,7 @@ pub struct Instance {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub hostname: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub id: String,
+
     /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
@@ -558,15 +588,7 @@ pub struct Instance {
         deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
     )]
     pub memory: i64,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
+
     /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
@@ -578,6 +600,7 @@ pub struct Instance {
         deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
     )]
     pub ncpus: i64,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -587,6 +610,7 @@ pub struct Instance {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub project_id: String,
+
     /**
      * Running state of an Instance (primarily: booted or stopped)
      *  
@@ -594,6 +618,7 @@ pub struct Instance {
      */
     #[serde()]
     pub run_state: InstanceState,
+
     /**
      * timestamp when this resource was created
      */
@@ -604,6 +629,7 @@ pub struct Instance {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -614,6 +640,7 @@ pub struct Instance {
     )]
     #[header(hidden = true)]
     pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -637,7 +664,18 @@ pub struct InstanceCreate {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
     pub description: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -647,6 +685,7 @@ pub struct InstanceCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub hostname: String,
+
     /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
@@ -658,15 +697,7 @@ pub struct InstanceCreate {
         deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
     )]
     pub memory: i64,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
+
     /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
@@ -678,6 +709,7 @@ pub struct InstanceCreate {
         deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
     )]
     pub ncpus: i64,
+
     /**
      * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
      */
@@ -743,6 +775,7 @@ pub struct InstanceResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Instance>,
+
     /**
      * A single page of results
      */
@@ -995,43 +1028,8 @@ pub struct NetworkInterface {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
     pub id: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub instance_id: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub ip: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub mac: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1041,6 +1039,47 @@ pub struct NetworkInterface {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub instance_id: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub ip: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub mac: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1050,6 +1089,7 @@ pub struct NetworkInterface {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub subnet_id: String,
+
     /**
      * timestamp when this resource was created
      */
@@ -1060,6 +1100,7 @@ pub struct NetworkInterface {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -1070,6 +1111,7 @@ pub struct NetworkInterface {
     )]
     #[header(hidden = true)]
     pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1092,7 +1134,18 @@ pub struct NetworkInterfaceCreate {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
     pub description: String,
+
     /**
      * Create-time parameters for a [`NetworkInterface`](omicron_common::api::external::NetworkInterface)
      */
@@ -1102,15 +1155,7 @@ pub struct NetworkInterfaceCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub ip: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1120,6 +1165,7 @@ pub struct NetworkInterfaceCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub subnet_name: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1144,6 +1190,7 @@ pub struct NetworkInterfaceResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<NetworkInterface>,
+
     /**
      * A single page of results
      */
@@ -1166,16 +1213,8 @@ pub struct Rack {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
     pub id: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1185,6 +1224,17 @@ pub struct Rack {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
     /**
      * timestamp when this resource was created
      */
@@ -1195,6 +1245,7 @@ pub struct Rack {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -1218,7 +1269,8 @@ pub struct RouterCreate {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
+    pub name: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1227,7 +1279,7 @@ pub struct RouterCreate {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub name: String,
+    pub description: String,
 }
 
 /// A single page of results
@@ -1243,6 +1295,7 @@ pub struct OrganizationResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Rack>,
+
     /**
      * A single page of results
      */
@@ -1257,6 +1310,13 @@ pub struct OrganizationResultsPage {
 /// Updateable properties of an [`Organization`](crate::external_api::views::Organization)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct OrganizationUpdate {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
     /**
      * Updateable properties of an [`Organization`](crate::external_api::views::Organization)
      */
@@ -1266,12 +1326,6 @@ pub struct OrganizationUpdate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
 }
 
 /// Client view of a [`Project`]
@@ -1285,16 +1339,8 @@ pub struct Project {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
     pub id: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1304,6 +1350,17 @@ pub struct Project {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1313,6 +1370,7 @@ pub struct Project {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub organization_id: String,
+
     /**
      * timestamp when this resource was created
      */
@@ -1323,6 +1381,7 @@ pub struct Project {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -1348,6 +1407,7 @@ pub struct ProjectResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Project>,
+
     /**
      * A single page of results
      */
@@ -1362,6 +1422,13 @@ pub struct ProjectResultsPage {
 /// Updateable properties of a [`Project`](crate::external_api::views::Project)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct ProjectUpdate {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
     /**
      * Updateable properties of a [`Project`](crate::external_api::views::Project)
      */
@@ -1371,12 +1438,6 @@ pub struct ProjectUpdate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
 }
 
 /// A single page of results
@@ -1392,6 +1453,7 @@ pub struct RackResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Rack>,
+
     /**
      * A single page of results
      */
@@ -1414,7 +1476,8 @@ pub struct Role {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
+    pub name: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1423,7 +1486,7 @@ pub struct Role {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub name: String,
+    pub description: String,
 }
 
 /// A single page of results
@@ -1439,6 +1502,7 @@ pub struct RoleResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Role>,
+
     /**
      * A single page of results
      */
@@ -1505,25 +1569,8 @@ pub struct Route {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    #[serde()]
-    pub destination: RouteDestination,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
     pub id: String,
-    /**
-     * The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
-     *  
-     *  See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
-     */
-    #[serde()]
-    pub kind: RouteKind,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1533,6 +1580,28 @@ pub struct Route {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    #[serde()]
+    pub destination: RouteDestination,
+
+    /**
+     * The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
+     *  
+     *  See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
+     */
+    #[serde()]
+    pub kind: RouteKind,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1542,8 +1611,10 @@ pub struct Route {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub router_id: String,
+
     #[serde()]
     pub target: RouteTarget,
+
     /**
      * timestamp when this resource was created
      */
@@ -1554,6 +1625,7 @@ pub struct Route {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -1577,9 +1649,8 @@ pub struct RouteCreateParams {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    #[serde()]
-    pub destination: RouteDestination,
+    pub name: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1588,7 +1659,11 @@ pub struct RouteCreateParams {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub name: String,
+    pub description: String,
+
+    #[serde()]
+    pub destination: RouteDestination,
+
     #[serde()]
     pub target: RouteTarget,
 }
@@ -1670,6 +1745,7 @@ pub struct RouteResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Route>,
+
     /**
      * A single page of results
      */
@@ -1684,6 +1760,13 @@ pub struct RouteResultsPage {
 /// Updateable properties of a [`RouterRoute`]
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct RouteUpdateParams {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
     /**
      * Updateable properties of a [`RouterRoute`]
      */
@@ -1693,14 +1776,10 @@ pub struct RouteUpdateParams {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
+
     #[serde()]
     pub destination: RouteDestination,
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
+
     #[serde()]
     pub target: RouteTarget,
 }
@@ -1716,6 +1795,7 @@ pub struct Saga {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub id: String,
+
     #[serde()]
     pub state: SagaState,
 }
@@ -1756,6 +1836,7 @@ pub struct SagaResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Saga>,
+
     /**
      * A single page of results
      */
@@ -1814,16 +1895,8 @@ pub struct Sled {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
     pub id: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1833,6 +1906,17 @@ pub struct Sled {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1842,6 +1926,7 @@ pub struct Sled {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub service_address: String,
+
     /**
      * timestamp when this resource was created
      */
@@ -1852,6 +1937,7 @@ pub struct Sled {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -1877,6 +1963,7 @@ pub struct SledResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Sled>,
+
     /**
      * A single page of results
      */
@@ -1899,25 +1986,8 @@ pub struct Snapshot {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub disk_id: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
     pub id: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1927,6 +1997,27 @@ pub struct Snapshot {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub disk_id: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1936,6 +2027,7 @@ pub struct Snapshot {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub project_id: String,
+
     /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
@@ -1947,6 +2039,7 @@ pub struct Snapshot {
         deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
     )]
     pub size: i64,
+
     /**
      * timestamp when this resource was created
      */
@@ -1957,6 +2050,7 @@ pub struct Snapshot {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -1980,7 +2074,18 @@ pub struct SnapshotCreate {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
     pub description: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -1990,15 +2095,6 @@ pub struct SnapshotCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub disk: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
 }
 
 /// A single page of results
@@ -2014,6 +2110,7 @@ pub struct SnapshotResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Snapshot>,
+
     /**
      * A single page of results
      */
@@ -2040,11 +2137,13 @@ pub struct TimeseriesSchema {
     )]
     #[header(hidden = true)]
     pub created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * The type of an individual datum of a metric.
      */
     #[serde()]
     pub datum_type: DatumType,
+
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -2052,6 +2151,7 @@ pub struct TimeseriesSchema {
     )]
     #[header(hidden = true)]
     pub field_schema: Vec<FieldSchema>,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2076,6 +2176,7 @@ pub struct TimeseriesSchemaResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<TimeseriesSchema>,
+
     /**
      * A single page of results
      */
@@ -2100,6 +2201,7 @@ pub struct UserResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Rack>,
+
     /**
      * A single page of results
      */
@@ -2122,34 +2224,8 @@ pub struct Vpc {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub dns_name: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
     pub id: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub ipv6_prefix: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2159,6 +2235,37 @@ pub struct Vpc {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub dns_name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub ipv6_prefix: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2168,6 +2275,7 @@ pub struct Vpc {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub project_id: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2177,6 +2285,7 @@ pub struct Vpc {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub system_router_id: String,
+
     /**
      * timestamp when this resource was created
      */
@@ -2187,6 +2296,7 @@ pub struct Vpc {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -2210,7 +2320,18 @@ pub struct VpcCreate {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
     pub description: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2220,6 +2341,7 @@ pub struct VpcCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub dns_name: String,
+
     /**
      * The IPv6 prefix for this VPC.
      *  
@@ -2231,39 +2353,11 @@ pub struct VpcCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub ipv6_prefix: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
 }
 
 /// A single rule in a VPC firewall
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct FirewallRule {
-    #[serde()]
-    pub action: FirewallRuleAction,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
-    #[serde()]
-    pub direction: FirewallRuleDirection,
-    /**
-     * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
-     */
-    #[serde()]
-    #[header(hidden = true)]
-    pub filters: FirewallRuleFilter,
     /**
      * human-readable free-form text about a resource
      */
@@ -2273,6 +2367,7 @@ pub struct FirewallRule {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub id: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2282,6 +2377,30 @@ pub struct FirewallRule {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    #[serde()]
+    pub action: FirewallRuleAction,
+
+    #[serde()]
+    pub direction: FirewallRuleDirection,
+
+    /**
+     * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
+     */
+    #[serde()]
+    #[header(hidden = true)]
+    pub filters: FirewallRuleFilter,
+
     /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
@@ -2293,8 +2412,10 @@ pub struct FirewallRule {
         deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
     )]
     pub priority: i64,
+
     #[serde()]
     pub status: FirewallRuleStatus,
+
     /**
      * list of sets of instances that the rule applies to
      */
@@ -2305,6 +2426,7 @@ pub struct FirewallRule {
     )]
     #[header(hidden = true)]
     pub targets: Vec<FirewallRuleTarget>,
+
     /**
      * timestamp when this resource was created
      */
@@ -2315,6 +2437,7 @@ pub struct FirewallRule {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -2325,6 +2448,7 @@ pub struct FirewallRule {
     )]
     #[header(hidden = true)]
     pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2442,6 +2566,7 @@ pub struct FirewallRuleFilter {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     pub hosts: Vec<FirewallRuleHostFilter>,
+
     /**
      * If present, the destination ports this rule applies to.
      */
@@ -2451,6 +2576,7 @@ pub struct FirewallRuleFilter {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     pub ports: Vec<String>,
+
     /**
      * If present, the networking protocols this rule applies to.
      */
@@ -2614,25 +2740,6 @@ impl fmt::Display for FirewallRuleTarget {
 /// A single rule in a VPC firewall
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct FirewallRuleUpdate {
-    #[serde()]
-    pub action: FirewallRuleAction,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
-    #[serde()]
-    pub direction: FirewallRuleDirection,
-    /**
-     * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
-     */
-    #[serde()]
-    #[header(hidden = true)]
-    pub filters: FirewallRuleFilter,
     /**
      * human-readable free-form text about a resource
      */
@@ -2642,6 +2749,30 @@ pub struct FirewallRuleUpdate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    #[serde()]
+    pub action: FirewallRuleAction,
+
+    #[serde()]
+    pub direction: FirewallRuleDirection,
+
+    /**
+     * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
+     */
+    #[serde()]
+    #[header(hidden = true)]
+    pub filters: FirewallRuleFilter,
+
     /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
@@ -2653,8 +2784,10 @@ pub struct FirewallRuleUpdate {
         deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
     )]
     pub priority: i64,
+
     #[serde()]
     pub status: FirewallRuleStatus,
+
     /**
      * list of sets of instances that the rule applies to
      */
@@ -2704,6 +2837,7 @@ pub struct VpcResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Vpc>,
+
     /**
      * A single page of results
      */
@@ -2726,18 +2860,8 @@ pub struct Router {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
     pub id: String,
-    #[serde()]
-    pub kind: RouterKind,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2747,6 +2871,20 @@ pub struct Router {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    #[serde()]
+    pub kind: RouterKind,
+
     /**
      * timestamp when this resource was created
      */
@@ -2757,6 +2895,7 @@ pub struct Router {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -2767,6 +2906,7 @@ pub struct Router {
     )]
     #[header(hidden = true)]
     pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2838,6 +2978,7 @@ pub struct RouterResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Router>,
+
     /**
      * A single page of results
      */
@@ -2852,6 +2993,13 @@ pub struct RouterResultsPage {
 /// Updateable properties of a [`VpcRouter`](crate::external_api::views::VpcRouter)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct RouterUpdate {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
     /**
      * Updateable properties of a [`VpcRouter`](crate::external_api::views::VpcRouter)
      */
@@ -2861,12 +3009,6 @@ pub struct RouterUpdate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
 }
 
 /// A VPC subnet represents a logical grouping for instances that allows network traffic between them, within a IPv4 subnetwork or optionall an IPv6 subnetwork.
@@ -2880,34 +3022,8 @@ pub struct Subnet {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub description: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
     pub id: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub ipv4_block: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub ipv6_block: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2917,6 +3033,37 @@ pub struct Subnet {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub ipv4_block: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub ipv6_block: String,
+
     /**
      * timestamp when this resource was created
      */
@@ -2927,6 +3074,7 @@ pub struct Subnet {
     )]
     #[header(hidden = true)]
     pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * timestamp when this resource was created
      */
@@ -2937,6 +3085,7 @@ pub struct Subnet {
     )]
     #[header(hidden = true)]
     pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2959,7 +3108,18 @@ pub struct SubnetCreate {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
     pub description: String,
+
     /**
      * human-readable free-form text about a resource
      */
@@ -2969,6 +3129,7 @@ pub struct SubnetCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub ipv4_block: String,
+
     /**
      * The IPv6 prefix for this VPC.
      *  
@@ -2980,15 +3141,6 @@ pub struct SubnetCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub ipv6_block: String,
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
 }
 
 /// A single page of results
@@ -3004,6 +3156,7 @@ pub struct SubnetResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Subnet>,
+
     /**
      * A single page of results
      */
@@ -3018,6 +3171,13 @@ pub struct SubnetResultsPage {
 /// Updateable properties of a [`VpcSubnet`](crate::external_api::views::VpcSubnet)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SubnetUpdate {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
     /**
      * Updateable properties of a [`VpcSubnet`](crate::external_api::views::VpcSubnet)
      */
@@ -3027,12 +3187,14 @@ pub struct SubnetUpdate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
+
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub ipv4_block: String,
+
     /**
      * The IPv6 prefix for this VPC.
      *  
@@ -3044,17 +3206,18 @@ pub struct SubnetUpdate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub ipv6_block: String,
+}
+
+/// Updateable properties of a [`Vpc`](crate::external_api::views::Vpc)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct VpcUpdate {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub name: String,
-}
 
-/// Updateable properties of a [`Vpc`](crate::external_api::views::Vpc)
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct VpcUpdate {
     /**
      * Updateable properties of a [`Vpc`](crate::external_api::views::Vpc)
      */
@@ -3064,16 +3227,11 @@ pub struct VpcUpdate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
+
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub dns_name: String,
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
 }

@@ -3,7 +3,7 @@ use std::{cmp::Ordering, collections::BTreeMap};
 use anyhow::{bail, Result};
 use inflector::cases::snakecase::to_snake_case;
 
-use crate::{render_param, struct_name, TypeDetails, TypeSpace};
+use crate::{render_param, struct_name, TypeDetails, TypeId, TypeSpace};
 
 /*
  * Declare named types we know about:
@@ -46,6 +46,7 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                 TypeDetails::AnyOf(omap, _) => a(&do_all_of_type(ts, omap, sn)),
                 TypeDetails::AllOf(omap, _) => a(&do_all_of_type(ts, omap, sn)),
                 TypeDetails::Object(omap, schema_data) => {
+                    let mut omap = omap.clone();
                     /*
                      * TODO: This breaks things so ignore for now.
                      * Eventually this should work, we should ignore empty structs.
@@ -82,175 +83,20 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                     a(r#")]"#);
 
                     a(&format!("pub struct {} {{", sn));
-                    for (name, tid) in omap.iter() {
-                        if let Ok(mut rt) = ts.render_type(tid, true) {
-                            let mut prop = name.trim().to_string();
-                            if prop == "next" {
-                                rt = "String".to_string();
-                            }
-                            if prop == "ref"
-                                || prop == "type"
-                                || prop == "self"
-                                || prop == "box"
-                                || prop == "match"
-                                || prop == "foo"
-                                || prop == "enum"
-                                || prop == "const"
-                                || prop == "use"
-                            {
-                                prop = format!("{}_", name);
-                            } else if name == "$ref" {
-                                prop = format!("{}_", name.replace('$', ""));
-                            } else if name == "$type" {
-                                prop = format!("{}__", name.replace('$', ""));
-                            } else if name == "+1" {
-                                prop = "plus_one".to_string()
-                            } else if name == "-1" {
-                                prop = "minus_one".to_string()
-                            } else if name.starts_with('@') {
-                                prop = name.trim_start_matches('@').to_string();
-                            } else if name.starts_with('_') {
-                                prop = name.trim_start_matches('_').to_string();
-                            }
 
-                            // Try to render the docs.
-                            let p = ts.render_docs(tid);
-                            if !p.is_empty() && p != desc {
-                                a("/**");
-                                a(&p);
-                                a("*/");
-                            }
-
-                            let te = ts.id_to_entry.get(tid).unwrap();
-
-                            // Render the serde string.
-                            if rt == "String"
-                                || rt.starts_with("Vec<")
-                                || rt.starts_with("Option<")
-                                || rt.starts_with("BTreeMap<")
-                            {
-                                a(r#"#[serde(default,"#);
-                                if rt == "String" {
-                                    a(r#"skip_serializing_if = "String::is_empty",
-                                        deserialize_with = "crate::utils::deserialize_null_string::deserialize","#);
-                                } else if rt.starts_with("Vec<") {
-                                    a(r#"skip_serializing_if = "Vec::is_empty",
-                                      deserialize_with = "crate::utils::deserialize_null_vector::deserialize","#);
-                                } else if rt.starts_with("std::collections::BTreeMap<") {
-                                    a(
-                                        r#"skip_serializing_if = "std::collections::BTreeMap::is_empty","#,
-                                    );
-                                } else if rt.starts_with("Option<url::Url") {
-                                    a(r#"skip_serializing_if = "Option::is_none",
-                                      deserialize_with = "crate::utils::deserialize_empty_url::deserialize","#);
-                                } else if rt.starts_with("Option<chrono::NaiveDate") {
-                                    a(r#"skip_serializing_if = "Option::is_none",
-                                      deserialize_with = "crate::utils::date_format::deserialize","#);
-                                } else if rt.starts_with("Option<chrono::DateTime") {
-                                    a(r#"skip_serializing_if = "Option::is_none",
-                                      deserialize_with = "crate::utils::date_time_format::deserialize","#);
-                                } else if rt.starts_with("Option<") {
-                                    a(r#"skip_serializing_if = "Option::is_none","#);
-                                }
-                            } else if rt == "bool" {
-                                if sn.ends_with("Request") {
-                                    // We have a request, we want to make sure our bools are
-                                    // options so we don't have to always provide them.
-                                    a(
-                                        r#"#[serde(default, skip_serializing_if = "Option::is_none","#,
-                                    );
-                                    rt = "Option<bool>".to_string();
-                                } else {
-                                    a(r#"#[serde(default,
-                                    deserialize_with = "crate::utils::deserialize_null_boolean::deserialize","#);
-                                }
-                            } else if rt == "i32" {
-                                a(r#"#[serde(default,
-                                    skip_serializing_if = "crate::utils::zero_i32",
-                                    deserialize_with = "crate::utils::deserialize_null_i32::deserialize","#);
-                            } else if rt == "i64" {
-                                a(r#"#[serde(default,
-                                    skip_serializing_if = "crate::utils::zero_i64",
-                                    deserialize_with = "crate::utils::deserialize_null_i64::deserialize","#);
-                            } else if rt == "f32" {
-                                a(r#"#[serde(default,
-                                    skip_serializing_if = "crate::utils::zero_f32",
-                                    deserialize_with = "crate::utils::deserialize_null_f32::deserialize","#);
-                            } else if rt == "f64" {
-                                a(r#"#[serde(default,
-                                    skip_serializing_if = "crate::utils::zero_f64",
-                                    deserialize_with = "crate::utils::deserialize_null_f64::deserialize","#);
-                            } else if rt == "u32" || rt == "u64" {
-                                a(r#"#[serde(default,"#);
-                            } else if let TypeDetails::Enum(_, sd) = &te.details {
-                                // We for sure have a default for every single enum, even
-                                // if the default is a noop.
-                                a(r#"#[serde(default,"#);
-                                // Figure out if its a no op and skip serializing if it is.
-                                if sd.default.is_none() {
-                                    a(&format!(r#"skip_serializing_if = "{}::is_noop","#, rt));
-                                }
-                            } else {
-                                a(r#"#[serde("#);
-                            }
-
-                            if !prop.ends_with('_') {
-                                prop = to_snake_case(&prop);
-                            }
-
-                            // DO this again.
-                            // I know this is shit sue me, but sometimes we change the prop
-                            // so much it becomes one of these, ie. in the case of shipbob.
-                            if prop == "ref"
-                                || prop == "type"
-                                || prop == "self"
-                                || prop == "box"
-                                || prop == "match"
-                                || prop == "foo"
-                                || prop == "enum"
-                                || prop == "const"
-                                || prop == "use"
-                            {
-                                prop = format!("{}_", prop);
-                            }
-
-                            if prop == "ipv_4_block" {
-                                prop = "ipv4_block".to_string();
-                            } else if prop == "ipv_6_block" {
-                                prop = "ipv6_block".to_string();
-                            } else if prop == "ipv_6_prefix" {
-                                prop = "ipv6_prefix".to_string();
-                            } else if prop == "ipv_4_prefix" {
-                                prop = "ipv4_prefix".to_string();
-                            }
-
-                            // Close the serde string.
-                            if *name != prop {
-                                a(&format!(r#"rename = "{}")]"#, name));
-                            } else if rt == "Page" && prop == "page" || rt.ends_with("Page") {
-                                a(r#"default)]"#);
-                            } else {
-                                a(r#")]"#);
-                            }
-
-                            // Hide things from the table that don't implement display.
-                            if (rt.starts_with("Vec<")
-                                || rt.starts_with("Option<chrono::")
-                                || rt.starts_with("Option<InstanceNetwork")
-                                || rt == "FirewallRuleFilter")
-                                && sn != "FirewallRuleFilter"
-                            {
-                                a(r#"#[header(hidden = true)]"#);
-                            }
-
-                            if prop == "type" {
-                                println!("{} {}", sn, prop);
-                            }
-
-                            a(&format!("pub {}: {},", prop, rt));
-                        } else {
-                            bail!("rendering type {} {:?} failed", name, tid);
+                    // If possible we want the order to be id, name, description,
+                    // then everything else.
+                    // Let's shoot for that.
+                    let try_first = vec!["id", "name", "description"];
+                    for f in try_first.iter() {
+                        if let Some(tid) = omap.get(&f.to_string()) {
+                            a(&render_property(ts, tid, f, &desc, &sn)?);
+                            omap.remove(&f.to_string());
                         }
+                    }
+
+                    for (name, tid) in omap.iter() {
+                        a(&render_property(ts, tid, name, &desc, &sn)?);
                     }
                     a("}");
                     a("");
@@ -262,6 +108,188 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                 TypeDetails::Optional(..) => {}
             }
         }
+    }
+
+    Ok(out.to_string())
+}
+
+fn render_property(
+    ts: &mut TypeSpace,
+    tid: &TypeId,
+    name: &str,
+    desc: &str,
+    sn: &str,
+) -> Result<String> {
+    let mut out = String::new();
+
+    let mut a = |s: &str| {
+        out.push_str(s);
+        out.push('\n');
+    };
+
+    if let Ok(mut rt) = ts.render_type(tid, true) {
+        let mut prop = name.trim().to_string();
+        if prop == "next" {
+            rt = "String".to_string();
+        }
+        if prop == "ref"
+            || prop == "type"
+            || prop == "self"
+            || prop == "box"
+            || prop == "match"
+            || prop == "foo"
+            || prop == "enum"
+            || prop == "const"
+            || prop == "use"
+        {
+            prop = format!("{}_", name);
+        } else if name == "$ref" {
+            prop = format!("{}_", name.replace('$', ""));
+        } else if name == "$type" {
+            prop = format!("{}__", name.replace('$', ""));
+        } else if name == "+1" {
+            prop = "plus_one".to_string()
+        } else if name == "-1" {
+            prop = "minus_one".to_string()
+        } else if name.starts_with('@') {
+            prop = name.trim_start_matches('@').to_string();
+        } else if name.starts_with('_') {
+            prop = name.trim_start_matches('_').to_string();
+        }
+
+        // Try to render the docs.
+        let p = ts.render_docs(tid);
+        if !p.is_empty() && p != desc {
+            a("/**");
+            a(&p);
+            a("*/");
+        }
+
+        let te = ts.id_to_entry.get(tid).unwrap();
+
+        // Render the serde string.
+        if rt == "String"
+            || rt.starts_with("Vec<")
+            || rt.starts_with("Option<")
+            || rt.starts_with("BTreeMap<")
+        {
+            a(r#"#[serde(default,"#);
+            if rt == "String" {
+                a(r#"skip_serializing_if = "String::is_empty",
+                                        deserialize_with = "crate::utils::deserialize_null_string::deserialize","#);
+            } else if rt.starts_with("Vec<") {
+                a(r#"skip_serializing_if = "Vec::is_empty",
+                                      deserialize_with = "crate::utils::deserialize_null_vector::deserialize","#);
+            } else if rt.starts_with("std::collections::BTreeMap<") {
+                a(r#"skip_serializing_if = "std::collections::BTreeMap::is_empty","#);
+            } else if rt.starts_with("Option<url::Url") {
+                a(r#"skip_serializing_if = "Option::is_none",
+                                      deserialize_with = "crate::utils::deserialize_empty_url::deserialize","#);
+            } else if rt.starts_with("Option<chrono::NaiveDate") {
+                a(r#"skip_serializing_if = "Option::is_none",
+                                      deserialize_with = "crate::utils::date_format::deserialize","#);
+            } else if rt.starts_with("Option<chrono::DateTime") {
+                a(r#"skip_serializing_if = "Option::is_none",
+                                      deserialize_with = "crate::utils::date_time_format::deserialize","#);
+            } else if rt.starts_with("Option<") {
+                a(r#"skip_serializing_if = "Option::is_none","#);
+            }
+        } else if rt == "bool" {
+            if sn.ends_with("Request") {
+                // We have a request, we want to make sure our bools are
+                // options so we don't have to always provide them.
+                a(r#"#[serde(default, skip_serializing_if = "Option::is_none","#);
+                rt = "Option<bool>".to_string();
+            } else {
+                a(r#"#[serde(default,
+                                    deserialize_with = "crate::utils::deserialize_null_boolean::deserialize","#);
+            }
+        } else if rt == "i32" {
+            a(r#"#[serde(default,
+                                    skip_serializing_if = "crate::utils::zero_i32",
+                                    deserialize_with = "crate::utils::deserialize_null_i32::deserialize","#);
+        } else if rt == "i64" {
+            a(r#"#[serde(default,
+                                    skip_serializing_if = "crate::utils::zero_i64",
+                                    deserialize_with = "crate::utils::deserialize_null_i64::deserialize","#);
+        } else if rt == "f32" {
+            a(r#"#[serde(default,
+                                    skip_serializing_if = "crate::utils::zero_f32",
+                                    deserialize_with = "crate::utils::deserialize_null_f32::deserialize","#);
+        } else if rt == "f64" {
+            a(r#"#[serde(default,
+                                    skip_serializing_if = "crate::utils::zero_f64",
+                                    deserialize_with = "crate::utils::deserialize_null_f64::deserialize","#);
+        } else if rt == "u32" || rt == "u64" {
+            a(r#"#[serde(default,"#);
+        } else if let TypeDetails::Enum(_, sd) = &te.details {
+            // We for sure have a default for every single enum, even
+            // if the default is a noop.
+            a(r#"#[serde(default,"#);
+            // Figure out if its a no op and skip serializing if it is.
+            if sd.default.is_none() {
+                a(&format!(r#"skip_serializing_if = "{}::is_noop","#, rt));
+            }
+        } else {
+            a(r#"#[serde("#);
+        }
+
+        if !prop.ends_with('_') {
+            prop = to_snake_case(&prop);
+        }
+
+        // DO this again.
+        // I know this is shit sue me, but sometimes we change the prop
+        // so much it becomes one of these, ie. in the case of shipbob.
+        if prop == "ref"
+            || prop == "type"
+            || prop == "self"
+            || prop == "box"
+            || prop == "match"
+            || prop == "foo"
+            || prop == "enum"
+            || prop == "const"
+            || prop == "use"
+        {
+            prop = format!("{}_", prop);
+        }
+
+        if prop == "ipv_4_block" {
+            prop = "ipv4_block".to_string();
+        } else if prop == "ipv_6_block" {
+            prop = "ipv6_block".to_string();
+        } else if prop == "ipv_6_prefix" {
+            prop = "ipv6_prefix".to_string();
+        } else if prop == "ipv_4_prefix" {
+            prop = "ipv4_prefix".to_string();
+        }
+
+        // Close the serde string.
+        if *name != prop {
+            a(&format!(r#"rename = "{}")]"#, name));
+        } else if rt == "Page" && prop == "page" || rt.ends_with("Page") {
+            a(r#"default)]"#);
+        } else {
+            a(r#")]"#);
+        }
+
+        // Hide things from the table that don't implement display.
+        if (rt.starts_with("Vec<")
+            || rt.starts_with("Option<chrono::")
+            || rt.starts_with("Option<InstanceNetwork")
+            || rt == "FirewallRuleFilter")
+            && sn != "FirewallRuleFilter"
+        {
+            a(r#"#[header(hidden = true)]"#);
+        }
+
+        if prop == "type" {
+            println!("{} {}", sn, prop);
+        }
+
+        a(&format!("pub {}: {},", prop, rt));
+    } else {
+        bail!("rendering type {} {:?} failed", name, tid);
     }
 
     Ok(out.to_string())
