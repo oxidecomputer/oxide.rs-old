@@ -975,6 +975,7 @@ impl TypeSpace {
                         || rt == "f32"
                         || rt == "f64"
                         || rt.starts_with("Option<")
+                        || rt.starts_with("crate::utils::DisplayOptionDateTime")
                         // This is for ramp, let's hope it doesn't break anything in the future.
                         || rt == "Page"
                         || rt.ends_with("Page")
@@ -1683,7 +1684,7 @@ impl TypeSpace {
                         Item(DateTime) => Ok((
                             Some(uid.to_string()),
                             TypeDetails::Basic(
-                                "Option<chrono::DateTime<chrono::Utc>>".to_string(),
+                                "crate::utils::DisplayOptionDateTime".to_string(),
                                 s.schema_data.clone(),
                             ),
                         )),
@@ -1754,28 +1755,28 @@ impl TypeSpace {
                             "google-datetime" => Ok((
                                 Some(uid.to_string()),
                                 TypeDetails::Basic(
-                                    "Option<chrono::DateTime<chrono::Utc>>".to_string(),
+                                    "crate::utils::DisplayOptionDateTime".to_string(),
                                     s.schema_data.clone(),
                                 ),
                             )),
                             "ISO 8601 date-time" => Ok((
                                 Some(uid.to_string()),
                                 TypeDetails::Basic(
-                                    "Option<chrono::DateTime<chrono::Utc>>".to_string(),
+                                    "crate::utils::DisplayOptionDateTime".to_string(),
                                     s.schema_data.clone(),
                                 ),
                             )),
                             "Promo date-time" => Ok((
                                 Some(uid.to_string()),
                                 TypeDetails::Basic(
-                                    "Option<chrono::DateTime<chrono::Utc>>".to_string(),
+                                    "crate::utils::DisplayOptionDateTime".to_string(),
                                     s.schema_data.clone(),
                                 ),
                             )),
                             "dateTime" => Ok((
                                 Some(uid.to_string()),
                                 TypeDetails::Basic(
-                                    "Option<chrono::DateTime<chrono::Utc>>".to_string(),
+                                    "crate::utils::DisplayOptionDateTime".to_string(),
                                     s.schema_data.clone(),
                                 ),
                             )),
@@ -3024,6 +3025,7 @@ license = "MIT"
 anyhow = "1"
 bytes = {{ version = "1", features = ["serde"] }}
 chrono = {{ version = "0.4", features = ["serde"] }}
+chrono-humanize = "^0.2.1"
 dirs = {{ version = "^4.0.0", optional = true }}
 http = "^0.2.4"
 hyperx = "1"

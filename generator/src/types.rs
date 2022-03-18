@@ -188,7 +188,7 @@ fn render_property(
             } else if rt.starts_with("Option<chrono::NaiveDate") {
                 a(r#"skip_serializing_if = "Option::is_none",
                                       deserialize_with = "crate::utils::date_format::deserialize","#);
-            } else if rt.starts_with("Option<chrono::DateTime") {
+            } else if rt.starts_with("crate::utils::DisplayOptionDateTime") {
                 a(r#"skip_serializing_if = "Option::is_none",
                                       deserialize_with = "crate::utils::date_time_format::deserialize","#);
             } else if rt.starts_with("Option<") {
@@ -275,7 +275,6 @@ fn render_property(
 
         // Hide things from the table that don't implement display.
         if (rt.starts_with("Vec<")
-            || rt.starts_with("Option<chrono::")
             || rt.starts_with("Option<InstanceNetwork")
             || rt == "FirewallRuleFilter")
             && sn != "FirewallRuleFilter"

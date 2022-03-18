@@ -1,6 +1,7 @@
 const TEMPLATE: &str = r#"use std::{fmt, str::FromStr};
 
 use serde::de::{self, Visitor};
+use serde::{Deserialize, Serialize};
 
 pub fn next_link(l: &hyperx::header::Link) -> Option<String> {
     l.values().iter().find_map(|value| {
@@ -641,6 +642,18 @@ pub mod deserialize_null_vector {
         }
 
         Ok(Default::default())
+    }
+}
+
+#[derive(Debug, Clone, Default, Deserialize, Serialize, schemars::JsonSchema, PartialEq)]
+pub struct DisplayOptionDateTime(pub Option<chrono::DateTime<chrono::Utc>>);
+
+impl std::fmt::Display for DisplayOptionDateTime {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self.0 {
+            Some(ref v) => write!(f, "{}", chrono_humanize::HumanTime::from(chrono::Utc::now() - v.clone())),
+            None => write!(f, "")
+        }
     }
 }
 "#;

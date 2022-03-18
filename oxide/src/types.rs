@@ -178,24 +178,14 @@ pub struct Disk {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
 /// Create-time parameters for a [`Disk`](omicron_common::api::external::Disk)
@@ -622,35 +612,20 @@ pub struct Instance {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_run_state_updated: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_run_state_updated: crate::utils::DisplayOptionDateTime,
 }
 
 /// Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
@@ -1093,24 +1068,14 @@ pub struct NetworkInterface {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 
     /**
      * human-readable free-form text about a resource
@@ -1238,24 +1203,14 @@ pub struct Rack {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
 /// Create-time parameters for a [`VpcRouter`](crate::external_api::views::VpcRouter)
@@ -1374,24 +1329,14 @@ pub struct Project {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
 /// A single page of results
@@ -1618,24 +1563,14 @@ pub struct Route {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
 /// Create-time parameters for a [`RouterRoute`]
@@ -1930,24 +1865,14 @@ pub struct Sled {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
 /// A single page of results
@@ -2043,24 +1968,14 @@ pub struct Snapshot {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
 /// Create-time parameters for a [`Snapshot`](omicron_common::api::external::Snapshot)
@@ -2130,13 +2045,8 @@ pub struct TimeseriesSchema {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub created: crate::utils::DisplayOptionDateTime,
 
     /**
      * The type of an individual datum of a metric.
@@ -2289,24 +2199,14 @@ pub struct Vpc {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
 /// Create-time parameters for a [`Vpc`](crate::external_api::views::Vpc)
@@ -2430,24 +2330,14 @@ pub struct FirewallRule {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 
     /**
      * human-readable free-form text about a resource
@@ -2888,24 +2778,14 @@ pub struct Router {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 
     /**
      * human-readable free-form text about a resource
@@ -3067,24 +2947,14 @@ pub struct Subnet {
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_created: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
      * timestamp when this resource was created
      */
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::utils::date_time_format::deserialize"
-    )]
-    #[header(hidden = true)]
-    pub time_modified: Option<chrono::DateTime<chrono::Utc>>,
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
 
     /**
      * human-readable free-form text about a resource
