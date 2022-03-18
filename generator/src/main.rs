@@ -2173,7 +2173,7 @@ fn render_param(
         a("*/");
     }
 
-    a("#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]");
+    a("#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]");
 
     a(&format!("pub enum {} {{", sn));
     for e in &enums {
@@ -3030,6 +3030,7 @@ schemars = {{ version = "0.8", features = ["bytes", "chrono", "url", "uuid"] }}
 serde = {{ version = "1", features = ["derive"] }}
 serde_json = "1"
 serde_urlencoded = "^0.7"
+tabled = {{ version = "0.5.0", features = ["color"] }}
 url = {{ version = "2", features = ["serde"] }}
 uuid = {{ version = "^0.8", features = ["serde", "v4"] }}
 

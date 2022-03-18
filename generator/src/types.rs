@@ -20,6 +20,7 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
     a("    use schemars::JsonSchema;");
     a("    use serde::{Serialize, Deserialize};");
     a("    use std::fmt;");
+    a("    use tabled::Tabled;");
     a("");
 
     for te in ts.clone().id_to_entry.values() {
@@ -66,40 +67,20 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
 
                     // TODO: just make everything a default,
                     // this is gated by the oneof types cooperating.
-                    if sn == "Page"
-                        || sn.ends_with("Page")
-                        || sn == "PagesSourceHash"
-                        || sn == "PagesHttpsCertificate"
-                        || sn == "ErrorDetails"
-                        || sn == "EnvelopeDefinition"
-                        || sn == "Event"
-                        || sn == "User"
-                        || sn == "Group"
-                        || sn == "CalendarResource"
-                        || sn == "Building"
-                        || sn == "Repo"
-                        || sn == "Payload"
-                        || sn == "Actor"
-                        || sn == "File"
-                        || sn == "PostMailSendRequest"
-                        || sn == "FromEmailObject"
-                        || sn == "Personalizations"
-                        || sn == "DescriptionlessJobOptions"
-                        || sn == "DescriptionlessJobOptionsData"
-                        || sn == "DescriptionlessJobOptionsDataType"
-                        || sn == "SubmitJobOptions"
-                        || sn == "SubmitJobOptionsData"
+                    a("#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema,");
+                    if sn != "Saga"
+                        && sn != "RouteUpdateParams"
+                        && sn != "RouteCreateParams"
+                        && sn != "Disk"
+                        && sn != "Route"
                     {
-                        a(
-                            "#[derive(Serialize, Default, Deserialize, PartialEq, Debug, Clone, \
-                             JsonSchema)]",
-                        );
-                    } else {
-                        a(
-                            "#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, \
-                             JsonSchema)]",
-                        );
+                        a("Default,");
                     }
+                    if sn != "FirewallRuleFilter" {
+                        a("Tabled,");
+                    }
+                    a(r#")]"#);
+
                     a(&format!("pub struct {} {{", sn));
                     for (name, tid) in omap.iter() {
                         if let Ok(mut rt) = ts.render_type(tid, true) {
@@ -250,6 +231,16 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                                 a(r#"default)]"#);
                             } else {
                                 a(r#")]"#);
+                            }
+
+                            // Hide things from the table that don't implement display.
+                            if (rt.starts_with("Vec<")
+                                || rt.starts_with("Option<chrono::")
+                                || rt.starts_with("Option<InstanceNetwork")
+                                || rt == "FirewallRuleFilter")
+                                && sn != "FirewallRuleFilter"
+                            {
+                                a(r#"#[header(hidden = true)]"#);
                             }
 
                             if prop == "type" {
@@ -438,11 +429,7 @@ fn do_all_of_type(ts: &mut TypeSpace, omap: &[crate::TypeId], sn: String) -> Str
     description = format!("/// {}", description.replace('\n', "\n/// "));
     a(&description);
 
-    if sn == "SubmitJobOptionsAllOf" || sn == "DescriptionlessJobOptionsAllOf" {
-        a("#[derive(Serialize, Deserialize, Default, PartialEq, Debug, Clone, JsonSchema)]");
-    } else {
-        a("#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]");
-    }
+    a("#[derive(Serialize, Deserialize, Default, PartialEq, Debug, Clone, JsonSchema, Tabled)]");
     a(&format!("pub struct {} {{", sn));
     let mut name_map: BTreeMap<String, String> = Default::default();
     // Becasue we have so many defaults set on our serde types these enums
