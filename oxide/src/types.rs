@@ -112,15 +112,14 @@ pub enum DiskState {
 
 impl fmt::Display for DiskState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            DiskState::Attached(..) => write!(f, "attached"),
-            DiskState::Attaching(..) => write!(f, "attaching"),
-            DiskState::Creating => write!(f, "creating"),
-            DiskState::Destroyed => write!(f, "destroyed"),
-            DiskState::Detached => write!(f, "detached"),
-            DiskState::Detaching(..) => write!(f, "detaching"),
-            DiskState::Faulted => write!(f, "faulted"),
-        }
+        write!(f, "{}", serde_json::json!(self).to_string())
+    }
+}
+
+impl std::str::FromStr for DiskState {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
     }
 }
 
@@ -721,11 +720,14 @@ pub enum InstanceNetworkInterfaceAttachment {
 
 impl fmt::Display for InstanceNetworkInterfaceAttachment {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            InstanceNetworkInterfaceAttachment::Create(..) => write!(f, "Create"),
-            InstanceNetworkInterfaceAttachment::Default => write!(f, "Default"),
-            InstanceNetworkInterfaceAttachment::None => write!(f, "None"),
-        }
+        write!(f, "{}", serde_json::json!(self).to_string())
+    }
+}
+
+impl std::str::FromStr for InstanceNetworkInterfaceAttachment {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
     }
 }
 
@@ -896,10 +898,14 @@ pub enum IpNet {
 
 impl fmt::Display for IpNet {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            IpNet::V4(..) => write!(f, "V4"),
-            IpNet::V6(..) => write!(f, "V6"),
-        }
+        write!(f, "{}", serde_json::json!(self).to_string())
+    }
+}
+
+impl std::str::FromStr for IpNet {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
     }
 }
 
@@ -1513,12 +1519,14 @@ pub enum RouteDestination {
 
 impl fmt::Display for RouteDestination {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            RouteDestination::Ip(..) => write!(f, "ip"),
-            RouteDestination::IpNet(..) => write!(f, "ip_net"),
-            RouteDestination::Subnet(..) => write!(f, "subnet"),
-            RouteDestination::Vpc(..) => write!(f, "vpc"),
-        }
+        write!(f, "{}", serde_json::json!(self).to_string())
+    }
+}
+
+impl std::str::FromStr for RouteDestination {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
     }
 }
 
@@ -1535,13 +1543,14 @@ pub enum RouteTarget {
 
 impl fmt::Display for RouteTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            RouteTarget::Instance(..) => write!(f, "instance"),
-            RouteTarget::InternetGateway(..) => write!(f, "internet_gateway"),
-            RouteTarget::Ip(..) => write!(f, "ip"),
-            RouteTarget::Subnet(..) => write!(f, "subnet"),
-            RouteTarget::Vpc(..) => write!(f, "vpc"),
-        }
+        write!(f, "{}", serde_json::json!(self).to_string())
+    }
+}
+
+impl std::str::FromStr for RouteTarget {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
     }
 }
 
@@ -1775,11 +1784,14 @@ pub enum SagaState {
 
 impl fmt::Display for SagaState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            SagaState::Failed { .. } => write!(f, "failed"),
-            SagaState::Running => write!(f, "running"),
-            SagaState::Succeeded => write!(f, "succeeded"),
-        }
+        write!(f, "{}", serde_json::json!(self).to_string())
+    }
+}
+
+impl std::str::FromStr for SagaState {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
     }
 }
 
@@ -1812,13 +1824,14 @@ pub enum SagaErrorInfo {
 
 impl fmt::Display for SagaErrorInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            SagaErrorInfo::ActionFailed(..) => write!(f, "action_failed"),
-            SagaErrorInfo::DeserializeFailed(..) => write!(f, "deserialize_failed"),
-            SagaErrorInfo::InjectedError => write!(f, "injected_error"),
-            SagaErrorInfo::SerializeFailed(..) => write!(f, "serialize_failed"),
-            SagaErrorInfo::SubsagaCreateFailed(..) => write!(f, "subsaga_create_failed"),
-        }
+        write!(f, "{}", serde_json::json!(self).to_string())
+    }
+}
+
+impl std::str::FromStr for SagaErrorInfo {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
     }
 }
 
@@ -2527,13 +2540,14 @@ pub enum VpcFirewallRuleTarget {
 
 impl fmt::Display for VpcFirewallRuleTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            VpcFirewallRuleTarget::Instance(..) => write!(f, "instance"),
-            VpcFirewallRuleTarget::Ip(..) => write!(f, "ip"),
-            VpcFirewallRuleTarget::IpNet(..) => write!(f, "ip_net"),
-            VpcFirewallRuleTarget::Subnet(..) => write!(f, "subnet"),
-            VpcFirewallRuleTarget::Vpc(..) => write!(f, "vpc"),
-        }
+        write!(f, "{}", serde_json::json!(self).to_string())
+    }
+}
+
+impl std::str::FromStr for VpcFirewallRuleTarget {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
     }
 }
 
@@ -2639,13 +2653,14 @@ pub enum VpcFirewallRuleHostFilter {
 
 impl fmt::Display for VpcFirewallRuleHostFilter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            VpcFirewallRuleHostFilter::Instance(..) => write!(f, "instance"),
-            VpcFirewallRuleHostFilter::Ip(..) => write!(f, "ip"),
-            VpcFirewallRuleHostFilter::IpNet(..) => write!(f, "ip_net"),
-            VpcFirewallRuleHostFilter::Subnet(..) => write!(f, "subnet"),
-            VpcFirewallRuleHostFilter::Vpc(..) => write!(f, "vpc"),
-        }
+        write!(f, "{}", serde_json::json!(self).to_string())
+    }
+}
+
+impl std::str::FromStr for VpcFirewallRuleHostFilter {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
     }
 }
 

@@ -452,14 +452,18 @@ fn do_of_type(
     // Now we need to implement display for the enum.
     a(&format!("impl fmt::Display for {} {{", sn));
     a("fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {");
-    a("match self {");
-    for (p, (t, s)) in types_strings.iter() {
-        a(&format!("{}::{}{} => write!(f, \"{}\"),", sn, p, s, t));
-    }
-    a("}");
+    a("   write!(f, \"{}\", serde_json::json!(self).to_string())");
     a("}");
     a("}");
     a("");
+
+    // Let's implement FromStr for clap so we can use enums there.
+    a(&format!("impl std::str::FromStr for {} {{", sn));
+    a("type Err = anyhow::Error;");
+    a("fn from_str(s: &str) -> Result<Self, Self::Err> {");
+    a("   Ok(serde_json::from_str(s)?)");
+    a("}");
+    a("}");
 
     out
 }
