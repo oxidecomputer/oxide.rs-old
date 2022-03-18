@@ -70,14 +70,14 @@ pub fn generate_types(ts: &mut TypeSpace) -> Result<String> {
                     // this is gated by the oneof types cooperating.
                     a("#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema,");
                     if sn != "Saga"
-                        && sn != "RouteUpdateParams"
-                        && sn != "RouteCreateParams"
+                        && sn != "RouterRouteUpdateParams"
+                        && sn != "RouterRouteCreateParams"
                         && sn != "Disk"
-                        && sn != "Route"
+                        && sn != "RouterRoute"
                     {
                         a("Default,");
                     }
-                    if sn != "FirewallRuleFilter" {
+                    if sn != "VpcFirewallRuleFilter" {
                         a("Tabled,");
                     }
                     a(r#")]"#);
@@ -276,8 +276,8 @@ fn render_property(
         // Hide things from the table that don't implement display.
         if (rt.starts_with("Vec<")
             || rt.starts_with("Option<InstanceNetwork")
-            || rt == "FirewallRuleFilter")
-            && sn != "FirewallRuleFilter"
+            || rt == "VpcFirewallRuleFilter")
+            && sn != "VpcFirewallRuleFilter"
         {
             a(r#"#[header(hidden = true)]"#);
         }

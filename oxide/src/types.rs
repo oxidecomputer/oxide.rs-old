@@ -1505,7 +1505,7 @@ impl fmt::Display for RouteTarget {
 
 /// A route defines a rule that governs where traffic should be sent based on its destination.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub struct Route {
+pub struct RouterRoute {
     /**
      * human-readable free-form text about a resource
      */
@@ -1545,7 +1545,7 @@ pub struct Route {
      *  See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
      */
     #[serde()]
-    pub kind: RouteKind,
+    pub kind: RouterRouteKind,
 
     /**
      * human-readable free-form text about a resource
@@ -1575,7 +1575,7 @@ pub struct Route {
 
 /// Create-time parameters for a [`RouterRoute`]
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub struct RouteCreateParams {
+pub struct RouterRouteCreateParams {
     /**
      * human-readable free-form text about a resource
      */
@@ -1609,7 +1609,7 @@ pub struct RouteCreateParams {
  *   See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub enum RouteKind {
+pub enum RouterRouteKind {
     #[serde(rename = "custom")]
     Custom,
     #[serde(rename = "default")]
@@ -1617,59 +1617,59 @@ pub enum RouteKind {
     #[serde(rename = "vpc_peering")]
     VpcPeering,
     #[serde(rename = "vpc_subnet")]
-    Subnet,
+    VpcSubnet,
     #[serde(rename = "")]
     Noop,
     #[serde(other)]
     FallthroughString,
 }
 
-impl std::fmt::Display for RouteKind {
+impl std::fmt::Display for RouterRouteKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            RouteKind::Custom => "custom",
-            RouteKind::Default => "default",
-            RouteKind::VpcPeering => "vpc_peering",
-            RouteKind::Subnet => "vpc_subnet",
-            RouteKind::Noop => "",
-            RouteKind::FallthroughString => "*",
+            RouterRouteKind::Custom => "custom",
+            RouterRouteKind::Default => "default",
+            RouterRouteKind::VpcPeering => "vpc_peering",
+            RouterRouteKind::VpcSubnet => "vpc_subnet",
+            RouterRouteKind::Noop => "",
+            RouterRouteKind::FallthroughString => "*",
         }
         .fmt(f)
     }
 }
 
-impl Default for RouteKind {
-    fn default() -> RouteKind {
-        RouteKind::Custom
+impl Default for RouterRouteKind {
+    fn default() -> RouterRouteKind {
+        RouterRouteKind::Custom
     }
 }
-impl std::str::FromStr for RouteKind {
+impl std::str::FromStr for RouterRouteKind {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "custom" {
-            return Ok(RouteKind::Custom);
+            return Ok(RouterRouteKind::Custom);
         }
         if s == "default" {
-            return Ok(RouteKind::Default);
+            return Ok(RouterRouteKind::Default);
         }
         if s == "vpc_peering" {
-            return Ok(RouteKind::VpcPeering);
+            return Ok(RouterRouteKind::VpcPeering);
         }
         if s == "vpc_subnet" {
-            return Ok(RouteKind::Subnet);
+            return Ok(RouterRouteKind::VpcSubnet);
         }
         anyhow::bail!("invalid string: {}", s);
     }
 }
-impl RouteKind {
+impl RouterRouteKind {
     pub fn is_noop(&self) -> bool {
-        matches!(self, RouteKind::Noop)
+        matches!(self, RouterRouteKind::Noop)
     }
 }
 
 /// A single page of results
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct RouteResultsPage {
+pub struct RouterRouteResultsPage {
     /**
      * list of items on this page of results
      */
@@ -1679,7 +1679,7 @@ pub struct RouteResultsPage {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub items: Vec<Route>,
+    pub items: Vec<RouterRoute>,
 
     /**
      * A single page of results
@@ -1694,7 +1694,7 @@ pub struct RouteResultsPage {
 
 /// Updateable properties of a [`RouterRoute`]
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub struct RouteUpdateParams {
+pub struct RouterRouteUpdateParams {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2257,7 +2257,7 @@ pub struct VpcCreate {
 
 /// A single rule in a VPC firewall
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct FirewallRule {
+pub struct VpcFirewallRule {
     /**
      * human-readable free-form text about a resource
      */
@@ -2289,17 +2289,17 @@ pub struct FirewallRule {
     pub description: String,
 
     #[serde()]
-    pub action: FirewallRuleAction,
+    pub action: VpcFirewallRuleAction,
 
     #[serde()]
-    pub direction: FirewallRuleDirection,
+    pub direction: VpcFirewallRuleDirection,
 
     /**
      * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
      */
     #[serde()]
     #[header(hidden = true)]
-    pub filters: FirewallRuleFilter,
+    pub filters: VpcFirewallRuleFilter,
 
     /**
      * A count of bytes, typically used either for memory or storage capacity
@@ -2314,7 +2314,7 @@ pub struct FirewallRule {
     pub priority: i64,
 
     #[serde()]
-    pub status: FirewallRuleStatus,
+    pub status: VpcFirewallRuleStatus,
 
     /**
      * list of sets of instances that the rule applies to
@@ -2325,7 +2325,7 @@ pub struct FirewallRule {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub targets: Vec<FirewallRuleTarget>,
+    pub targets: Vec<VpcFirewallRuleTarget>,
 
     /**
      * timestamp when this resource was created
@@ -2351,7 +2351,7 @@ pub struct FirewallRule {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub enum FirewallRuleAction {
+pub enum VpcFirewallRuleAction {
     #[serde(rename = "allow")]
     Allow,
     #[serde(rename = "deny")]
@@ -2362,43 +2362,43 @@ pub enum FirewallRuleAction {
     FallthroughString,
 }
 
-impl std::fmt::Display for FirewallRuleAction {
+impl std::fmt::Display for VpcFirewallRuleAction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            FirewallRuleAction::Allow => "allow",
-            FirewallRuleAction::Deny => "deny",
-            FirewallRuleAction::Noop => "",
-            FirewallRuleAction::FallthroughString => "*",
+            VpcFirewallRuleAction::Allow => "allow",
+            VpcFirewallRuleAction::Deny => "deny",
+            VpcFirewallRuleAction::Noop => "",
+            VpcFirewallRuleAction::FallthroughString => "*",
         }
         .fmt(f)
     }
 }
 
-impl Default for FirewallRuleAction {
-    fn default() -> FirewallRuleAction {
-        FirewallRuleAction::Allow
+impl Default for VpcFirewallRuleAction {
+    fn default() -> VpcFirewallRuleAction {
+        VpcFirewallRuleAction::Allow
     }
 }
-impl std::str::FromStr for FirewallRuleAction {
+impl std::str::FromStr for VpcFirewallRuleAction {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "allow" {
-            return Ok(FirewallRuleAction::Allow);
+            return Ok(VpcFirewallRuleAction::Allow);
         }
         if s == "deny" {
-            return Ok(FirewallRuleAction::Deny);
+            return Ok(VpcFirewallRuleAction::Deny);
         }
         anyhow::bail!("invalid string: {}", s);
     }
 }
-impl FirewallRuleAction {
+impl VpcFirewallRuleAction {
     pub fn is_noop(&self) -> bool {
-        matches!(self, FirewallRuleAction::Noop)
+        matches!(self, VpcFirewallRuleAction::Noop)
     }
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub enum FirewallRuleDirection {
+pub enum VpcFirewallRuleDirection {
     #[serde(rename = "inbound")]
     Inbound,
     #[serde(rename = "outbound")]
@@ -2409,44 +2409,44 @@ pub enum FirewallRuleDirection {
     FallthroughString,
 }
 
-impl std::fmt::Display for FirewallRuleDirection {
+impl std::fmt::Display for VpcFirewallRuleDirection {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            FirewallRuleDirection::Inbound => "inbound",
-            FirewallRuleDirection::Outbound => "outbound",
-            FirewallRuleDirection::Noop => "",
-            FirewallRuleDirection::FallthroughString => "*",
+            VpcFirewallRuleDirection::Inbound => "inbound",
+            VpcFirewallRuleDirection::Outbound => "outbound",
+            VpcFirewallRuleDirection::Noop => "",
+            VpcFirewallRuleDirection::FallthroughString => "*",
         }
         .fmt(f)
     }
 }
 
-impl Default for FirewallRuleDirection {
-    fn default() -> FirewallRuleDirection {
-        FirewallRuleDirection::Inbound
+impl Default for VpcFirewallRuleDirection {
+    fn default() -> VpcFirewallRuleDirection {
+        VpcFirewallRuleDirection::Inbound
     }
 }
-impl std::str::FromStr for FirewallRuleDirection {
+impl std::str::FromStr for VpcFirewallRuleDirection {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "inbound" {
-            return Ok(FirewallRuleDirection::Inbound);
+            return Ok(VpcFirewallRuleDirection::Inbound);
         }
         if s == "outbound" {
-            return Ok(FirewallRuleDirection::Outbound);
+            return Ok(VpcFirewallRuleDirection::Outbound);
         }
         anyhow::bail!("invalid string: {}", s);
     }
 }
-impl FirewallRuleDirection {
+impl VpcFirewallRuleDirection {
     pub fn is_noop(&self) -> bool {
-        matches!(self, FirewallRuleDirection::Noop)
+        matches!(self, VpcFirewallRuleDirection::Noop)
     }
 }
 
 /// Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default)]
-pub struct FirewallRuleFilter {
+pub struct VpcFirewallRuleFilter {
     /**
      * If present, the sources (if incoming) or destinations (if outgoing) this rule applies to.
      */
@@ -2455,7 +2455,7 @@ pub struct FirewallRuleFilter {
         skip_serializing_if = "Vec::is_empty",
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
-    pub hosts: Vec<FirewallRuleHostFilter>,
+    pub hosts: Vec<VpcFirewallRuleHostFilter>,
 
     /**
      * If present, the destination ports this rule applies to.
@@ -2475,13 +2475,13 @@ pub struct FirewallRuleFilter {
         skip_serializing_if = "Vec::is_empty",
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
-    pub protocols: Vec<FirewallRuleProtocol>,
+    pub protocols: Vec<VpcFirewallRuleProtocol>,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "type", content = "value")]
-pub enum FirewallRuleHostFilter {
+pub enum VpcFirewallRuleHostFilter {
     Ip(String),
     IpNet(IpNet),
     Vpc(String),
@@ -2489,14 +2489,14 @@ pub enum FirewallRuleHostFilter {
     Instance(String),
 }
 
-impl fmt::Display for FirewallRuleHostFilter {
+impl fmt::Display for VpcFirewallRuleHostFilter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            FirewallRuleHostFilter::Instance(..) => write!(f, "instance"),
-            FirewallRuleHostFilter::Ip(..) => write!(f, "ip"),
-            FirewallRuleHostFilter::IpNet(..) => write!(f, "ip_net"),
-            FirewallRuleHostFilter::Subnet(..) => write!(f, "subnet"),
-            FirewallRuleHostFilter::Vpc(..) => write!(f, "vpc"),
+            VpcFirewallRuleHostFilter::Instance(..) => write!(f, "instance"),
+            VpcFirewallRuleHostFilter::Ip(..) => write!(f, "ip"),
+            VpcFirewallRuleHostFilter::IpNet(..) => write!(f, "ip_net"),
+            VpcFirewallRuleHostFilter::Subnet(..) => write!(f, "subnet"),
+            VpcFirewallRuleHostFilter::Vpc(..) => write!(f, "vpc"),
         }
     }
 }
@@ -2505,7 +2505,7 @@ impl fmt::Display for FirewallRuleHostFilter {
  * The protocols that may be specified in a firewall rule's filter
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub enum FirewallRuleProtocol {
+pub enum VpcFirewallRuleProtocol {
     #[serde(rename = "ICMP")]
     Icmp,
     #[serde(rename = "TCP")]
@@ -2518,47 +2518,47 @@ pub enum FirewallRuleProtocol {
     FallthroughString,
 }
 
-impl std::fmt::Display for FirewallRuleProtocol {
+impl std::fmt::Display for VpcFirewallRuleProtocol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            FirewallRuleProtocol::Icmp => "ICMP",
-            FirewallRuleProtocol::Tcp => "TCP",
-            FirewallRuleProtocol::Udp => "UDP",
-            FirewallRuleProtocol::Noop => "",
-            FirewallRuleProtocol::FallthroughString => "*",
+            VpcFirewallRuleProtocol::Icmp => "ICMP",
+            VpcFirewallRuleProtocol::Tcp => "TCP",
+            VpcFirewallRuleProtocol::Udp => "UDP",
+            VpcFirewallRuleProtocol::Noop => "",
+            VpcFirewallRuleProtocol::FallthroughString => "*",
         }
         .fmt(f)
     }
 }
 
-impl Default for FirewallRuleProtocol {
-    fn default() -> FirewallRuleProtocol {
-        FirewallRuleProtocol::Icmp
+impl Default for VpcFirewallRuleProtocol {
+    fn default() -> VpcFirewallRuleProtocol {
+        VpcFirewallRuleProtocol::Icmp
     }
 }
-impl std::str::FromStr for FirewallRuleProtocol {
+impl std::str::FromStr for VpcFirewallRuleProtocol {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "ICMP" {
-            return Ok(FirewallRuleProtocol::Icmp);
+            return Ok(VpcFirewallRuleProtocol::Icmp);
         }
         if s == "TCP" {
-            return Ok(FirewallRuleProtocol::Tcp);
+            return Ok(VpcFirewallRuleProtocol::Tcp);
         }
         if s == "UDP" {
-            return Ok(FirewallRuleProtocol::Udp);
+            return Ok(VpcFirewallRuleProtocol::Udp);
         }
         anyhow::bail!("invalid string: {}", s);
     }
 }
-impl FirewallRuleProtocol {
+impl VpcFirewallRuleProtocol {
     pub fn is_noop(&self) -> bool {
-        matches!(self, FirewallRuleProtocol::Noop)
+        matches!(self, VpcFirewallRuleProtocol::Noop)
     }
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub enum FirewallRuleStatus {
+pub enum VpcFirewallRuleStatus {
     #[serde(rename = "disabled")]
     Disabled,
     #[serde(rename = "enabled")]
@@ -2569,45 +2569,45 @@ pub enum FirewallRuleStatus {
     FallthroughString,
 }
 
-impl std::fmt::Display for FirewallRuleStatus {
+impl std::fmt::Display for VpcFirewallRuleStatus {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            FirewallRuleStatus::Disabled => "disabled",
-            FirewallRuleStatus::Enabled => "enabled",
-            FirewallRuleStatus::Noop => "",
-            FirewallRuleStatus::FallthroughString => "*",
+            VpcFirewallRuleStatus::Disabled => "disabled",
+            VpcFirewallRuleStatus::Enabled => "enabled",
+            VpcFirewallRuleStatus::Noop => "",
+            VpcFirewallRuleStatus::FallthroughString => "*",
         }
         .fmt(f)
     }
 }
 
-impl Default for FirewallRuleStatus {
-    fn default() -> FirewallRuleStatus {
-        FirewallRuleStatus::Disabled
+impl Default for VpcFirewallRuleStatus {
+    fn default() -> VpcFirewallRuleStatus {
+        VpcFirewallRuleStatus::Disabled
     }
 }
-impl std::str::FromStr for FirewallRuleStatus {
+impl std::str::FromStr for VpcFirewallRuleStatus {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "disabled" {
-            return Ok(FirewallRuleStatus::Disabled);
+            return Ok(VpcFirewallRuleStatus::Disabled);
         }
         if s == "enabled" {
-            return Ok(FirewallRuleStatus::Enabled);
+            return Ok(VpcFirewallRuleStatus::Enabled);
         }
         anyhow::bail!("invalid string: {}", s);
     }
 }
-impl FirewallRuleStatus {
+impl VpcFirewallRuleStatus {
     pub fn is_noop(&self) -> bool {
-        matches!(self, FirewallRuleStatus::Noop)
+        matches!(self, VpcFirewallRuleStatus::Noop)
     }
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "type", content = "value")]
-pub enum FirewallRuleTarget {
+pub enum VpcFirewallRuleTarget {
     Ip(String),
     IpNet(IpNet),
     Vpc(String),
@@ -2615,21 +2615,21 @@ pub enum FirewallRuleTarget {
     Instance(String),
 }
 
-impl fmt::Display for FirewallRuleTarget {
+impl fmt::Display for VpcFirewallRuleTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            FirewallRuleTarget::Instance(..) => write!(f, "instance"),
-            FirewallRuleTarget::Ip(..) => write!(f, "ip"),
-            FirewallRuleTarget::IpNet(..) => write!(f, "ip_net"),
-            FirewallRuleTarget::Subnet(..) => write!(f, "subnet"),
-            FirewallRuleTarget::Vpc(..) => write!(f, "vpc"),
+            VpcFirewallRuleTarget::Instance(..) => write!(f, "instance"),
+            VpcFirewallRuleTarget::Ip(..) => write!(f, "ip"),
+            VpcFirewallRuleTarget::IpNet(..) => write!(f, "ip_net"),
+            VpcFirewallRuleTarget::Subnet(..) => write!(f, "subnet"),
+            VpcFirewallRuleTarget::Vpc(..) => write!(f, "vpc"),
         }
     }
 }
 
 /// A single rule in a VPC firewall
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct FirewallRuleUpdate {
+pub struct VpcFirewallRuleUpdate {
     /**
      * human-readable free-form text about a resource
      */
@@ -2651,17 +2651,17 @@ pub struct FirewallRuleUpdate {
     pub description: String,
 
     #[serde()]
-    pub action: FirewallRuleAction,
+    pub action: VpcFirewallRuleAction,
 
     #[serde()]
-    pub direction: FirewallRuleDirection,
+    pub direction: VpcFirewallRuleDirection,
 
     /**
      * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
      */
     #[serde()]
     #[header(hidden = true)]
-    pub filters: FirewallRuleFilter,
+    pub filters: VpcFirewallRuleFilter,
 
     /**
      * A count of bytes, typically used either for memory or storage capacity
@@ -2676,7 +2676,7 @@ pub struct FirewallRuleUpdate {
     pub priority: i64,
 
     #[serde()]
-    pub status: FirewallRuleStatus,
+    pub status: VpcFirewallRuleStatus,
 
     /**
      * list of sets of instances that the rule applies to
@@ -2687,31 +2687,31 @@ pub struct FirewallRuleUpdate {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub targets: Vec<FirewallRuleTarget>,
+    pub targets: Vec<VpcFirewallRuleTarget>,
 }
 
 /// Updateable properties of a `Vpc`'s firewall Note that VpcFirewallRules are implicitly created along with a Vpc, so there is no explicit creation.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct FirewallRuleUpdateParams {
+pub struct VpcFirewallRuleUpdateParams {
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub rules: Vec<FirewallRuleUpdate>,
+    pub rules: Vec<VpcFirewallRuleUpdate>,
 }
 
 /// Collection of a [`Vpc`]'s firewall rules
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct FirewallRules {
+pub struct VpcFirewallRules {
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub rules: Vec<FirewallRule>,
+    pub rules: Vec<VpcFirewallRule>,
 }
 
 /// A single page of results
@@ -2741,7 +2741,7 @@ pub struct VpcResultsPage {
 
 /// A VPC router defines a series of rules that indicate where traffic should be sent depending on its destination.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct Router {
+pub struct VpcRouter {
     /**
      * human-readable free-form text about a resource
      */
@@ -2773,7 +2773,7 @@ pub struct Router {
     pub description: String,
 
     #[serde()]
-    pub kind: RouterKind,
+    pub kind: VpcRouterKind,
 
     /**
      * timestamp when this resource was created
@@ -2799,7 +2799,7 @@ pub struct Router {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-pub enum RouterKind {
+pub enum VpcRouterKind {
     #[serde(rename = "custom")]
     Custom,
     #[serde(rename = "system")]
@@ -2810,44 +2810,44 @@ pub enum RouterKind {
     FallthroughString,
 }
 
-impl std::fmt::Display for RouterKind {
+impl std::fmt::Display for VpcRouterKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            RouterKind::Custom => "custom",
-            RouterKind::System => "system",
-            RouterKind::Noop => "",
-            RouterKind::FallthroughString => "*",
+            VpcRouterKind::Custom => "custom",
+            VpcRouterKind::System => "system",
+            VpcRouterKind::Noop => "",
+            VpcRouterKind::FallthroughString => "*",
         }
         .fmt(f)
     }
 }
 
-impl Default for RouterKind {
-    fn default() -> RouterKind {
-        RouterKind::Custom
+impl Default for VpcRouterKind {
+    fn default() -> VpcRouterKind {
+        VpcRouterKind::Custom
     }
 }
-impl std::str::FromStr for RouterKind {
+impl std::str::FromStr for VpcRouterKind {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "custom" {
-            return Ok(RouterKind::Custom);
+            return Ok(VpcRouterKind::Custom);
         }
         if s == "system" {
-            return Ok(RouterKind::System);
+            return Ok(VpcRouterKind::System);
         }
         anyhow::bail!("invalid string: {}", s);
     }
 }
-impl RouterKind {
+impl VpcRouterKind {
     pub fn is_noop(&self) -> bool {
-        matches!(self, RouterKind::Noop)
+        matches!(self, VpcRouterKind::Noop)
     }
 }
 
 /// A single page of results
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct RouterResultsPage {
+pub struct VpcRouterResultsPage {
     /**
      * list of items on this page of results
      */
@@ -2857,7 +2857,7 @@ pub struct RouterResultsPage {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub items: Vec<Router>,
+    pub items: Vec<VpcRouter>,
 
     /**
      * A single page of results
@@ -2872,7 +2872,7 @@ pub struct RouterResultsPage {
 
 /// Updateable properties of a [`VpcRouter`](crate::external_api::views::VpcRouter)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct RouterUpdate {
+pub struct VpcRouterUpdate {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2893,7 +2893,7 @@ pub struct RouterUpdate {
 
 /// A VPC subnet represents a logical grouping for instances that allows network traffic between them, within a IPv4 subnetwork or optionall an IPv6 subnetwork.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct Subnet {
+pub struct VpcSubnet {
     /**
      * human-readable free-form text about a resource
      */
@@ -2969,7 +2969,7 @@ pub struct Subnet {
 
 /// Create-time parameters for a [`VpcSubnet`](crate::external_api::views::VpcSubnet)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct SubnetCreate {
+pub struct VpcSubnetCreate {
     /**
      * human-readable free-form text about a resource
      */
@@ -3015,7 +3015,7 @@ pub struct SubnetCreate {
 
 /// A single page of results
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct SubnetResultsPage {
+pub struct VpcSubnetResultsPage {
     /**
      * list of items on this page of results
      */
@@ -3025,7 +3025,7 @@ pub struct SubnetResultsPage {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub items: Vec<Subnet>,
+    pub items: Vec<VpcSubnet>,
 
     /**
      * A single page of results
@@ -3040,7 +3040,7 @@ pub struct SubnetResultsPage {
 
 /// Updateable properties of a [`VpcSubnet`](crate::external_api::views::VpcSubnet)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct SubnetUpdate {
+pub struct VpcSubnetUpdate {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",

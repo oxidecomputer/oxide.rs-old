@@ -28,7 +28,7 @@ impl Firewall {
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-    ) -> Result<crate::types::FirewallRules> {
+    ) -> Result<crate::types::VpcFirewallRules> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/firewall/rules",
             crate::progenitor_support::encode_path(organization_name),
@@ -55,8 +55,8 @@ impl Firewall {
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-        body: &crate::types::FirewallRuleUpdateParams,
-    ) -> Result<crate::types::FirewallRules> {
+        body: &crate::types::VpcFirewallRuleUpdateParams,
+    ) -> Result<crate::types::VpcFirewallRules> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/firewall/rules",
             crate::progenitor_support::encode_path(organization_name),

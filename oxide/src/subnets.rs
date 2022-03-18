@@ -38,7 +38,7 @@ impl Subnets {
         project_name: &str,
         sort_by: crate::types::NameSortMode,
         vpc_name: &str,
-    ) -> Result<Vec<crate::types::Subnet>> {
+    ) -> Result<Vec<crate::types::VpcSubnet>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -58,7 +58,7 @@ impl Subnets {
             query_
         );
 
-        let resp: crate::types::SubnetResultsPage = self.client.get(&url, None).await?;
+        let resp: crate::types::VpcSubnetResultsPage = self.client.get(&url, None).await?;
 
         // Return our response data.
         Ok(resp.items)
@@ -77,7 +77,7 @@ impl Subnets {
         project_name: &str,
         sort_by: crate::types::NameSortMode,
         vpc_name: &str,
-    ) -> Result<Vec<crate::types::Subnet>> {
+    ) -> Result<Vec<crate::types::VpcSubnet>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {
             query_args.push(("sort_by".to_string(), sort_by.to_string()));
@@ -91,7 +91,7 @@ impl Subnets {
             query_
         );
 
-        let mut resp: crate::types::SubnetResultsPage = self.client.get(&url, None).await?;
+        let mut resp: crate::types::VpcSubnetResultsPage = self.client.get(&url, None).await?;
 
         let mut items = resp.items;
         let mut page = resp.next_page;
@@ -139,8 +139,8 @@ impl Subnets {
         organization_name: &str,
         project_name: &str,
         vpc_name: &str,
-        body: &crate::types::SubnetCreate,
-    ) -> Result<crate::types::Subnet> {
+        body: &crate::types::VpcSubnetCreate,
+    ) -> Result<crate::types::VpcSubnet> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets",
             crate::progenitor_support::encode_path(organization_name),
@@ -171,7 +171,7 @@ impl Subnets {
         project_name: &str,
         subnet_name: &str,
         vpc_name: &str,
-    ) -> Result<crate::types::Subnet> {
+    ) -> Result<crate::types::VpcSubnet> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets/{}",
             crate::progenitor_support::encode_path(organization_name),
@@ -201,8 +201,8 @@ impl Subnets {
         project_name: &str,
         subnet_name: &str,
         vpc_name: &str,
-        body: &crate::types::SubnetUpdate,
-    ) -> Result<crate::types::Subnet> {
+        body: &crate::types::VpcSubnetUpdate,
+    ) -> Result<crate::types::VpcSubnet> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/subnets/{}",
             crate::progenitor_support::encode_path(organization_name),

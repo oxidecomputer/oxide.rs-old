@@ -1114,7 +1114,10 @@ impl TypeSpace {
                     if (details.is_object()
                         || details.is_enum()
                         || details.is_one_of()
-                        || details.is_any_of() || details.is_all_of()) && existing_name == new_name {
+                        || details.is_any_of()
+                        || details.is_all_of())
+                        && existing_name == new_name
+                    {
                         // Return early.
                         return Ok(tid.clone());
                     }
@@ -2424,11 +2427,6 @@ fn clean_name(t: &str) -> String {
     .replace("s_uuid", "")
     .replace("_id_or_uuid", "")
     .replace("_uuid", "")
-    .replace("vpc_firewall_rule", "firewall_rule")
-    .replace("vpc_router", "router")
-    .replace("vpc_subnet", "subnet")
-    .replace("vpc_route", "route")
-    .replace("router_route", "route")
     .trim_start_matches('_')
     .trim_end_matches('_')
     .replace('_', " ")

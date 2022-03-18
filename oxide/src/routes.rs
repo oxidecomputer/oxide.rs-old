@@ -40,7 +40,7 @@ impl Routes {
         router_name: &str,
         sort_by: crate::types::NameSortMode,
         vpc_name: &str,
-    ) -> Result<Vec<crate::types::Route>> {
+    ) -> Result<Vec<crate::types::RouterRoute>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
             query_args.push(("limit".to_string(), limit.to_string()));
@@ -61,7 +61,7 @@ impl Routes {
             query_
         );
 
-        let resp: crate::types::RouteResultsPage = self.client.get(&url, None).await?;
+        let resp: crate::types::RouterRouteResultsPage = self.client.get(&url, None).await?;
 
         // Return our response data.
         Ok(resp.items)
@@ -81,7 +81,7 @@ impl Routes {
         router_name: &str,
         sort_by: crate::types::NameSortMode,
         vpc_name: &str,
-    ) -> Result<Vec<crate::types::Route>> {
+    ) -> Result<Vec<crate::types::RouterRoute>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !sort_by.to_string().is_empty() {
             query_args.push(("sort_by".to_string(), sort_by.to_string()));
@@ -96,7 +96,7 @@ impl Routes {
             query_
         );
 
-        let mut resp: crate::types::RouteResultsPage = self.client.get(&url, None).await?;
+        let mut resp: crate::types::RouterRouteResultsPage = self.client.get(&url, None).await?;
 
         let mut items = resp.items;
         let mut page = resp.next_page;
@@ -146,8 +146,8 @@ impl Routes {
         project_name: &str,
         router_name: &str,
         vpc_name: &str,
-        body: &crate::types::RouteCreateParams,
-    ) -> Result<crate::types::Route> {
+        body: &crate::types::RouterRouteCreateParams,
+    ) -> Result<crate::types::RouterRoute> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes",
             crate::progenitor_support::encode_path(organization_name),
@@ -181,7 +181,7 @@ impl Routes {
         route_name: &str,
         router_name: &str,
         vpc_name: &str,
-    ) -> Result<crate::types::Route> {
+    ) -> Result<crate::types::RouterRoute> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes/{}",
             crate::progenitor_support::encode_path(organization_name),
@@ -214,8 +214,8 @@ impl Routes {
         route_name: &str,
         router_name: &str,
         vpc_name: &str,
-        body: &crate::types::RouteUpdateParams,
-    ) -> Result<crate::types::Route> {
+        body: &crate::types::RouterRouteUpdateParams,
+    ) -> Result<crate::types::RouterRoute> {
         let url = format!(
             "/organizations/{}/projects/{}/vpcs/{}/routers/{}/routes/{}",
             crate::progenitor_support::encode_path(organization_name),
