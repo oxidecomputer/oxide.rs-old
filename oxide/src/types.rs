@@ -55,7 +55,7 @@ impl std::fmt::Display for DatumType {
 
 impl Default for DatumType {
     fn default() -> DatumType {
-        DatumType::Noop
+        DatumType::Bool
     }
 }
 impl std::str::FromStr for DatumType {
@@ -382,7 +382,7 @@ impl std::fmt::Display for FieldSource {
 
 impl Default for FieldSource {
     fn default() -> FieldSource {
-        FieldSource::Noop
+        FieldSource::Metric
     }
 }
 impl std::str::FromStr for FieldSource {
@@ -441,7 +441,7 @@ impl std::fmt::Display for FieldType {
 
 impl Default for FieldType {
     fn default() -> FieldType {
-        FieldType::Noop
+        FieldType::Bool
     }
 }
 impl std::str::FromStr for FieldType {
@@ -499,7 +499,7 @@ impl std::fmt::Display for IdSortMode {
 
 impl Default for IdSortMode {
     fn default() -> IdSortMode {
-        IdSortMode::Noop
+        IdSortMode::IdAscending
     }
 }
 impl std::str::FromStr for IdSortMode {
@@ -809,7 +809,7 @@ impl std::fmt::Display for InstanceState {
 
 impl Default for InstanceState {
     fn default() -> InstanceState {
-        InstanceState::Noop
+        InstanceState::Creating
     }
 }
 impl std::str::FromStr for InstanceState {
@@ -914,7 +914,7 @@ impl std::fmt::Display for NameOrIdSortMode {
 
 impl Default for NameOrIdSortMode {
     fn default() -> NameOrIdSortMode {
-        NameOrIdSortMode::Noop
+        NameOrIdSortMode::IdAscending
     }
 }
 impl std::str::FromStr for NameOrIdSortMode {
@@ -966,7 +966,7 @@ impl std::fmt::Display for NameSortMode {
 
 impl Default for NameSortMode {
     fn default() -> NameSortMode {
-        NameSortMode::Noop
+        NameSortMode::NameAscending
     }
 }
 impl std::str::FromStr for NameSortMode {
@@ -1630,7 +1630,7 @@ impl std::fmt::Display for RouteKind {
 
 impl Default for RouteKind {
     fn default() -> RouteKind {
-        RouteKind::Noop
+        RouteKind::Custom
     }
 }
 impl std::str::FromStr for RouteKind {
@@ -2362,7 +2362,7 @@ impl std::fmt::Display for FirewallRuleAction {
 
 impl Default for FirewallRuleAction {
     fn default() -> FirewallRuleAction {
-        FirewallRuleAction::Noop
+        FirewallRuleAction::Allow
     }
 }
 impl std::str::FromStr for FirewallRuleAction {
@@ -2409,7 +2409,7 @@ impl std::fmt::Display for FirewallRuleDirection {
 
 impl Default for FirewallRuleDirection {
     fn default() -> FirewallRuleDirection {
-        FirewallRuleDirection::Noop
+        FirewallRuleDirection::Inbound
     }
 }
 impl std::str::FromStr for FirewallRuleDirection {
@@ -2517,7 +2517,7 @@ impl std::fmt::Display for FirewallRuleProtocol {
 
 impl Default for FirewallRuleProtocol {
     fn default() -> FirewallRuleProtocol {
-        FirewallRuleProtocol::Noop
+        FirewallRuleProtocol::Icmp
     }
 }
 impl std::str::FromStr for FirewallRuleProtocol {
@@ -2567,7 +2567,7 @@ impl std::fmt::Display for FirewallRuleStatus {
 
 impl Default for FirewallRuleStatus {
     fn default() -> FirewallRuleStatus {
-        FirewallRuleStatus::Noop
+        FirewallRuleStatus::Disabled
     }
 }
 impl std::str::FromStr for FirewallRuleStatus {
@@ -2804,7 +2804,7 @@ impl std::fmt::Display for RouterKind {
 
 impl Default for RouterKind {
     fn default() -> RouterKind {
-        RouterKind::Noop
+        RouterKind::Custom
     }
 }
 impl std::str::FromStr for RouterKind {

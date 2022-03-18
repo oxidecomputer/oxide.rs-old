@@ -2221,15 +2221,13 @@ fn render_param(
         a(&format!("fn default() -> {} {{", sn));
         if let Some(d) = default {
             // Use the default that can be passed to the OpenAPI,
-            // github is not using that currently for everything but we might want to
-            // in the future.
             a(&format!(
                 "{}::{}",
                 sn,
                 struct_name(&d.to_string().replace('"', ""))
             ));
         } else {
-            a(&format!("{}::Noop", sn));
+            a(&format!("{}::{}", sn, struct_name(&enums[0])));
         }
         a("}");
         a("}");
