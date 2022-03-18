@@ -651,7 +651,7 @@ impl std::fmt::Display for DisplayOptionDateTime {
             Some(ref v) => write!(
                 f,
                 "{}",
-                chrono_humanize::HumanTime::from(chrono::Utc::now() - v.clone())
+                chrono_humanize::HumanTime::from(chrono::Utc::now() - *v)
             ),
             None => write!(f, ""),
         }
