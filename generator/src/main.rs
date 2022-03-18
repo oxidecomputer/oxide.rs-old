@@ -1095,7 +1095,7 @@ impl TypeSpace {
         if !is_reference {
             for (tid, te) in self.id_to_entry.iter() {
                 if te.details == details {
-                    let id = tid.clone();
+                    let _id = tid.clone();
 
                     // We have a match! Okay, now we want to keep the shorter
                     // name of the two structs and ensure that is the one we have
@@ -1111,16 +1111,12 @@ impl TypeSpace {
                     } else {
                         "".to_string()
                     };
-                    if details.is_object()
+                    if (details.is_object()
                         || details.is_enum()
                         || details.is_one_of()
-                        || details.is_any_of()
-                        || details.is_all_of()
-                    {
-                        if existing_name == new_name {
-                            // Return early.
-                            return Ok(tid.clone());
-                        }
+                        || details.is_any_of() || details.is_all_of()) && existing_name == new_name {
+                        // Return early.
+                        return Ok(tid.clone());
                     }
 
                     return Ok(tid.clone());
