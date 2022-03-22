@@ -163,7 +163,6 @@ impl std::str::FromStr for DiskState {
                 tag, content
             );
         }
-        println!("JSON: {}", j);
         let result = serde_json::from_str(&j)?;
         Ok(result)
     }
@@ -859,7 +858,6 @@ impl std::str::FromStr for InstanceNetworkInterfaceAttachment {
                 tag, content
             );
         }
-        println!("JSON: {}", j);
         let result = serde_json::from_str(&j)?;
         Ok(result)
     }
@@ -1910,7 +1908,6 @@ impl std::str::FromStr for RouteDestination {
                 tag, content
             );
         }
-        println!("JSON: {}", j);
         let result = serde_json::from_str(&j)?;
         Ok(result)
     }
@@ -2058,7 +2055,6 @@ impl std::str::FromStr for RouteTarget {
                 tag, content
             );
         }
-        println!("JSON: {}", j);
         let result = serde_json::from_str(&j)?;
         Ok(result)
     }
@@ -2506,7 +2502,6 @@ impl std::str::FromStr for SagaErrorInfo {
                 tag, content
             );
         }
-        println!("JSON: {}", j);
         let result = serde_json::from_str(&j)?;
         Ok(result)
     }
@@ -3333,7 +3328,6 @@ impl std::str::FromStr for VpcFirewallRuleTarget {
                 serde_json::json!(IpNet::from_str(&content).unwrap())
             );
         }
-        println!("JSON: {}", j);
         let result = serde_json::from_str(&j)?;
         Ok(result)
     }
@@ -3578,7 +3572,6 @@ impl std::str::FromStr for VpcFirewallRuleHostFilter {
                 serde_json::json!(IpNet::from_str(&content).unwrap())
             );
         }
-        println!("JSON: {}", j);
         let result = serde_json::from_str(&j)?;
         Ok(result)
     }
