@@ -2185,12 +2185,13 @@ fn get_parameter_data(param: &openapiv3::Parameter) -> Option<&openapiv3::Parame
     None
 }
 
-fn render_param(
+pub fn render_param(
     sn: &str,
     en: &[String],
     required: bool,
     description: &str,
     default: Option<&serde_json::Value>,
+    do_fallthrough_etc: bool,
 ) -> String {
     let mut out = String::new();
 
@@ -2236,14 +2237,16 @@ fn render_param(
         a(&format!(r#"#[serde(rename = "{}")]"#, e));
         a(&format!("{},", struct_name(e)));
     }
-    if !required && default.is_none() {
+    if !required && default.is_none() && do_fallthrough_etc {
         a(r#"#[serde(rename = "")]"#);
         a("Noop,");
     }
 
-    // Let's add the wildcard.
-    a("#[serde(other)]");
-    a("FallthroughString");
+    if do_fallthrough_etc {
+        // Let's add the wildcard.
+        a("#[serde(other)]");
+        a("FallthroughString");
+    }
 
     a("}");
     a("");
@@ -2254,12 +2257,14 @@ fn render_param(
     for e in &enums {
         a(&format!(r#"{}::{} => "{}","#, sn, struct_name(e), e));
     }
-    if !required && default.is_none() {
+    if !required && default.is_none() && do_fallthrough_etc {
         a(&format!(r#"{}::Noop => "","#, sn));
     }
 
-    // Let's add the display format for the wildcard.
-    a(&format!(r#"{}::FallthroughString => "*","#, sn));
+    if do_fallthrough_etc {
+        // Let's add the display format for the wildcard.
+        a(&format!(r#"{}::FallthroughString => "*","#, sn));
+    }
 
     a("}");
     a(".fmt(f)");
@@ -2302,7 +2307,7 @@ fn render_param(
     a("}");
 
     // Add a method to check if it is empty if it has this Noop state.
-    if !required && default.is_none() {
+    if !required && default.is_none() && do_fallthrough_etc {
         a(&format!(
             r#"impl {} {{
             pub fn is_noop(&self) -> bool {{
@@ -3074,6 +3079,7 @@ chrono = {{ version = "0.4", features = ["serde"] }}
 chrono-humanize = "^0.2.1"
 dirs = {{ version = "^4.0.0", optional = true }}
 http = "^0.2.4"
+ipnetwork = "^0.18"
 hyperx = "1"
 log = {{ version = "^0.4", features = ["serde"] }}
 mime = "0.3"
@@ -3091,6 +3097,7 @@ uuid = {{ version = "^0.8", features = ["serde", "v4"] }}
 base64 = "^0.13"
 dirs = "^4.0.0"
 nom_pem = "4"
+pretty_assertions = "1"
 tokio = {{ version = "1.8.0", features = ["full"] }}
 
 [features]

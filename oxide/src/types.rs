@@ -112,14 +112,141 @@ pub enum DiskState {
 
 impl fmt::Display for DiskState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self))
+        let j = serde_json::json!(self);
+        let tag: String = serde_json::from_value(j["state"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["instance"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["instance"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        write!(f, "{}={}", tag, content)
     }
 }
 
 impl std::str::FromStr for DiskState {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(serde_json::from_str(s)?)
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for DiskState, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "attaching" {
+            j = format!(
+                r#"{{
+"state": "{}",
+"instance": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "attached" {
+            j = format!(
+                r#"{{
+"state": "{}",
+"instance": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "detaching" {
+            j = format!(
+                r#"{{
+"state": "{}",
+"instance": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        println!("JSON: {}", j);
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl DiskState {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "attached".to_string(),
+            "attaching".to_string(),
+            "creating".to_string(),
+            "destroyed".to_string(),
+            "detached".to_string(),
+            "detaching".to_string(),
+            "faulted".to_string(),
+        ]
+    }
+}
+/**
+ * The types for DiskState.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum DiskStateType {
+    #[serde(rename = "attached")]
+    Attached,
+    #[serde(rename = "attaching")]
+    Attaching,
+    #[serde(rename = "creating")]
+    Creating,
+    #[serde(rename = "destroyed")]
+    Destroyed,
+    #[serde(rename = "detached")]
+    Detached,
+    #[serde(rename = "detaching")]
+    Detaching,
+    #[serde(rename = "faulted")]
+    Faulted,
+}
+
+impl std::fmt::Display for DiskStateType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            DiskStateType::Attached => "attached",
+            DiskStateType::Attaching => "attaching",
+            DiskStateType::Creating => "creating",
+            DiskStateType::Destroyed => "destroyed",
+            DiskStateType::Detached => "detached",
+            DiskStateType::Detaching => "detaching",
+            DiskStateType::Faulted => "faulted",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for DiskStateType {
+    fn default() -> DiskStateType {
+        DiskStateType::Attached
+    }
+}
+impl std::str::FromStr for DiskStateType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "attached" {
+            return Ok(DiskStateType::Attached);
+        }
+        if s == "attaching" {
+            return Ok(DiskStateType::Attaching);
+        }
+        if s == "creating" {
+            return Ok(DiskStateType::Creating);
+        }
+        if s == "destroyed" {
+            return Ok(DiskStateType::Destroyed);
+        }
+        if s == "detached" {
+            return Ok(DiskStateType::Detached);
+        }
+        if s == "detaching" {
+            return Ok(DiskStateType::Detaching);
+        }
+        if s == "faulted" {
+            return Ok(DiskStateType::Faulted);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 
@@ -696,14 +823,98 @@ pub enum InstanceNetworkInterfaceAttachment {
 
 impl fmt::Display for InstanceNetworkInterfaceAttachment {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self))
+        let j = serde_json::json!(self);
+        let tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["params"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["params"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        write!(f, "{}={}", tag, content)
     }
 }
 
 impl std::str::FromStr for InstanceNetworkInterfaceAttachment {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(serde_json::from_str(s)?)
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!(
+                "invalid format for InstanceNetworkInterfaceAttachment, got {}",
+                s
+            );
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "create" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"params": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        println!("JSON: {}", j);
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl InstanceNetworkInterfaceAttachment {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "create".to_string(),
+            "default".to_string(),
+            "none".to_string(),
+        ]
+    }
+}
+/**
+ * The types for InstanceNetworkInterfaceAttachment.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum InstanceNetworkInterfaceAttachmentType {
+    #[serde(rename = "create")]
+    Create,
+    #[serde(rename = "default")]
+    Default,
+    #[serde(rename = "none")]
+    None,
+}
+
+impl std::fmt::Display for InstanceNetworkInterfaceAttachmentType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            InstanceNetworkInterfaceAttachmentType::Create => "create",
+            InstanceNetworkInterfaceAttachmentType::Default => "default",
+            InstanceNetworkInterfaceAttachmentType::None => "none",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for InstanceNetworkInterfaceAttachmentType {
+    fn default() -> InstanceNetworkInterfaceAttachmentType {
+        InstanceNetworkInterfaceAttachmentType::Create
+    }
+}
+impl std::str::FromStr for InstanceNetworkInterfaceAttachmentType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "create" {
+            return Ok(InstanceNetworkInterfaceAttachmentType::Create);
+        }
+        if s == "default" {
+            return Ok(InstanceNetworkInterfaceAttachmentType::Default);
+        }
+        if s == "none" {
+            return Ok(InstanceNetworkInterfaceAttachmentType::None);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 
@@ -854,25 +1065,201 @@ pub struct InstanceResultsPage {
     pub next_page: String,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+/// An `IpNet` represents an IP network, either IPv4 or IPv6.
+#[derive(Clone, Copy, Debug, Deserialize, PartialEq, Hash, JsonSchema, Serialize)]
 pub enum IpNet {
-    V4(String),
-    V6(String),
+    V4(Ipv4Net),
+    V6(Ipv6Net),
 }
 
-impl fmt::Display for IpNet {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self))
+impl From<Ipv4Net> for IpNet {
+    fn from(n: Ipv4Net) -> IpNet {
+        IpNet::V4(n)
+    }
+}
+
+impl From<std::net::Ipv4Addr> for IpNet {
+    fn from(n: std::net::Ipv4Addr) -> IpNet {
+        IpNet::V4(Ipv4Net(ipnetwork::Ipv4Network::from(n)))
+    }
+}
+
+impl From<Ipv6Net> for IpNet {
+    fn from(n: Ipv6Net) -> IpNet {
+        IpNet::V6(n)
+    }
+}
+
+impl From<std::net::Ipv6Addr> for IpNet {
+    fn from(n: std::net::Ipv6Addr) -> IpNet {
+        IpNet::V6(Ipv6Net(ipnetwork::Ipv6Network::from(n)))
+    }
+}
+
+impl std::fmt::Display for IpNet {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            IpNet::V4(inner) => write!(f, "{}", inner),
+            IpNet::V6(inner) => write!(f, "{}", inner),
+        }
     }
 }
 
 impl std::str::FromStr for IpNet {
-    type Err = anyhow::Error;
+    type Err = String;
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(serde_json::from_str(s)?)
+        let net = s
+            .parse::<ipnetwork::IpNetwork>()
+            .map_err(|e| e.to_string())?;
+        match net {
+            ipnetwork::IpNetwork::V4(net) => Ok(IpNet::from(Ipv4Net(net))),
+            ipnetwork::IpNetwork::V6(net) => Ok(IpNet::from(Ipv6Net(net))),
+        }
     }
 }
 
+/// An `Ipv4Net` represents a IPv4 subnetwork, including the address and network mask.
+#[derive(Clone, Copy, Debug, Deserialize, Hash, PartialEq, Serialize)]
+pub struct Ipv4Net(pub ipnetwork::Ipv4Network);
+
+impl Ipv4Net {
+    /// Return `true` if this IPv4 subnetwork is from an RFC 1918 private
+    /// address space.
+    pub fn is_private(&self) -> bool {
+        self.0.network().is_private()
+    }
+}
+
+impl std::ops::Deref for Ipv4Net {
+    type Target = ipnetwork::Ipv4Network;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::fmt::Display for Ipv4Net {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl JsonSchema for Ipv4Net {
+    fn schema_name() -> String {
+        "Ipv4Net".to_string()
+    }
+
+    fn json_schema(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+        schemars::schema::Schema::Object(
+            schemars::schema::SchemaObject {
+                metadata: Some(Box::new(schemars::schema::Metadata {
+                    title: Some("An IPv4 subnet".to_string()),
+                    description: Some("An IPv4 subnet, including prefix and subnet mask".to_string()),
+                    examples: vec!["192.168.1.0/24".into()],
+                    ..Default::default()
+                })),
+                instance_type: Some(schemars::schema::SingleOrVec::Single(Box::new(schemars::schema::InstanceType::String))),
+                string: Some(Box::new(schemars::schema::StringValidation {
+                    // Fully-specified IPv4 address. Up to 15 chars for address, plus slash and up to 2 subnet digits.
+                    max_length: Some(18),
+                    min_length: None,
+                    // Addresses must be from an RFC 1918 private address space
+                    pattern: Some(
+                        concat!(
+                            // 10.x.x.x/8
+                            r#"(^(10\.(25[0-5]|[1-2][0-4][0-9]|[1-9][0-9]|[0-9]\.){2}(25[0-5]|[1-2][0-4][0-9]|[1-9][0-9]|[0-9])/(1[0-9]|2[0-8]|[8-9]))$)|"#,
+                            // 172.16.x.x/12
+                            r#"(^(172\.16\.(25[0-5]|[1-2][0-4][0-9]|[1-9][0-9]|[0-9])\.(25[0-5]|[1-2][0-4][0-9]|[1-9][0-9]|[0-9])/(1[2-9]|2[0-8]))$)|"#,
+                            // 192.168.x.x/16
+                            r#"(^(192\.168\.(25[0-5]|[1-2][0-4][0-9]|[1-9][0-9]|[0-9])\.(25[0-5]|[1-2][0-4][0-9]|[1-9][0-9]|[0-9])/(1[6-9]|2[0-8]))$)"#,
+                        ).to_string(),
+                    ),
+                })),
+                ..Default::default()
+            }
+        )
+    }
+}
+/// An `Ipv6Net` represents a IPv6 subnetwork, including the address and network mask.
+#[derive(Clone, Copy, Debug, Deserialize, Hash, PartialEq, Serialize)]
+pub struct Ipv6Net(pub ipnetwork::Ipv6Network);
+
+impl Ipv6Net {
+    /// The length for all VPC IPv6 prefixes
+    pub const VPC_IPV6_PREFIX_LENGTH: u8 = 48;
+
+    /// The prefix length for all VPC Sunets
+    pub const VPC_SUBNET_IPV6_PREFIX_LENGTH: u8 = 64;
+
+    /// Return `true` if this subnetwork is in the IPv6 Unique Local Address
+    /// range defined in RFC 4193, e.g., `fd00:/8`
+    pub fn is_unique_local(&self) -> bool {
+        // TODO: Delegate to `Ipv6Addr::is_unique_local()` when stabilized.
+        self.0.network().octets()[0] == 0xfd
+    }
+
+    /// Return `true` if this subnetwork is a valid VPC prefix.
+    ///
+    /// This checks that the subnet is a unique local address, and has the VPC
+    /// prefix length required.
+    pub fn is_vpc_prefix(&self) -> bool {
+        self.is_unique_local() && self.0.prefix() == Self::VPC_IPV6_PREFIX_LENGTH
+    }
+
+    /// Return `true` if this subnetwork is a valid VPC Subnet, given the VPC's
+    /// prefix.
+    pub fn is_vpc_subnet(&self, vpc_prefix: &Ipv6Net) -> bool {
+        self.is_unique_local()
+            && self.is_subnet_of(vpc_prefix.0)
+            && self.prefix() == Self::VPC_SUBNET_IPV6_PREFIX_LENGTH
+    }
+}
+
+impl std::ops::Deref for Ipv6Net {
+    type Target = ipnetwork::Ipv6Network;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl std::fmt::Display for Ipv6Net {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl JsonSchema for Ipv6Net {
+    fn schema_name() -> String {
+        "Ipv6Net".to_string()
+    }
+
+    fn json_schema(_: &mut schemars::gen::SchemaGenerator) -> schemars::schema::Schema {
+        schemars::schema::Schema::Object(
+            schemars::schema::SchemaObject {
+                metadata: Some(Box::new(schemars::schema::Metadata {
+                    title: Some("An IPv6 subnet".to_string()),
+                    description: Some("An IPv6 subnet, including prefix and subnet mask".to_string()),
+                    examples: vec!["fd12:3456::/64".into()],
+                    ..Default::default()
+                })),
+                instance_type: Some(schemars::schema::SingleOrVec::Single(Box::new(schemars::schema::InstanceType::String))),
+                string: Some(Box::new(schemars::schema::StringValidation {
+                    // Fully-specified IPv6 address. 4 hex chars per segment, 8 segments, 7
+                    // ":"-separators, slash and up to 3 subnet digits
+                    max_length: Some(43),
+                    min_length: None,
+                    pattern: Some(
+                        // Conforming to unique local addressing scheme, `fd00::/8`.
+                        concat!(
+                            r#"^(fd|FD)[0-9a-fA-F]{2}:((([0-9a-fA-F]{1,4}\:){6}[0-9a-fA-F]{1,4})|(([0-9a-fA-F]{1,4}:){1,6}:))/(6[4-9]|[7-9][0-9]|1[0-1][0-9]|12[0-6])$"#,
+                        ).to_string(),
+                    ),
+                })),
+                ..Default::default()
+            }
+        )
+    }
+}
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct LoginParams {
     #[serde(
@@ -1462,14 +1849,130 @@ pub enum RouteDestination {
 
 impl fmt::Display for RouteDestination {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self))
+        let j = serde_json::json!(self);
+        let tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["value"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["value"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        write!(f, "{}={}", tag, content)
     }
 }
 
 impl std::str::FromStr for RouteDestination {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(serde_json::from_str(s)?)
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for RouteDestination, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "ip" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "ipnet" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": {}
+        }}"#,
+                tag,
+                serde_json::json!(IpNet::from_str(&content).unwrap())
+            );
+        }
+        if tag == "vpc" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "subnet" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        println!("JSON: {}", j);
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl RouteDestination {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "ip".to_string(),
+            "ipnet".to_string(),
+            "subnet".to_string(),
+            "vpc".to_string(),
+        ]
+    }
+}
+/**
+ * The types for RouteDestination.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum RouteDestinationType {
+    #[serde(rename = "ip")]
+    Ip,
+    #[serde(rename = "ipnet")]
+    Ipnet,
+    #[serde(rename = "subnet")]
+    Subnet,
+    #[serde(rename = "vpc")]
+    Vpc,
+}
+
+impl std::fmt::Display for RouteDestinationType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            RouteDestinationType::Ip => "ip",
+            RouteDestinationType::Ipnet => "ipnet",
+            RouteDestinationType::Subnet => "subnet",
+            RouteDestinationType::Vpc => "vpc",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for RouteDestinationType {
+    fn default() -> RouteDestinationType {
+        RouteDestinationType::Ip
+    }
+}
+impl std::str::FromStr for RouteDestinationType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "ip" {
+            return Ok(RouteDestinationType::Ip);
+        }
+        if s == "ipnet" {
+            return Ok(RouteDestinationType::Ipnet);
+        }
+        if s == "subnet" {
+            return Ok(RouteDestinationType::Subnet);
+        }
+        if s == "vpc" {
+            return Ok(RouteDestinationType::Vpc);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 
@@ -1486,14 +1989,145 @@ pub enum RouteTarget {
 
 impl fmt::Display for RouteTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self))
+        let j = serde_json::json!(self);
+        let tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["value"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["value"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        write!(f, "{}={}", tag, content)
     }
 }
 
 impl std::str::FromStr for RouteTarget {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(serde_json::from_str(s)?)
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for RouteTarget, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "ip" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "vpc" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "subnet" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "instance" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "internetgateway" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        println!("JSON: {}", j);
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl RouteTarget {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "instance".to_string(),
+            "internetgateway".to_string(),
+            "ip".to_string(),
+            "subnet".to_string(),
+            "vpc".to_string(),
+        ]
+    }
+}
+/**
+ * The types for RouteTarget.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum RouteTargetType {
+    #[serde(rename = "instance")]
+    Instance,
+    #[serde(rename = "internetgateway")]
+    Internetgateway,
+    #[serde(rename = "ip")]
+    Ip,
+    #[serde(rename = "subnet")]
+    Subnet,
+    #[serde(rename = "vpc")]
+    Vpc,
+}
+
+impl std::fmt::Display for RouteTargetType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            RouteTargetType::Instance => "instance",
+            RouteTargetType::Internetgateway => "internetgateway",
+            RouteTargetType::Ip => "ip",
+            RouteTargetType::Subnet => "subnet",
+            RouteTargetType::Vpc => "vpc",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for RouteTargetType {
+    fn default() -> RouteTargetType {
+        RouteTargetType::Instance
+    }
+}
+impl std::str::FromStr for RouteTargetType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "instance" {
+            return Ok(RouteTargetType::Instance);
+        }
+        if s == "internetgateway" {
+            return Ok(RouteTargetType::Internetgateway);
+        }
+        if s == "ip" {
+            return Ok(RouteTargetType::Ip);
+        }
+        if s == "subnet" {
+            return Ok(RouteTargetType::Subnet);
+        }
+        if s == "vpc" {
+            return Ok(RouteTargetType::Vpc);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 
@@ -1731,6 +2365,59 @@ impl std::str::FromStr for SagaState {
         Ok(serde_json::from_str(s)?)
     }
 }
+impl SagaState {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "failed".to_string(),
+            "running".to_string(),
+            "succeeded".to_string(),
+        ]
+    }
+}
+/**
+ * The types for SagaState.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum SagaStateType {
+    #[serde(rename = "failed")]
+    Failed,
+    #[serde(rename = "running")]
+    Running,
+    #[serde(rename = "succeeded")]
+    Succeeded,
+}
+
+impl std::fmt::Display for SagaStateType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            SagaStateType::Failed => "failed",
+            SagaStateType::Running => "running",
+            SagaStateType::Succeeded => "succeeded",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for SagaStateType {
+    fn default() -> SagaStateType {
+        SagaStateType::Failed
+    }
+}
+impl std::str::FromStr for SagaStateType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "failed" {
+            return Ok(SagaStateType::Failed);
+        }
+        if s == "running" {
+            return Ok(SagaStateType::Running);
+        }
+        if s == "succeeded" {
+            return Ok(SagaStateType::Succeeded);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct Saga {
@@ -1758,14 +2445,137 @@ pub enum SagaErrorInfo {
 
 impl fmt::Display for SagaErrorInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self))
+        let j = serde_json::json!(self);
+        let tag: String = serde_json::from_value(j["error"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["message"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["message"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        write!(f, "{}={}", tag, content)
     }
 }
 
 impl std::str::FromStr for SagaErrorInfo {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(serde_json::from_str(s)?)
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for SagaErrorInfo, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "actionfailed" {
+            j = format!(
+                r#"{{
+"error": "{}",
+"message": {}
+        }}"#,
+                tag,
+                serde_json::json!(serde_json::Value::from_str(&content).unwrap())
+            );
+        }
+        if tag == "deserializefailed" {
+            j = format!(
+                r#"{{
+"error": "{}",
+"message": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "serializefailed" {
+            j = format!(
+                r#"{{
+"error": "{}",
+"message": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "subsagacreatefailed" {
+            j = format!(
+                r#"{{
+"error": "{}",
+"message": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        println!("JSON: {}", j);
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl SagaErrorInfo {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "actionfailed".to_string(),
+            "deserializefailed".to_string(),
+            "injectederror".to_string(),
+            "serializefailed".to_string(),
+            "subsagacreatefailed".to_string(),
+        ]
+    }
+}
+/**
+ * The types for SagaErrorInfo.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum SagaErrorInfoType {
+    #[serde(rename = "actionfailed")]
+    Actionfailed,
+    #[serde(rename = "deserializefailed")]
+    Deserializefailed,
+    #[serde(rename = "injectederror")]
+    Injectederror,
+    #[serde(rename = "serializefailed")]
+    Serializefailed,
+    #[serde(rename = "subsagacreatefailed")]
+    Subsagacreatefailed,
+}
+
+impl std::fmt::Display for SagaErrorInfoType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            SagaErrorInfoType::Actionfailed => "actionfailed",
+            SagaErrorInfoType::Deserializefailed => "deserializefailed",
+            SagaErrorInfoType::Injectederror => "injectederror",
+            SagaErrorInfoType::Serializefailed => "serializefailed",
+            SagaErrorInfoType::Subsagacreatefailed => "subsagacreatefailed",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for SagaErrorInfoType {
+    fn default() -> SagaErrorInfoType {
+        SagaErrorInfoType::Actionfailed
+    }
+}
+impl std::str::FromStr for SagaErrorInfoType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "actionfailed" {
+            return Ok(SagaErrorInfoType::Actionfailed);
+        }
+        if s == "deserializefailed" {
+            return Ok(SagaErrorInfoType::Deserializefailed);
+        }
+        if s == "injectederror" {
+            return Ok(SagaErrorInfoType::Injectederror);
+        }
+        if s == "serializefailed" {
+            return Ok(SagaErrorInfoType::Serializefailed);
+        }
+        if s == "subsagacreatefailed" {
+            return Ok(SagaErrorInfoType::Subsagacreatefailed);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 
@@ -2453,14 +3263,146 @@ pub enum VpcFirewallRuleTarget {
 
 impl fmt::Display for VpcFirewallRuleTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self))
+        let j = serde_json::json!(self);
+        let tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["value"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["value"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        write!(f, "{}={}", tag, content)
     }
 }
 
 impl std::str::FromStr for VpcFirewallRuleTarget {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(serde_json::from_str(s)?)
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for VpcFirewallRuleTarget, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "vpc" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "subnet" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "instance" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "ip" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "ipnet" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": {}
+        }}"#,
+                tag,
+                serde_json::json!(IpNet::from_str(&content).unwrap())
+            );
+        }
+        println!("JSON: {}", j);
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl VpcFirewallRuleTarget {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "instance".to_string(),
+            "ip".to_string(),
+            "ipnet".to_string(),
+            "subnet".to_string(),
+            "vpc".to_string(),
+        ]
+    }
+}
+/**
+ * The types for VpcFirewallRuleTarget.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum VpcFirewallRuleTargetType {
+    #[serde(rename = "instance")]
+    Instance,
+    #[serde(rename = "ip")]
+    Ip,
+    #[serde(rename = "ipnet")]
+    Ipnet,
+    #[serde(rename = "subnet")]
+    Subnet,
+    #[serde(rename = "vpc")]
+    Vpc,
+}
+
+impl std::fmt::Display for VpcFirewallRuleTargetType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            VpcFirewallRuleTargetType::Instance => "instance",
+            VpcFirewallRuleTargetType::Ip => "ip",
+            VpcFirewallRuleTargetType::Ipnet => "ipnet",
+            VpcFirewallRuleTargetType::Subnet => "subnet",
+            VpcFirewallRuleTargetType::Vpc => "vpc",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for VpcFirewallRuleTargetType {
+    fn default() -> VpcFirewallRuleTargetType {
+        VpcFirewallRuleTargetType::Instance
+    }
+}
+impl std::str::FromStr for VpcFirewallRuleTargetType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "instance" {
+            return Ok(VpcFirewallRuleTargetType::Instance);
+        }
+        if s == "ip" {
+            return Ok(VpcFirewallRuleTargetType::Ip);
+        }
+        if s == "ipnet" {
+            return Ok(VpcFirewallRuleTargetType::Ipnet);
+        }
+        if s == "subnet" {
+            return Ok(VpcFirewallRuleTargetType::Subnet);
+        }
+        if s == "vpc" {
+            return Ok(VpcFirewallRuleTargetType::Vpc);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 
@@ -2566,14 +3508,146 @@ pub enum VpcFirewallRuleHostFilter {
 
 impl fmt::Display for VpcFirewallRuleHostFilter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::json!(self))
+        let j = serde_json::json!(self);
+        let tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["value"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["value"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        write!(f, "{}={}", tag, content)
     }
 }
 
 impl std::str::FromStr for VpcFirewallRuleHostFilter {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(serde_json::from_str(s)?)
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for VpcFirewallRuleHostFilter, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "vpc" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "subnet" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "instance" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "ip" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": "{}"
+        }}"#,
+                tag, content
+            );
+        }
+        if tag == "ipnet" {
+            j = format!(
+                r#"{{
+"type": "{}",
+"value": {}
+        }}"#,
+                tag,
+                serde_json::json!(IpNet::from_str(&content).unwrap())
+            );
+        }
+        println!("JSON: {}", j);
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl VpcFirewallRuleHostFilter {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "instance".to_string(),
+            "ip".to_string(),
+            "ipnet".to_string(),
+            "subnet".to_string(),
+            "vpc".to_string(),
+        ]
+    }
+}
+/**
+ * The types for VpcFirewallRuleHostFilter.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum VpcFirewallRuleHostFilterType {
+    #[serde(rename = "instance")]
+    Instance,
+    #[serde(rename = "ip")]
+    Ip,
+    #[serde(rename = "ipnet")]
+    Ipnet,
+    #[serde(rename = "subnet")]
+    Subnet,
+    #[serde(rename = "vpc")]
+    Vpc,
+}
+
+impl std::fmt::Display for VpcFirewallRuleHostFilterType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            VpcFirewallRuleHostFilterType::Instance => "instance",
+            VpcFirewallRuleHostFilterType::Ip => "ip",
+            VpcFirewallRuleHostFilterType::Ipnet => "ipnet",
+            VpcFirewallRuleHostFilterType::Subnet => "subnet",
+            VpcFirewallRuleHostFilterType::Vpc => "vpc",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for VpcFirewallRuleHostFilterType {
+    fn default() -> VpcFirewallRuleHostFilterType {
+        VpcFirewallRuleHostFilterType::Instance
+    }
+}
+impl std::str::FromStr for VpcFirewallRuleHostFilterType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "instance" {
+            return Ok(VpcFirewallRuleHostFilterType::Instance);
+        }
+        if s == "ip" {
+            return Ok(VpcFirewallRuleHostFilterType::Ip);
+        }
+        if s == "ipnet" {
+            return Ok(VpcFirewallRuleHostFilterType::Ipnet);
+        }
+        if s == "subnet" {
+            return Ok(VpcFirewallRuleHostFilterType::Subnet);
+        }
+        if s == "vpc" {
+            return Ok(VpcFirewallRuleHostFilterType::Vpc);
+        }
+        anyhow::bail!("invalid string: {}", s);
     }
 }
 
@@ -3116,10 +4190,6 @@ pub struct VpcUpdate {
 pub type ByteCount = u64;
 /// The number of CPUs in an Instance
 pub type InstanceCpuCount = u16;
-/// An IPv4 subnet, including prefix and subnet mask
-pub type Ipv4Net = String;
-/// An IPv6 subnet, including prefix and subnet mask
-pub type Ipv6Net = String;
 /// An inclusive-inclusive range of IP ports. The second port may be omitted to represent a single port
 pub type L4PortRange = String;
 /// A Media Access Control address, in EUI-48 format

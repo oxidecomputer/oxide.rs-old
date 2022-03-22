@@ -7,7 +7,7 @@ SPEC_REMOTE = https://raw.githubusercontent.com/oxidecomputer/omicron/main/opena
 VERSION = $(shell cat VERSION.txt)
 
 generate: oxide
-	cargo test tests
+	cargo test tests -- --nocapture
 	cargo clippy
 
 target/debug/generator: generator/src/*.rs generator/Cargo.toml
