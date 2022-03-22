@@ -1142,6 +1142,20 @@ impl std::fmt::Display for Ipv4Net {
     }
 }
 
+impl std::str::FromStr for Ipv4Net {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let net = s
+            .parse::<ipnetwork::IpNetwork>()
+            .map_err(|e| e.to_string())?;
+        match net {
+            ipnetwork::IpNetwork::V4(net) => Ok(Ipv4Net(net)),
+            ipnetwork::IpNetwork::V6(..) => Err(format!("IPv6 subnet {} not supported here", s)),
+        }
+    }
+}
+
 impl JsonSchema for Ipv4Net {
     fn schema_name() -> String {
         "Ipv4Net".to_string()
@@ -1223,6 +1237,20 @@ impl std::ops::Deref for Ipv6Net {
 impl std::fmt::Display for Ipv6Net {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.0)
+    }
+}
+
+impl std::str::FromStr for Ipv6Net {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let net = s
+            .parse::<ipnetwork::IpNetwork>()
+            .map_err(|e| e.to_string())?;
+        match net {
+            ipnetwork::IpNetwork::V4(..) => Err(format!("IPv4 subnet {} not supported here", s)),
+            ipnetwork::IpNetwork::V6(net) => Ok(Ipv6Net(net)),
+        }
     }
 }
 
