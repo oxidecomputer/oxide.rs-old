@@ -24,6 +24,26 @@ fn test_route_target() {
 
     route_target_from_str = crate::types::RouteTarget::from_str("subnet=192.1.13.2").unwrap();
     assert_eq!(route_target_from_str, route_target);
+
+    route_target = crate::types::RouteTarget::InternetGateway("192.1.13.2".to_string());
+    route_target_str = format!("{}", route_target);
+    assert_eq!(route_target_str, "inetgw=192.1.13.2");
+
+    route_target_from_str = crate::types::RouteTarget::from_str("inetgw=192.1.13.2").unwrap();
+    assert_eq!(route_target_from_str, route_target);
+
+    let variants = crate::types::RouteTarget::variants();
+    assert_eq!(variants.len(), 5);
+    assert_eq!(
+        variants,
+        vec![
+            "instance".to_string(),
+            "inetgw".to_string(),
+            "ip".to_string(),
+            "subnet".to_string(),
+            "vpc".to_string(),
+        ]
+    );
 }
 
 #[test]

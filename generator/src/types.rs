@@ -727,7 +727,8 @@ impl std::str::FromStr for IpNet {
         a("fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {");
         a("   let j = serde_json::json!(self);");
         a(&format!(
-            "   let tag: String = serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default();",
+            "   let mut tag: String = \
+             serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default();",
             tag
         ));
         a(&format!(
@@ -743,6 +744,7 @@ impl std::str::FromStr for IpNet {
         ));
         a("if let Some((_, v)) = map.iter().next() { content = v.to_string(); }");
         a("}");
+        a("if tag == \"internetgateway\" { tag = \"inetgw\".to_string(); }");
         a("     write!(f, \"{}={}\",tag, content)");
         a("}");
         a("}");
@@ -763,16 +765,20 @@ impl std::str::FromStr for IpNet {
         a("    let content = parts[1].to_string();");
         a("    let mut j = String::new();");
         for (name, p) in prop_types.iter() {
-            a(&format!("if tag == \"{}\" {{", name.to_lowercase()));
+            let mut k = name.to_lowercase();
+            if k == "internetgateway" {
+                k = "inetgw".to_string();
+            }
+            a(&format!("if tag == \"{}\" {{", k));
             a("j = format!(r#\"{{");
-            a(&format!("\"{}\": \"{{}}\",", tag));
+            a(&format!("\"{}\": \"{}\",", tag, name.to_lowercase()));
             if p == "String" || p == "InstanceNetworkInterfaceCreate" {
                 a(&format!("\"{}\": \"{{}}\"", content));
-                a("        }}\"#, tag, content);");
+                a("        }}\"#, content);");
             } else {
                 a(&format!("\"{}\": {{}}", content));
                 a(&format!(
-                    "        }}}}\"#, tag, serde_json::json!({}::from_str(&content).unwrap()));",
+                    "        }}}}\"#, serde_json::json!({}::from_str(&content).unwrap()));",
                     p
                 ));
             }
@@ -807,9 +813,12 @@ impl std::str::FromStr for IpNet {
         a("pub fn variants() -> Vec<String> {");
         a("    vec![");
         for (name, _) in types_strings.iter() {
-            let k = name.to_lowercase();
+            let mut k = name.to_lowercase();
+            if k == "internetgateway" {
+                k = "inetgw".to_string();
+            }
             a(&format!("        \"{}\".to_string(),", k));
-            values.push(k.to_string());
+            values.push(name.to_string());
         }
         a("    ]");
         a("}");

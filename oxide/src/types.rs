@@ -113,7 +113,7 @@ pub enum DiskState {
 impl fmt::Display for DiskState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let j = serde_json::json!(self);
-        let tag: String = serde_json::from_value(j["state"].clone()).unwrap_or_default();
+        let mut tag: String = serde_json::from_value(j["state"].clone()).unwrap_or_default();
         let mut content: String = serde_json::from_value(j["instance"].clone()).unwrap_or_default();
         if content.is_empty() {
             let map: std::collections::HashMap<String, String> =
@@ -121,6 +121,9 @@ impl fmt::Display for DiskState {
             if let Some((_, v)) = map.iter().next() {
                 content = v.to_string();
             }
+        }
+        if tag == "internetgateway" {
+            tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
     }
@@ -139,28 +142,28 @@ impl std::str::FromStr for DiskState {
         if tag == "attaching" {
             j = format!(
                 r#"{{
-"state": "{}",
+"state": "attaching",
 "instance": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "attached" {
             j = format!(
                 r#"{{
-"state": "{}",
+"state": "attached",
 "instance": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "detaching" {
             j = format!(
                 r#"{{
-"state": "{}",
+"state": "detaching",
 "instance": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         let result = serde_json::from_str(&j)?;
@@ -185,32 +188,32 @@ impl DiskState {
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum DiskStateType {
-    #[serde(rename = "attached")]
+    #[serde(rename = "Attached")]
     Attached,
-    #[serde(rename = "attaching")]
+    #[serde(rename = "Attaching")]
     Attaching,
-    #[serde(rename = "creating")]
+    #[serde(rename = "Creating")]
     Creating,
-    #[serde(rename = "destroyed")]
+    #[serde(rename = "Destroyed")]
     Destroyed,
-    #[serde(rename = "detached")]
+    #[serde(rename = "Detached")]
     Detached,
-    #[serde(rename = "detaching")]
+    #[serde(rename = "Detaching")]
     Detaching,
-    #[serde(rename = "faulted")]
+    #[serde(rename = "Faulted")]
     Faulted,
 }
 
 impl std::fmt::Display for DiskStateType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            DiskStateType::Attached => "attached",
-            DiskStateType::Attaching => "attaching",
-            DiskStateType::Creating => "creating",
-            DiskStateType::Destroyed => "destroyed",
-            DiskStateType::Detached => "detached",
-            DiskStateType::Detaching => "detaching",
-            DiskStateType::Faulted => "faulted",
+            DiskStateType::Attached => "Attached",
+            DiskStateType::Attaching => "Attaching",
+            DiskStateType::Creating => "Creating",
+            DiskStateType::Destroyed => "Destroyed",
+            DiskStateType::Detached => "Detached",
+            DiskStateType::Detaching => "Detaching",
+            DiskStateType::Faulted => "Faulted",
         }
         .fmt(f)
     }
@@ -224,25 +227,25 @@ impl Default for DiskStateType {
 impl std::str::FromStr for DiskStateType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "attached" {
+        if s == "Attached" {
             return Ok(DiskStateType::Attached);
         }
-        if s == "attaching" {
+        if s == "Attaching" {
             return Ok(DiskStateType::Attaching);
         }
-        if s == "creating" {
+        if s == "Creating" {
             return Ok(DiskStateType::Creating);
         }
-        if s == "destroyed" {
+        if s == "Destroyed" {
             return Ok(DiskStateType::Destroyed);
         }
-        if s == "detached" {
+        if s == "Detached" {
             return Ok(DiskStateType::Detached);
         }
-        if s == "detaching" {
+        if s == "Detaching" {
             return Ok(DiskStateType::Detaching);
         }
-        if s == "faulted" {
+        if s == "Faulted" {
             return Ok(DiskStateType::Faulted);
         }
         anyhow::bail!("invalid string: {}", s);
@@ -823,7 +826,7 @@ pub enum InstanceNetworkInterfaceAttachment {
 impl fmt::Display for InstanceNetworkInterfaceAttachment {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let j = serde_json::json!(self);
-        let tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
         let mut content: String = serde_json::from_value(j["params"].clone()).unwrap_or_default();
         if content.is_empty() {
             let map: std::collections::HashMap<String, String> =
@@ -831,6 +834,9 @@ impl fmt::Display for InstanceNetworkInterfaceAttachment {
             if let Some((_, v)) = map.iter().next() {
                 content = v.to_string();
             }
+        }
+        if tag == "internetgateway" {
+            tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
     }
@@ -852,10 +858,10 @@ impl std::str::FromStr for InstanceNetworkInterfaceAttachment {
         if tag == "create" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "create",
 "params": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         let result = serde_json::from_str(&j)?;
@@ -876,20 +882,20 @@ impl InstanceNetworkInterfaceAttachment {
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum InstanceNetworkInterfaceAttachmentType {
-    #[serde(rename = "create")]
+    #[serde(rename = "Create")]
     Create,
-    #[serde(rename = "default")]
+    #[serde(rename = "Default")]
     Default,
-    #[serde(rename = "none")]
+    #[serde(rename = "None")]
     None,
 }
 
 impl std::fmt::Display for InstanceNetworkInterfaceAttachmentType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            InstanceNetworkInterfaceAttachmentType::Create => "create",
-            InstanceNetworkInterfaceAttachmentType::Default => "default",
-            InstanceNetworkInterfaceAttachmentType::None => "none",
+            InstanceNetworkInterfaceAttachmentType::Create => "Create",
+            InstanceNetworkInterfaceAttachmentType::Default => "Default",
+            InstanceNetworkInterfaceAttachmentType::None => "None",
         }
         .fmt(f)
     }
@@ -903,13 +909,13 @@ impl Default for InstanceNetworkInterfaceAttachmentType {
 impl std::str::FromStr for InstanceNetworkInterfaceAttachmentType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "create" {
+        if s == "Create" {
             return Ok(InstanceNetworkInterfaceAttachmentType::Create);
         }
-        if s == "default" {
+        if s == "Default" {
             return Ok(InstanceNetworkInterfaceAttachmentType::Default);
         }
-        if s == "none" {
+        if s == "None" {
             return Ok(InstanceNetworkInterfaceAttachmentType::None);
         }
         anyhow::bail!("invalid string: {}", s);
@@ -1876,7 +1882,7 @@ pub enum RouteDestination {
 impl fmt::Display for RouteDestination {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let j = serde_json::json!(self);
-        let tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
         let mut content: String = serde_json::from_value(j["value"].clone()).unwrap_or_default();
         if content.is_empty() {
             let map: std::collections::HashMap<String, String> =
@@ -1884,6 +1890,9 @@ impl fmt::Display for RouteDestination {
             if let Some((_, v)) = map.iter().next() {
                 content = v.to_string();
             }
+        }
+        if tag == "internetgateway" {
+            tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
     }
@@ -1902,38 +1911,37 @@ impl std::str::FromStr for RouteDestination {
         if tag == "ip" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "ip",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "ipnet" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "ipnet",
 "value": {}
         }}"#,
-                tag,
                 serde_json::json!(IpNet::from_str(&content).unwrap())
             );
         }
         if tag == "vpc" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "vpc",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "subnet" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "subnet",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         let result = serde_json::from_str(&j)?;
@@ -1955,23 +1963,23 @@ impl RouteDestination {
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum RouteDestinationType {
-    #[serde(rename = "ip")]
+    #[serde(rename = "Ip")]
     Ip,
-    #[serde(rename = "ipnet")]
-    Ipnet,
-    #[serde(rename = "subnet")]
+    #[serde(rename = "IpNet")]
+    IpNet,
+    #[serde(rename = "Subnet")]
     Subnet,
-    #[serde(rename = "vpc")]
+    #[serde(rename = "Vpc")]
     Vpc,
 }
 
 impl std::fmt::Display for RouteDestinationType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            RouteDestinationType::Ip => "ip",
-            RouteDestinationType::Ipnet => "ipnet",
-            RouteDestinationType::Subnet => "subnet",
-            RouteDestinationType::Vpc => "vpc",
+            RouteDestinationType::Ip => "Ip",
+            RouteDestinationType::IpNet => "IpNet",
+            RouteDestinationType::Subnet => "Subnet",
+            RouteDestinationType::Vpc => "Vpc",
         }
         .fmt(f)
     }
@@ -1985,16 +1993,16 @@ impl Default for RouteDestinationType {
 impl std::str::FromStr for RouteDestinationType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "ip" {
+        if s == "Ip" {
             return Ok(RouteDestinationType::Ip);
         }
-        if s == "ipnet" {
-            return Ok(RouteDestinationType::Ipnet);
+        if s == "IpNet" {
+            return Ok(RouteDestinationType::IpNet);
         }
-        if s == "subnet" {
+        if s == "Subnet" {
             return Ok(RouteDestinationType::Subnet);
         }
-        if s == "vpc" {
+        if s == "Vpc" {
             return Ok(RouteDestinationType::Vpc);
         }
         anyhow::bail!("invalid string: {}", s);
@@ -2015,7 +2023,7 @@ pub enum RouteTarget {
 impl fmt::Display for RouteTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let j = serde_json::json!(self);
-        let tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
         let mut content: String = serde_json::from_value(j["value"].clone()).unwrap_or_default();
         if content.is_empty() {
             let map: std::collections::HashMap<String, String> =
@@ -2023,6 +2031,9 @@ impl fmt::Display for RouteTarget {
             if let Some((_, v)) = map.iter().next() {
                 content = v.to_string();
             }
+        }
+        if tag == "internetgateway" {
+            tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
     }
@@ -2041,46 +2052,46 @@ impl std::str::FromStr for RouteTarget {
         if tag == "ip" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "ip",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "vpc" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "vpc",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "subnet" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "subnet",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "instance" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "instance",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
-        if tag == "internetgateway" {
+        if tag == "inetgw" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "internetgateway",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         let result = serde_json::from_str(&j)?;
@@ -2091,7 +2102,7 @@ impl RouteTarget {
     pub fn variants() -> Vec<String> {
         vec![
             "instance".to_string(),
-            "internetgateway".to_string(),
+            "inetgw".to_string(),
             "ip".to_string(),
             "subnet".to_string(),
             "vpc".to_string(),
@@ -2103,26 +2114,26 @@ impl RouteTarget {
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum RouteTargetType {
-    #[serde(rename = "instance")]
+    #[serde(rename = "Instance")]
     Instance,
-    #[serde(rename = "internetgateway")]
-    Internetgateway,
-    #[serde(rename = "ip")]
+    #[serde(rename = "InternetGateway")]
+    InternetGateway,
+    #[serde(rename = "Ip")]
     Ip,
-    #[serde(rename = "subnet")]
+    #[serde(rename = "Subnet")]
     Subnet,
-    #[serde(rename = "vpc")]
+    #[serde(rename = "Vpc")]
     Vpc,
 }
 
 impl std::fmt::Display for RouteTargetType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            RouteTargetType::Instance => "instance",
-            RouteTargetType::Internetgateway => "internetgateway",
-            RouteTargetType::Ip => "ip",
-            RouteTargetType::Subnet => "subnet",
-            RouteTargetType::Vpc => "vpc",
+            RouteTargetType::Instance => "Instance",
+            RouteTargetType::InternetGateway => "InternetGateway",
+            RouteTargetType::Ip => "Ip",
+            RouteTargetType::Subnet => "Subnet",
+            RouteTargetType::Vpc => "Vpc",
         }
         .fmt(f)
     }
@@ -2136,19 +2147,19 @@ impl Default for RouteTargetType {
 impl std::str::FromStr for RouteTargetType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "instance" {
+        if s == "Instance" {
             return Ok(RouteTargetType::Instance);
         }
-        if s == "internetgateway" {
-            return Ok(RouteTargetType::Internetgateway);
+        if s == "InternetGateway" {
+            return Ok(RouteTargetType::InternetGateway);
         }
-        if s == "ip" {
+        if s == "Ip" {
             return Ok(RouteTargetType::Ip);
         }
-        if s == "subnet" {
+        if s == "Subnet" {
             return Ok(RouteTargetType::Subnet);
         }
-        if s == "vpc" {
+        if s == "Vpc" {
             return Ok(RouteTargetType::Vpc);
         }
         anyhow::bail!("invalid string: {}", s);
@@ -2403,20 +2414,20 @@ impl SagaState {
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum SagaStateType {
-    #[serde(rename = "failed")]
+    #[serde(rename = "Failed")]
     Failed,
-    #[serde(rename = "running")]
+    #[serde(rename = "Running")]
     Running,
-    #[serde(rename = "succeeded")]
+    #[serde(rename = "Succeeded")]
     Succeeded,
 }
 
 impl std::fmt::Display for SagaStateType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            SagaStateType::Failed => "failed",
-            SagaStateType::Running => "running",
-            SagaStateType::Succeeded => "succeeded",
+            SagaStateType::Failed => "Failed",
+            SagaStateType::Running => "Running",
+            SagaStateType::Succeeded => "Succeeded",
         }
         .fmt(f)
     }
@@ -2430,13 +2441,13 @@ impl Default for SagaStateType {
 impl std::str::FromStr for SagaStateType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "failed" {
+        if s == "Failed" {
             return Ok(SagaStateType::Failed);
         }
-        if s == "running" {
+        if s == "Running" {
             return Ok(SagaStateType::Running);
         }
-        if s == "succeeded" {
+        if s == "Succeeded" {
             return Ok(SagaStateType::Succeeded);
         }
         anyhow::bail!("invalid string: {}", s);
@@ -2470,7 +2481,7 @@ pub enum SagaErrorInfo {
 impl fmt::Display for SagaErrorInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let j = serde_json::json!(self);
-        let tag: String = serde_json::from_value(j["error"].clone()).unwrap_or_default();
+        let mut tag: String = serde_json::from_value(j["error"].clone()).unwrap_or_default();
         let mut content: String = serde_json::from_value(j["message"].clone()).unwrap_or_default();
         if content.is_empty() {
             let map: std::collections::HashMap<String, String> =
@@ -2478,6 +2489,9 @@ impl fmt::Display for SagaErrorInfo {
             if let Some((_, v)) = map.iter().next() {
                 content = v.to_string();
             }
+        }
+        if tag == "internetgateway" {
+            tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
     }
@@ -2496,38 +2510,37 @@ impl std::str::FromStr for SagaErrorInfo {
         if tag == "actionfailed" {
             j = format!(
                 r#"{{
-"error": "{}",
+"error": "actionfailed",
 "message": {}
         }}"#,
-                tag,
                 serde_json::json!(serde_json::Value::from_str(&content).unwrap())
             );
         }
         if tag == "deserializefailed" {
             j = format!(
                 r#"{{
-"error": "{}",
+"error": "deserializefailed",
 "message": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "serializefailed" {
             j = format!(
                 r#"{{
-"error": "{}",
+"error": "serializefailed",
 "message": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "subsagacreatefailed" {
             j = format!(
                 r#"{{
-"error": "{}",
+"error": "subsagacreatefailed",
 "message": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         let result = serde_json::from_str(&j)?;
@@ -2550,26 +2563,26 @@ impl SagaErrorInfo {
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum SagaErrorInfoType {
-    #[serde(rename = "actionfailed")]
-    Actionfailed,
-    #[serde(rename = "deserializefailed")]
-    Deserializefailed,
-    #[serde(rename = "injectederror")]
-    Injectederror,
-    #[serde(rename = "serializefailed")]
-    Serializefailed,
-    #[serde(rename = "subsagacreatefailed")]
-    Subsagacreatefailed,
+    #[serde(rename = "ActionFailed")]
+    ActionFailed,
+    #[serde(rename = "DeserializeFailed")]
+    DeserializeFailed,
+    #[serde(rename = "InjectedError")]
+    InjectedError,
+    #[serde(rename = "SerializeFailed")]
+    SerializeFailed,
+    #[serde(rename = "SubsagaCreateFailed")]
+    SubsagaCreateFailed,
 }
 
 impl std::fmt::Display for SagaErrorInfoType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            SagaErrorInfoType::Actionfailed => "actionfailed",
-            SagaErrorInfoType::Deserializefailed => "deserializefailed",
-            SagaErrorInfoType::Injectederror => "injectederror",
-            SagaErrorInfoType::Serializefailed => "serializefailed",
-            SagaErrorInfoType::Subsagacreatefailed => "subsagacreatefailed",
+            SagaErrorInfoType::ActionFailed => "ActionFailed",
+            SagaErrorInfoType::DeserializeFailed => "DeserializeFailed",
+            SagaErrorInfoType::InjectedError => "InjectedError",
+            SagaErrorInfoType::SerializeFailed => "SerializeFailed",
+            SagaErrorInfoType::SubsagaCreateFailed => "SubsagaCreateFailed",
         }
         .fmt(f)
     }
@@ -2577,26 +2590,26 @@ impl std::fmt::Display for SagaErrorInfoType {
 
 impl Default for SagaErrorInfoType {
     fn default() -> SagaErrorInfoType {
-        SagaErrorInfoType::Actionfailed
+        SagaErrorInfoType::ActionFailed
     }
 }
 impl std::str::FromStr for SagaErrorInfoType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "actionfailed" {
-            return Ok(SagaErrorInfoType::Actionfailed);
+        if s == "ActionFailed" {
+            return Ok(SagaErrorInfoType::ActionFailed);
         }
-        if s == "deserializefailed" {
-            return Ok(SagaErrorInfoType::Deserializefailed);
+        if s == "DeserializeFailed" {
+            return Ok(SagaErrorInfoType::DeserializeFailed);
         }
-        if s == "injectederror" {
-            return Ok(SagaErrorInfoType::Injectederror);
+        if s == "InjectedError" {
+            return Ok(SagaErrorInfoType::InjectedError);
         }
-        if s == "serializefailed" {
-            return Ok(SagaErrorInfoType::Serializefailed);
+        if s == "SerializeFailed" {
+            return Ok(SagaErrorInfoType::SerializeFailed);
         }
-        if s == "subsagacreatefailed" {
-            return Ok(SagaErrorInfoType::Subsagacreatefailed);
+        if s == "SubsagaCreateFailed" {
+            return Ok(SagaErrorInfoType::SubsagaCreateFailed);
         }
         anyhow::bail!("invalid string: {}", s);
     }
@@ -3287,7 +3300,7 @@ pub enum VpcFirewallRuleTarget {
 impl fmt::Display for VpcFirewallRuleTarget {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let j = serde_json::json!(self);
-        let tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
         let mut content: String = serde_json::from_value(j["value"].clone()).unwrap_or_default();
         if content.is_empty() {
             let map: std::collections::HashMap<String, String> =
@@ -3295,6 +3308,9 @@ impl fmt::Display for VpcFirewallRuleTarget {
             if let Some((_, v)) = map.iter().next() {
                 content = v.to_string();
             }
+        }
+        if tag == "internetgateway" {
+            tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
     }
@@ -3313,46 +3329,45 @@ impl std::str::FromStr for VpcFirewallRuleTarget {
         if tag == "vpc" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "vpc",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "subnet" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "subnet",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "instance" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "instance",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "ip" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "ip",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "ipnet" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "ipnet",
 "value": {}
         }}"#,
-                tag,
                 serde_json::json!(IpNet::from_str(&content).unwrap())
             );
         }
@@ -3376,26 +3391,26 @@ impl VpcFirewallRuleTarget {
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum VpcFirewallRuleTargetType {
-    #[serde(rename = "instance")]
+    #[serde(rename = "Instance")]
     Instance,
-    #[serde(rename = "ip")]
+    #[serde(rename = "Ip")]
     Ip,
-    #[serde(rename = "ipnet")]
-    Ipnet,
-    #[serde(rename = "subnet")]
+    #[serde(rename = "IpNet")]
+    IpNet,
+    #[serde(rename = "Subnet")]
     Subnet,
-    #[serde(rename = "vpc")]
+    #[serde(rename = "Vpc")]
     Vpc,
 }
 
 impl std::fmt::Display for VpcFirewallRuleTargetType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            VpcFirewallRuleTargetType::Instance => "instance",
-            VpcFirewallRuleTargetType::Ip => "ip",
-            VpcFirewallRuleTargetType::Ipnet => "ipnet",
-            VpcFirewallRuleTargetType::Subnet => "subnet",
-            VpcFirewallRuleTargetType::Vpc => "vpc",
+            VpcFirewallRuleTargetType::Instance => "Instance",
+            VpcFirewallRuleTargetType::Ip => "Ip",
+            VpcFirewallRuleTargetType::IpNet => "IpNet",
+            VpcFirewallRuleTargetType::Subnet => "Subnet",
+            VpcFirewallRuleTargetType::Vpc => "Vpc",
         }
         .fmt(f)
     }
@@ -3409,19 +3424,19 @@ impl Default for VpcFirewallRuleTargetType {
 impl std::str::FromStr for VpcFirewallRuleTargetType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "instance" {
+        if s == "Instance" {
             return Ok(VpcFirewallRuleTargetType::Instance);
         }
-        if s == "ip" {
+        if s == "Ip" {
             return Ok(VpcFirewallRuleTargetType::Ip);
         }
-        if s == "ipnet" {
-            return Ok(VpcFirewallRuleTargetType::Ipnet);
+        if s == "IpNet" {
+            return Ok(VpcFirewallRuleTargetType::IpNet);
         }
-        if s == "subnet" {
+        if s == "Subnet" {
             return Ok(VpcFirewallRuleTargetType::Subnet);
         }
-        if s == "vpc" {
+        if s == "Vpc" {
             return Ok(VpcFirewallRuleTargetType::Vpc);
         }
         anyhow::bail!("invalid string: {}", s);
@@ -3531,7 +3546,7 @@ pub enum VpcFirewallRuleHostFilter {
 impl fmt::Display for VpcFirewallRuleHostFilter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let j = serde_json::json!(self);
-        let tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
         let mut content: String = serde_json::from_value(j["value"].clone()).unwrap_or_default();
         if content.is_empty() {
             let map: std::collections::HashMap<String, String> =
@@ -3539,6 +3554,9 @@ impl fmt::Display for VpcFirewallRuleHostFilter {
             if let Some((_, v)) = map.iter().next() {
                 content = v.to_string();
             }
+        }
+        if tag == "internetgateway" {
+            tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
     }
@@ -3557,46 +3575,45 @@ impl std::str::FromStr for VpcFirewallRuleHostFilter {
         if tag == "vpc" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "vpc",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "subnet" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "subnet",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "instance" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "instance",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "ip" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "ip",
 "value": "{}"
         }}"#,
-                tag, content
+                content
             );
         }
         if tag == "ipnet" {
             j = format!(
                 r#"{{
-"type": "{}",
+"type": "ipnet",
 "value": {}
         }}"#,
-                tag,
                 serde_json::json!(IpNet::from_str(&content).unwrap())
             );
         }
@@ -3620,26 +3637,26 @@ impl VpcFirewallRuleHostFilter {
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum VpcFirewallRuleHostFilterType {
-    #[serde(rename = "instance")]
+    #[serde(rename = "Instance")]
     Instance,
-    #[serde(rename = "ip")]
+    #[serde(rename = "Ip")]
     Ip,
-    #[serde(rename = "ipnet")]
-    Ipnet,
-    #[serde(rename = "subnet")]
+    #[serde(rename = "IpNet")]
+    IpNet,
+    #[serde(rename = "Subnet")]
     Subnet,
-    #[serde(rename = "vpc")]
+    #[serde(rename = "Vpc")]
     Vpc,
 }
 
 impl std::fmt::Display for VpcFirewallRuleHostFilterType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            VpcFirewallRuleHostFilterType::Instance => "instance",
-            VpcFirewallRuleHostFilterType::Ip => "ip",
-            VpcFirewallRuleHostFilterType::Ipnet => "ipnet",
-            VpcFirewallRuleHostFilterType::Subnet => "subnet",
-            VpcFirewallRuleHostFilterType::Vpc => "vpc",
+            VpcFirewallRuleHostFilterType::Instance => "Instance",
+            VpcFirewallRuleHostFilterType::Ip => "Ip",
+            VpcFirewallRuleHostFilterType::IpNet => "IpNet",
+            VpcFirewallRuleHostFilterType::Subnet => "Subnet",
+            VpcFirewallRuleHostFilterType::Vpc => "Vpc",
         }
         .fmt(f)
     }
@@ -3653,19 +3670,19 @@ impl Default for VpcFirewallRuleHostFilterType {
 impl std::str::FromStr for VpcFirewallRuleHostFilterType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "instance" {
+        if s == "Instance" {
             return Ok(VpcFirewallRuleHostFilterType::Instance);
         }
-        if s == "ip" {
+        if s == "Ip" {
             return Ok(VpcFirewallRuleHostFilterType::Ip);
         }
-        if s == "ipnet" {
-            return Ok(VpcFirewallRuleHostFilterType::Ipnet);
+        if s == "IpNet" {
+            return Ok(VpcFirewallRuleHostFilterType::IpNet);
         }
-        if s == "subnet" {
+        if s == "Subnet" {
             return Ok(VpcFirewallRuleHostFilterType::Subnet);
         }
-        if s == "vpc" {
+        if s == "Vpc" {
             return Ok(VpcFirewallRuleHostFilterType::Vpc);
         }
         anyhow::bail!("invalid string: {}", s);
