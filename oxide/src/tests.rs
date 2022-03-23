@@ -73,7 +73,7 @@ fn test_route_destination() {
 
     let variants = crate::types::RouteDestination::variants();
     assert_eq!(variants.len(), 4);
-    assert_eq!(variants, vec!["ip", "ipnet", "subnet", "vpc"]);
+    assert_eq!(variants, vec!["ip", "ip_net", "subnet", "vpc"]);
 
     let ip = crate::types::IpNet::V4(crate::types::Ipv4Net(
         ipnetwork::Ipv4Network::new(std::net::Ipv4Addr::new(172, 30, 0, 0), 22).unwrap(),
@@ -83,9 +83,9 @@ fn test_route_destination() {
 
     route_destination = crate::types::RouteDestination::IpNet(ip);
     route_destination_str = format!("{}", route_destination);
-    assert_eq!(route_destination_str, "ipnet=172.30.0.0/22");
+    assert_eq!(route_destination_str, "ip_net=172.30.0.0/22");
 
     route_destination_from_str =
-        crate::types::RouteDestination::from_str("ipnet=172.30.0.0/22").unwrap();
+        crate::types::RouteDestination::from_str("ip_net=172.30.0.0/22").unwrap();
     assert_eq!(route_destination_from_str, route_destination);
 }

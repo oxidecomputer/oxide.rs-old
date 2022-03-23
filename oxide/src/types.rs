@@ -98,7 +98,7 @@ impl DatumType {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 #[serde(tag = "state", content = "instance")]
 pub enum DiskState {
     Creating,
@@ -122,7 +122,7 @@ impl fmt::Display for DiskState {
                 content = v.to_string();
             }
         }
-        if tag == "internetgateway" {
+        if tag == "internet_gateway" {
             tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
@@ -815,7 +815,7 @@ pub struct Instance {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 #[serde(tag = "type", content = "params")]
 pub enum InstanceNetworkInterfaceAttachment {
     Create(InstanceNetworkInterfaceCreate),
@@ -835,7 +835,7 @@ impl fmt::Display for InstanceNetworkInterfaceAttachment {
                 content = v.to_string();
             }
         }
-        if tag == "internetgateway" {
+        if tag == "internet_gateway" {
             tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
@@ -1870,7 +1870,7 @@ pub struct RoleResultsPage {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 #[serde(tag = "type", content = "value")]
 pub enum RouteDestination {
     Ip(String),
@@ -1891,7 +1891,7 @@ impl fmt::Display for RouteDestination {
                 content = v.to_string();
             }
         }
-        if tag == "internetgateway" {
+        if tag == "internet_gateway" {
             tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
@@ -1917,10 +1917,10 @@ impl std::str::FromStr for RouteDestination {
                 content
             );
         }
-        if tag == "ipnet" {
+        if tag == "ip_net" {
             j = format!(
                 r#"{{
-"type": "ipnet",
+"type": "ip_net",
 "value": {}
         }}"#,
                 serde_json::json!(IpNet::from_str(&content).unwrap())
@@ -1952,7 +1952,7 @@ impl RouteDestination {
     pub fn variants() -> Vec<String> {
         vec![
             "ip".to_string(),
-            "ipnet".to_string(),
+            "ip_net".to_string(),
             "subnet".to_string(),
             "vpc".to_string(),
         ]
@@ -2010,7 +2010,7 @@ impl std::str::FromStr for RouteDestinationType {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 #[serde(tag = "type", content = "value")]
 pub enum RouteTarget {
     Ip(String),
@@ -2032,7 +2032,7 @@ impl fmt::Display for RouteTarget {
                 content = v.to_string();
             }
         }
-        if tag == "internetgateway" {
+        if tag == "internet_gateway" {
             tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
@@ -2088,7 +2088,7 @@ impl std::str::FromStr for RouteTarget {
         if tag == "inetgw" {
             j = format!(
                 r#"{{
-"type": "internetgateway",
+"type": "internet_gateway",
 "value": "{}"
         }}"#,
                 content
@@ -2377,7 +2377,7 @@ pub struct RouterRouteUpdateParams {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 #[serde(tag = "state")]
 pub enum SagaState {
     Running,
@@ -2468,7 +2468,7 @@ pub struct Saga {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 #[serde(tag = "error", content = "message")]
 pub enum SagaErrorInfo {
     ActionFailed(serde_json::Value),
@@ -2490,7 +2490,7 @@ impl fmt::Display for SagaErrorInfo {
                 content = v.to_string();
             }
         }
-        if tag == "internetgateway" {
+        if tag == "internet_gateway" {
             tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
@@ -2507,37 +2507,37 @@ impl std::str::FromStr for SagaErrorInfo {
         let tag = parts[0].to_string();
         let content = parts[1].to_string();
         let mut j = String::new();
-        if tag == "actionfailed" {
+        if tag == "action_failed" {
             j = format!(
                 r#"{{
-"error": "actionfailed",
+"error": "action_failed",
 "message": {}
         }}"#,
                 serde_json::json!(serde_json::Value::from_str(&content).unwrap())
             );
         }
-        if tag == "deserializefailed" {
+        if tag == "deserialize_failed" {
             j = format!(
                 r#"{{
-"error": "deserializefailed",
+"error": "deserialize_failed",
 "message": "{}"
         }}"#,
                 content
             );
         }
-        if tag == "serializefailed" {
+        if tag == "serialize_failed" {
             j = format!(
                 r#"{{
-"error": "serializefailed",
+"error": "serialize_failed",
 "message": "{}"
         }}"#,
                 content
             );
         }
-        if tag == "subsagacreatefailed" {
+        if tag == "subsaga_create_failed" {
             j = format!(
                 r#"{{
-"error": "subsagacreatefailed",
+"error": "subsaga_create_failed",
 "message": "{}"
         }}"#,
                 content
@@ -2550,11 +2550,11 @@ impl std::str::FromStr for SagaErrorInfo {
 impl SagaErrorInfo {
     pub fn variants() -> Vec<String> {
         vec![
-            "actionfailed".to_string(),
-            "deserializefailed".to_string(),
-            "injectederror".to_string(),
-            "serializefailed".to_string(),
-            "subsagacreatefailed".to_string(),
+            "action_failed".to_string(),
+            "deserialize_failed".to_string(),
+            "injected_error".to_string(),
+            "serialize_failed".to_string(),
+            "subsaga_create_failed".to_string(),
         ]
     }
 }
@@ -3287,7 +3287,7 @@ impl VpcFirewallRuleStatus {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 #[serde(tag = "type", content = "value")]
 pub enum VpcFirewallRuleTarget {
     Vpc(String),
@@ -3309,7 +3309,7 @@ impl fmt::Display for VpcFirewallRuleTarget {
                 content = v.to_string();
             }
         }
-        if tag == "internetgateway" {
+        if tag == "internet_gateway" {
             tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
@@ -3362,10 +3362,10 @@ impl std::str::FromStr for VpcFirewallRuleTarget {
                 content
             );
         }
-        if tag == "ipnet" {
+        if tag == "ip_net" {
             j = format!(
                 r#"{{
-"type": "ipnet",
+"type": "ip_net",
 "value": {}
         }}"#,
                 serde_json::json!(IpNet::from_str(&content).unwrap())
@@ -3380,7 +3380,7 @@ impl VpcFirewallRuleTarget {
         vec![
             "instance".to_string(),
             "ip".to_string(),
-            "ipnet".to_string(),
+            "ip_net".to_string(),
             "subnet".to_string(),
             "vpc".to_string(),
         ]
@@ -3533,7 +3533,7 @@ pub struct VpcFirewallRule {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 #[serde(tag = "type", content = "value")]
 pub enum VpcFirewallRuleHostFilter {
     Vpc(String),
@@ -3555,7 +3555,7 @@ impl fmt::Display for VpcFirewallRuleHostFilter {
                 content = v.to_string();
             }
         }
-        if tag == "internetgateway" {
+        if tag == "internet_gateway" {
             tag = "inetgw".to_string();
         }
         write!(f, "{}={}", tag, content)
@@ -3608,10 +3608,10 @@ impl std::str::FromStr for VpcFirewallRuleHostFilter {
                 content
             );
         }
-        if tag == "ipnet" {
+        if tag == "ip_net" {
             j = format!(
                 r#"{{
-"type": "ipnet",
+"type": "ip_net",
 "value": {}
         }}"#,
                 serde_json::json!(IpNet::from_str(&content).unwrap())
@@ -3626,7 +3626,7 @@ impl VpcFirewallRuleHostFilter {
         vec![
             "instance".to_string(),
             "ip".to_string(),
-            "ipnet".to_string(),
+            "ip_net".to_string(),
             "subnet".to_string(),
             "vpc".to_string(),
         ]

@@ -637,7 +637,7 @@ impl std::str::FromStr for IpNet {
 
     a("#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]");
     if !tag.is_empty() {
-        a("#[serde(rename_all = \"lowercase\")]");
+        a("#[serde(rename_all = \"snake_case\")]");
         a(&format!("#[serde(tag = \"{}\"", tag));
         if !content.is_empty() {
             a(&format!(", content = \"{}\"", content));
@@ -744,7 +744,7 @@ impl std::str::FromStr for IpNet {
         ));
         a("if let Some((_, v)) = map.iter().next() { content = v.to_string(); }");
         a("}");
-        a("if tag == \"internetgateway\" { tag = \"inetgw\".to_string(); }");
+        a("if tag == \"internet_gateway\" { tag = \"inetgw\".to_string(); }");
         a("     write!(f, \"{}={}\",tag, content)");
         a("}");
         a("}");
@@ -765,13 +765,13 @@ impl std::str::FromStr for IpNet {
         a("    let content = parts[1].to_string();");
         a("    let mut j = String::new();");
         for (name, p) in prop_types.iter() {
-            let mut k = name.to_lowercase();
-            if k == "internetgateway" {
+            let mut k = to_snake_case(name);
+            if k == "internet_gateway" {
                 k = "inetgw".to_string();
             }
             a(&format!("if tag == \"{}\" {{", k));
             a("j = format!(r#\"{{");
-            a(&format!("\"{}\": \"{}\",", tag, name.to_lowercase()));
+            a(&format!("\"{}\": \"{}\",", tag, to_snake_case(name)));
             if p == "String" || p == "InstanceNetworkInterfaceCreate" {
                 a(&format!("\"{}\": \"{{}}\"", content));
                 a("        }}\"#, content);");
@@ -813,8 +813,8 @@ impl std::str::FromStr for IpNet {
         a("pub fn variants() -> Vec<String> {");
         a("    vec![");
         for (name, _) in types_strings.iter() {
-            let mut k = name.to_lowercase();
-            if k == "internetgateway" {
+            let mut k = to_snake_case(name);
+            if k == "internet_gateway" {
                 k = "inetgw".to_string();
             }
             a(&format!("        \"{}\".to_string(),", k));
