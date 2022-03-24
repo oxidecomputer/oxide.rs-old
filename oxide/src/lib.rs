@@ -29,7 +29,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! oxide-api = "0.1.0-rc.29"
+//! oxide-api = "0.1.0-rc.30"
 //! ```
 //!
 //! ## Basic example
@@ -291,14 +291,20 @@ impl Client {
             };
             parsed_response.map_err(Error::from)
         } else {
-            let error = if response_body.is_empty() {
+            let error: anyhow::Error = if response_body.is_empty() {
                 anyhow!("code: {}, empty response", status)
             } else {
-                anyhow!(
-                    "code: {}, error: {:?}",
-                    status,
-                    String::from_utf8_lossy(&response_body),
-                )
+                // Parse the error as the error type.
+                match serde_json::from_slice::<crate::types::Error>(&response_body) {
+                    Ok(e) => e.into(),
+                    Err(_) => {
+                        anyhow!(
+                            "code: {}, error: {:?}",
+                            status,
+                            String::from_utf8_lossy(&response_body),
+                        )
+                    }
+                }
             };
 
             Err(error)
