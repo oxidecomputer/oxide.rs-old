@@ -411,17 +411,11 @@ pub struct DiskResultsPage {
 #[derive(Debug, Deserialize, thiserror::Error, PartialEq, Serialize)]
 pub enum Error {
     /// An object needed as part of this operation was not found.
-    #[error("Object (of type {lookup_type:?}) not found: {type_name}")]
-    ObjectNotFound {
-        type_name: ResourceType,
-        lookup_type: LookupType,
-    },
+    #[error("Object Not Found: {message}")]
+    ObjectNotFound { message: String },
     /// An object already exists with the specified name or identifier.
-    #[error("Object (of type {type_name:?}) already exists: {object_name}")]
-    ObjectAlreadyExists {
-        type_name: ResourceType,
-        object_name: String,
-    },
+    #[error("Object Already Exists: {message}")]
+    ObjectAlreadyExists { message: String },
     /// The request was well-formed, but the operation cannot be completed given
     /// the current state of the system.
     #[error("Invalid Request: {message}")]
@@ -432,8 +426,8 @@ pub enum Error {
     #[error("Missing or invalid credentials")]
     Unauthenticated { internal_message: String },
     /// The specified input field is not valid.
-    #[error("Invalid Value: {label}, {message}")]
-    InvalidValue { label: String, message: String },
+    #[error("Invalid Value: {message}")]
+    InvalidValue { message: String },
     /// The request is not authorized to perform the requested operation.
     #[error("Forbidden")]
     Forbidden,
@@ -447,38 +441,6 @@ pub enum Error {
     /// Method Not Allowed
     #[error("Method Not Allowed: {internal_message}")]
     MethodNotAllowed { internal_message: String },
-}
-
-/// Indicates how an object was looked up (for an `ObjectNotFound` error)
-#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
-pub enum LookupType {
-    /// a specific name was requested
-    ByName(String),
-    /// a specific id was requested
-    ById(uuid::Uuid),
-}
-
-impl LookupType {
-    /// Returns an ObjectNotFound error appropriate for the case where this
-    /// lookup failed
-    pub fn into_not_found(self, type_name: ResourceType) -> Error {
-        Error::ObjectNotFound {
-            type_name,
-            lookup_type: self,
-        }
-    }
-}
-
-impl From<&str> for LookupType {
-    fn from(name: &str) -> Self {
-        LookupType::ByName(name.to_owned())
-    }
-}
-
-impl From<&Name> for LookupType {
-    fn from(name: &Name) -> Self {
-        LookupType::from(name.as_str())
-    }
 }
 
 impl Error {
@@ -498,50 +460,61 @@ impl Error {
             | Error::InternalError { .. } => false,
         }
     }
+}
 
-    /// Generates an [`Error::ObjectNotFound`] error for a lookup by object
-    /// name.
-    pub fn not_found_by_name(type_name: ResourceType, name: &Name) -> Error {
-        LookupType::from(name).into_not_found(type_name)
-    }
+impl From<ErrorResponse> for Error {
+    /// Converts an `Error` error into an `HttpError`.  This defines how
+    /// errors that are represented internally using `Error` are ultimately
+    /// exposed to clients over HTTP.
+    fn from(error: ErrorResponse) -> Error {
+        if error.error_code == "ObjectNotFound" {
+            return Error::ObjectNotFound {
+                message: error.message,
+            };
+        }
 
-    /// Generates an [`Error::ObjectNotFound`] error for a lookup by object id.
-    pub fn not_found_by_id(type_name: ResourceType, id: &uuid::Uuid) -> Error {
-        LookupType::ById(*id).into_not_found(type_name)
-    }
+        if error.error_code == "ObjectAlreadyExists" {
+            return Error::ObjectAlreadyExists {
+                message: error.message,
+            };
+        }
 
-    /// Generates an [`Error::InternalError`] error with the specific message
-    ///
-    /// InternalError should be used for operational conditions that should not
-    /// happen but that we cannot reasonably handle at runtime (e.g.,
-    /// deserializing a value from the database, or finding two records for
-    /// something that is supposed to be unique).
-    pub fn internal_error(internal_message: &str) -> Error {
+        if error.error_code == "Unauthorized" {
+            return Error::Unauthenticated {
+                internal_message: error.message,
+            };
+        }
+
+        if error.error_code == "InvalidRequest" {
+            return Error::InvalidRequest {
+                message: error.message,
+            };
+        }
+
+        if error.error_code == "InvalidValue" {
+            return Error::InvalidValue {
+                message: error.message,
+            };
+        }
+
+        if error.error_code == "Forbidden" {
+            return Error::Forbidden;
+        }
+
+        if error.error_code == "MethodNotAllowed" {
+            return Error::MethodNotAllowed {
+                internal_message: error.message,
+            };
+        }
+
+        if error.error_code == "ServiceUnavailable" {
+            return Error::ServiceUnavailable {
+                internal_message: error.message,
+            };
+        }
+
         Error::InternalError {
-            internal_message: internal_message.to_owned(),
-        }
-    }
-
-    /// Generates an [`Error::InvalidRequest`] error with the specific message
-    ///
-    /// This should be used for failures due possibly to invalid client input
-    /// or malformed requests.
-    pub fn invalid_request(message: &str) -> Error {
-        Error::InvalidRequest {
-            message: message.to_owned(),
-        }
-    }
-
-    /// Generates an [`Error::ServiceUnavailable`] error with the specific
-    /// message
-    ///
-    /// This should be used for transient failures where the caller might be
-    /// expected to retry.  Logic errors or other problems indicating that a
-    /// retry would not work should probably be an InternalError (if it's a
-    /// server problem) or InvalidRequest (if it's a client problem) instead.
-    pub fn unavail(message: &str) -> Error {
-        Error::ServiceUnavailable {
-            internal_message: message.to_owned(),
+            internal_message: error.message,
         }
     }
 }
@@ -583,6 +556,34 @@ pub enum ResourceType {
     Role,
     User,
     Zpool,
+}
+
+/// Error information from a response.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct ErrorResponse {
+    /**
+    * Error information from a response.
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub error_code: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub message: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub request_id: String,
 }
 
 /**

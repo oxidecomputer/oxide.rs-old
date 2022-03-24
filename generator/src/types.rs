@@ -29,7 +29,7 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
 
     for te in ts.clone().id_to_entry.values() {
         if let Some(sn) = te.name.as_deref() {
-            let sn = struct_name(sn);
+            let mut sn = struct_name(sn);
 
             if seen.contains_key(sn.as_str()) {
                 continue;
@@ -46,8 +46,7 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                 continue;
             } else if sn == "Error" {
                 a(crate::types_templates::ERROR);
-
-                continue;
+                sn = "ErrorResponse".to_string();
             }
 
             match &te.details {

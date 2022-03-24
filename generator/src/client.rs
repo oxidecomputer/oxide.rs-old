@@ -145,8 +145,11 @@ impl Client {
                 anyhow!("code: {}, empty response", status)
             } else {
                 // Parse the error as the error type.
-                match serde_json::from_slice::<crate::types::Error>(&response_body) {
-                    Ok(e) => e.into(),
+                match serde_json::from_slice::<crate::types::ErrorResponse>(&response_body) {
+                    Ok(resp) => {
+                       let e : crate::types::Error = resp.into();
+                       e.into()
+                    },
                     Err(_) => {
                         anyhow!(
                             "code: {}, error: {:?}",
