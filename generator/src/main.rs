@@ -2,6 +2,7 @@ mod client;
 mod functions;
 mod template;
 mod types;
+mod types_templates;
 mod utils;
 
 use std::{
@@ -3083,13 +3084,16 @@ ipnetwork = "^0.18"
 hyperx = "1"
 log = {{ version = "^0.4", features = ["serde"] }}
 mime = "0.3"
+parse-display = "^0.5"
 percent-encoding = "2.1"
 reqwest = {{ version = "0.11", default-features = false, features = ["json", "multipart", "rustls-tls"] }}
 schemars = {{ version = "0.8", features = ["bytes", "chrono", "url", "uuid"] }}
 serde = {{ version = "1", features = ["derive"] }}
 serde_json = "1"
+serde_with = "1"
 serde_urlencoded = "^0.7"
 tabled = {{ version = "0.5.0", features = ["color"] }}
+thiserror = "^1"
 url = {{ version = "2", features = ["serde"] }}
 uuid = {{ version = "^0.8", features = ["serde", "v4"] }}
 

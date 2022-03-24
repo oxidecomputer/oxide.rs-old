@@ -18,7 +18,7 @@
     },
     "x-rust": {
       "client": "use oxide_api::Client;\n\n// Authenticate via an API token.\nlet client = Client::new(\"$OXIDE_TOKEN\", \"$OXIDE_HOST\");\n\n// - OR -\n\n// Authenticate with your token and host parsed from the environment variables:\n// OXIDE_TOKEN, OXIDE_HOST.\nlet client = Client::new_from_env();",
-      "install": "[dependencies]\noxide-api = \"0.1.0-rc.28\""
+      "install": "[dependencies]\noxide-api = \"0.1.0-rc.29\""
     }
   },
   "paths": {

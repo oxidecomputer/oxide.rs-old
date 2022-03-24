@@ -1,6 +1,7 @@
 //! The data types sent to and returned from the API client.
 use std::fmt;
 
+use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use tabled::Tabled;
@@ -408,32 +409,181 @@ pub struct DiskResultsPage {
     pub next_page: String,
 }
 
-/// Error information from a response.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct Error {
-    /**
-     * Error information from a response.
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub error_code: String,
+#[derive(Debug, Deserialize, thiserror::Error, PartialEq, Serialize)]
+pub enum Error {
+    /// An object needed as part of this operation was not found.
+    #[error("Object (of type {lookup_type:?}) not found: {type_name}")]
+    ObjectNotFound {
+        type_name: ResourceType,
+        lookup_type: LookupType,
+    },
+    /// An object already exists with the specified name or identifier.
+    #[error("Object (of type {type_name:?}) already exists: {object_name}")]
+    ObjectAlreadyExists {
+        type_name: ResourceType,
+        object_name: String,
+    },
+    /// The request was well-formed, but the operation cannot be completed given
+    /// the current state of the system.
+    #[error("Invalid Request: {message}")]
+    InvalidRequest { message: String },
+    /// Authentication credentials were required but either missing or invalid.
+    /// The HTTP status code is called "Unauthorized", but it's more accurate to
+    /// call it "Unauthenticated".
+    #[error("Missing or invalid credentials")]
+    Unauthenticated { internal_message: String },
+    /// The specified input field is not valid.
+    #[error("Invalid Value: {label}, {message}")]
+    InvalidValue { label: String, message: String },
+    /// The request is not authorized to perform the requested operation.
+    #[error("Forbidden")]
+    Forbidden,
 
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub message: String,
+    /// The system encountered an unhandled operational error.
+    #[error("Internal Error: {internal_message}")]
+    InternalError { internal_message: String },
+    /// The system (or part of it) is unavailable.
+    #[error("Service Unavailable: {internal_message}")]
+    ServiceUnavailable { internal_message: String },
+    /// Method Not Allowed
+    #[error("Method Not Allowed: {internal_message}")]
+    MethodNotAllowed { internal_message: String },
+}
 
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub request_id: String,
+/// Indicates how an object was looked up (for an `ObjectNotFound` error)
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+pub enum LookupType {
+    /// a specific name was requested
+    ByName(String),
+    /// a specific id was requested
+    ById(uuid::Uuid),
+}
+
+impl LookupType {
+    /// Returns an ObjectNotFound error appropriate for the case where this
+    /// lookup failed
+    pub fn into_not_found(self, type_name: ResourceType) -> Error {
+        Error::ObjectNotFound {
+            type_name,
+            lookup_type: self,
+        }
+    }
+}
+
+impl From<&str> for LookupType {
+    fn from(name: &str) -> Self {
+        LookupType::ByName(name.to_owned())
+    }
+}
+
+impl From<&Name> for LookupType {
+    fn from(name: &Name) -> Self {
+        LookupType::from(name.as_str())
+    }
+}
+
+impl Error {
+    /// Returns whether the error is likely transient and could reasonably be
+    /// retried
+    pub fn retryable(&self) -> bool {
+        match self {
+            Error::ServiceUnavailable { .. } => true,
+
+            Error::ObjectNotFound { .. }
+            | Error::ObjectAlreadyExists { .. }
+            | Error::Unauthenticated { .. }
+            | Error::InvalidRequest { .. }
+            | Error::InvalidValue { .. }
+            | Error::Forbidden
+            | Error::MethodNotAllowed { .. }
+            | Error::InternalError { .. } => false,
+        }
+    }
+
+    /// Generates an [`Error::ObjectNotFound`] error for a lookup by object
+    /// name.
+    pub fn not_found_by_name(type_name: ResourceType, name: &Name) -> Error {
+        LookupType::from(name).into_not_found(type_name)
+    }
+
+    /// Generates an [`Error::ObjectNotFound`] error for a lookup by object id.
+    pub fn not_found_by_id(type_name: ResourceType, id: &uuid::Uuid) -> Error {
+        LookupType::ById(*id).into_not_found(type_name)
+    }
+
+    /// Generates an [`Error::InternalError`] error with the specific message
+    ///
+    /// InternalError should be used for operational conditions that should not
+    /// happen but that we cannot reasonably handle at runtime (e.g.,
+    /// deserializing a value from the database, or finding two records for
+    /// something that is supposed to be unique).
+    pub fn internal_error(internal_message: &str) -> Error {
+        Error::InternalError {
+            internal_message: internal_message.to_owned(),
+        }
+    }
+
+    /// Generates an [`Error::InvalidRequest`] error with the specific message
+    ///
+    /// This should be used for failures due possibly to invalid client input
+    /// or malformed requests.
+    pub fn invalid_request(message: &str) -> Error {
+        Error::InvalidRequest {
+            message: message.to_owned(),
+        }
+    }
+
+    /// Generates an [`Error::ServiceUnavailable`] error with the specific
+    /// message
+    ///
+    /// This should be used for transient failures where the caller might be
+    /// expected to retry.  Logic errors or other problems indicating that a
+    /// retry would not work should probably be an InternalError (if it's a
+    /// server problem) or InvalidRequest (if it's a client problem) instead.
+    pub fn unavail(message: &str) -> Error {
+        Error::ServiceUnavailable {
+            internal_message: message.to_owned(),
+        }
+    }
+}
+
+/// Identifies a type of API resource
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    serde_with::DeserializeFromStr,
+    Display,
+    Eq,
+    FromStr,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    serde_with::SerializeDisplay,
+)]
+#[display(style = "kebab-case")]
+pub enum ResourceType {
+    Fleet,
+    Organization,
+    Project,
+    Dataset,
+    Disk,
+    Instance,
+    NetworkInterface,
+    Rack,
+    Sled,
+    SagaDbg,
+    Volume,
+    Vpc,
+    VpcFirewallRule,
+    VpcSubnet,
+    VpcRouter,
+    RouterRoute,
+    Oximeter,
+    MetricProducer,
+    Role,
+    User,
+    Zpool,
 }
 
 /**
