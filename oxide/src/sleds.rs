@@ -13,18 +13,18 @@ impl Sleds {
     }
 
     /**
-    * List sleds in the system.
-    *
-    * This function performs a `GET` to the `/hardware/sleds` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `limit: u32` -- Maximum number of items returned by a single call.
-    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-    * * `sort_by: crate::types::IdSortMode` -- Supported set of sort modes for scanning by id only.
-    *  
-    *  Currently, we only support scanning in ascending order.
-    */
+     * List sleds in the system.
+     *
+     * This function performs a `GET` to the `/hardware/sleds` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `limit: u32` -- Maximum number of items returned by a single call.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `sort_by: crate::types::IdSortMode` -- Supported set of sort modes for scanning by id only.
+     *  
+     *  Currently, we only support scanning in ascending order.
+     */
     pub async fn get_page(
         &self,
         limit: u32,
@@ -51,12 +51,12 @@ impl Sleds {
     }
 
     /**
-    * List sleds in the system.
-    *
-    * This function performs a `GET` to the `/hardware/sleds` endpoint.
-    *
-    * As opposed to `get`, this function returns all the pages of the request at once.
-    */
+     * List sleds in the system.
+     *
+     * This function performs a `GET` to the `/hardware/sleds` endpoint.
+     *
+     * As opposed to `get`, this function returns all the pages of the request at once.
+     */
     pub async fn get_all(
         &self,
         sort_by: crate::types::IdSortMode,
@@ -101,14 +101,14 @@ impl Sleds {
     }
 
     /**
-    * Fetch information about a sled in the system.
-    *
-    * This function performs a `GET` to the `/hardware/sleds/{sled_id}` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `sled_id: &str` -- The sled's unique ID.
-    */
+     * Fetch information about a sled in the system.
+     *
+     * This function performs a `GET` to the `/hardware/sleds/{sled_id}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `sled_id: &str` -- The sled's unique ID.
+     */
     pub async fn get(&self, sled_id: &str) -> Result<crate::types::Sled> {
         let url = format!(
             "/hardware/sleds/{}",
