@@ -13,16 +13,16 @@ impl Organizations {
     }
 
     /**
-    * List all organizations.
-    *
-    * This function performs a `GET` to the `/organizations` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `limit: u32` -- Maximum number of items returned by a single call.
-    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-    * * `sort_by: crate::types::NameOrIdSortMode` -- Supported set of sort modes for scanning by name or id.
-    */
+     * List all organizations.
+     *
+     * This function performs a `GET` to the `/organizations` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `limit: u32` -- Maximum number of items returned by a single call.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `sort_by: crate::types::NameOrIdSortMode` -- Supported set of sort modes for scanning by name or id.
+     */
     pub async fn get_page(
         &self,
         limit: u32,
@@ -49,12 +49,12 @@ impl Organizations {
     }
 
     /**
-    * List all organizations.
-    *
-    * This function performs a `GET` to the `/organizations` endpoint.
-    *
-    * As opposed to `get`, this function returns all the pages of the request at once.
-    */
+     * List all organizations.
+     *
+     * This function performs a `GET` to the `/organizations` endpoint.
+     *
+     * As opposed to `get`, this function returns all the pages of the request at once.
+     */
     pub async fn get_all(
         &self,
         sort_by: crate::types::NameOrIdSortMode,
@@ -99,10 +99,10 @@ impl Organizations {
     }
 
     /**
-    * Create a new organization.
-    *
-    * This function performs a `POST` to the `/organizations` endpoint.
-    */
+     * Create a new organization.
+     *
+     * This function performs a `POST` to the `/organizations` endpoint.
+     */
     pub async fn post(
         &self,
         body: &crate::types::OrganizationCreate,
@@ -114,14 +114,14 @@ impl Organizations {
     }
 
     /**
-    * Fetch a specific organization.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Fetch a specific organization.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn get(&self, organization_name: &str) -> Result<crate::types::Organization> {
         let url = format!(
             "/organizations/{}",
@@ -132,14 +132,14 @@ impl Organizations {
     }
 
     /**
-    * Update a specific organization.
-    *
-    * This function performs a `PUT` to the `/organizations/{organization_name}` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Update a specific organization.
+     *
+     * This function performs a `PUT` to the `/organizations/{organization_name}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn put(
         &self,
         organization_name: &str,
@@ -156,14 +156,14 @@ impl Organizations {
     }
 
     /**
-    * Delete a specific organization.
-    *
-    * This function performs a `DELETE` to the `/organizations/{organization_name}` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Delete a specific organization.
+     *
+     * This function performs a `DELETE` to the `/organizations/{organization_name}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn delete(&self, organization_name: &str) -> Result<()> {
         let url = format!(
             "/organizations/{}",
