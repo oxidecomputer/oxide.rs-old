@@ -780,13 +780,12 @@ checksum = "da32515d9f6e6e489d7bc9d84c71b060db7247dc035bbe44eac88cf87486d8d5"
 
 [[package]]
 name = "openapiv3"
-version = "0.5.0"
-source = "git+https://github.com/jessfraz/openapiv3?branch=jess#fc1609df68cab452f381b0904075073e193f67a5"
+version = "1.0.1"
+source = "git+https://github.com/jessfraz/openapiv3?branch=jess#50bd6ce63c11967ce40c7f7ec8312138614e9970"
 dependencies = [
  "indexmap",
  "serde",
  "serde_json",
- "serde_yaml",
 ]
 
 [[package]]
