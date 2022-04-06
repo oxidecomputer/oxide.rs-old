@@ -546,7 +546,7 @@ fn do_one_of_type(
             a(&format!("if tag == \"{}\" {{", k));
             a("j = format!(r#\"{{");
             a(&format!("\"{}\": \"{}\",", tag, to_snake_case(name)));
-            if p == "String" || p == "InstanceNetworkInterfaceCreate" {
+            if p == "String" || p.starts_with("Vec<") {
                 a(&format!("\"{}\": \"{{}}\"", content));
                 a("        }}\"#, content);");
             } else {
