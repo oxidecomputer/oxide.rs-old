@@ -98,6 +98,7 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                         && sn != "RouterRouteCreateParams"
                         && sn != "Disk"
                         && sn != "RouterRoute"
+                        && sn != "ImageCreate"
                     {
                         a("Default,");
                     }

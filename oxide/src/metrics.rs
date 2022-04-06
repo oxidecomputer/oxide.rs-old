@@ -13,15 +13,15 @@ impl Metrics {
     }
 
     /**
-     * List all timeseries schema.
-     *
-     * This function performs a `GET` to the `/timeseries/schema` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `limit: u32` -- Maximum number of items returned by a single call.
-     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-     */
+    * List all timeseries schema.
+    *
+    * This function performs a `GET` to the `/timeseries/schema` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `limit: u32` -- Maximum number of items returned by a single call.
+    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+    */
     pub async fn timeseries_schema_get(
         &self,
         limit: u32,
@@ -44,12 +44,12 @@ impl Metrics {
     }
 
     /**
-     * List all timeseries schema.
-     *
-     * This function performs a `GET` to the `/timeseries/schema` endpoint.
-     *
-     * As opposed to `timeseries_schema_get`, this function returns all the pages of the request at once.
-     */
+    * List all timeseries schema.
+    *
+    * This function performs a `GET` to the `/timeseries/schema` endpoint.
+    *
+    * As opposed to `timeseries_schema_get`, this function returns all the pages of the request at once.
+    */
     pub async fn timeseries_schema_get_all(&self) -> Result<Vec<crate::types::TimeseriesSchema>> {
         let url = "/timeseries/schema".to_string();
         let mut resp: crate::types::TimeseriesSchemaResultsPage =

@@ -40,7 +40,10 @@
 //! ```
 //! use oxide_api::Client;
 //!
-//! let oxide = Client::new(String::from("api-key"), String::from("host"));
+//! let oxide = Client::new(
+//!     String::from("api-key"),
+//!     String::from("host"),
+//! );
 //! ```
 //!
 //! Alternatively, the library can search for most of the variables required for
@@ -56,6 +59,7 @@
 //!
 //! let oxide = Client::new_from_env();
 //! ```
+//!
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::nonstandard_macro_braces)]
 #![allow(clippy::large_enum_variant)]
@@ -75,6 +79,14 @@ pub mod firewall;
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod hidden;
+/// Images are read-only Virtual Disks that may be used to boot Virtual Machines.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod images;
+/// Images are read-only Virtual Disks that may be used to boot Virtual Machines. These images are scoped globally.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod images_global;
 /// Virtual machine instances are the basic unit of computation. These operations are used for provisioning, controlling, and destroying instances.
 ///
 ///FROM: http://oxide.computer/docs/#xxx
@@ -111,6 +123,10 @@ pub mod routes;
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod sagas;
+/// Silos represent a logical partition of users and resources.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod silos;
 /// This tag should be moved into hardware.
 ///
 ///FROM: http://oxide.computer/docs/#xxx
@@ -393,6 +409,20 @@ impl Client {
         hidden::Hidden::new(self.clone())
     }
 
+    /// Images are read-only Virtual Disks that may be used to boot Virtual Machines.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn images(&self) -> images::Images {
+        images::Images::new(self.clone())
+    }
+
+    /// Images are read-only Virtual Disks that may be used to boot Virtual Machines. These images are scoped globally.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn images_global(&self) -> images_global::ImagesGlobal {
+        images_global::ImagesGlobal::new(self.clone())
+    }
+
     /// Virtual machine instances are the basic unit of computation. These operations are used for provisioning, controlling, and destroying instances.
     ///
     ///FROM: http://oxide.computer/docs/#xxx
@@ -454,6 +484,13 @@ impl Client {
     ///FROM: http://oxide.computer/docs/#xxx
     pub fn sagas(&self) -> sagas::Sagas {
         sagas::Sagas::new(self.clone())
+    }
+
+    /// Silos represent a logical partition of users and resources.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn silos(&self) -> silos::Silos {
+        silos::Silos::new(self.clone())
     }
 
     /// This tag should be moved into hardware.
