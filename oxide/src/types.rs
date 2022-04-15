@@ -286,12 +286,27 @@ pub struct Disk {
     )]
     pub description: String,
 
+    /**
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
+    #[serde(default)]
+    pub block_size: u64,
+
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub device_path: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub image_id: String,
 
     #[serde(
         default,
@@ -351,6 +366,23 @@ pub struct DiskCreate {
     )]
     pub description: String,
 
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub block_size: i64,
+
+    /**
+     * id for image from which the Disk should be created, if any
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub image_id: String,
+
     /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
@@ -381,7 +413,7 @@ pub struct DiskIdentifier {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub disk: String,
+    pub name: String,
 }
 
 /// A single page of results
@@ -1103,10 +1135,12 @@ pub struct Instance {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-#[serde(tag = "type", content = "disk")]
+#[serde(tag = "type", content = "name")]
 pub enum InstanceDiskAttachment {
     Create {
+        block_size: i64,
         description: String,
+        image_id: String,
         name: String,
         size: u64,
         snapshot_id: String,
@@ -1118,10 +1152,10 @@ impl fmt::Display for InstanceDiskAttachment {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let j = serde_json::json!(self);
         let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
-        let mut content: String = serde_json::from_value(j["disk"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["name"].clone()).unwrap_or_default();
         if content.is_empty() {
             let map: std::collections::HashMap<String, String> =
-                serde_json::from_value(j["disk"].clone()).unwrap_or_default();
+                serde_json::from_value(j["name"].clone()).unwrap_or_default();
             if let Some((_, v)) = map.iter().next() {
                 content = v.to_string();
             }
@@ -1147,7 +1181,16 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "create",
-"disk": "{}"
+"name": {}
+        }}"#,
+                serde_json::json!(i64::from_str(&content).unwrap())
+            );
+        }
+        if tag == "create" {
+            j = format!(
+                r#"{{
+"type": "create",
+"name": "{}"
         }}"#,
                 content
             );
@@ -1156,7 +1199,7 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "create",
-"disk": "{}"
+"name": "{}"
         }}"#,
                 content
             );
@@ -1165,7 +1208,16 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "create",
-"disk": {}
+"name": "{}"
+        }}"#,
+                content
+            );
+        }
+        if tag == "create" {
+            j = format!(
+                r#"{{
+"type": "create",
+"name": {}
         }}"#,
                 serde_json::json!(u64::from_str(&content).unwrap())
             );
@@ -1174,7 +1226,7 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "create",
-"disk": "{}"
+"name": "{}"
         }}"#,
                 content
             );
@@ -1183,7 +1235,7 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "attach",
-"disk": "{}"
+"name": "{}"
         }}"#,
                 content
             );
@@ -4751,6 +4803,7 @@ pub struct VpcUpdate {
     pub dns_name: String,
 }
 
+pub type BlockSize = i64;
 /// A count of bytes, typically used either for memory or storage capacity
 ///
 /// The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
