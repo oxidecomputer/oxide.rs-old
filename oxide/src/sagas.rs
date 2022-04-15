@@ -13,18 +13,18 @@ impl Sagas {
     }
 
     /**
-     * List all sagas (for debugging).
-     *
-     * This function performs a `GET` to the `/sagas` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `limit: u32` -- Maximum number of items returned by a single call.
-     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-     * * `sort_by: crate::types::IdSortMode` -- Supported set of sort modes for scanning by id only.
-     *  
-     *  Currently, we only support scanning in ascending order.
-     */
+    * List all sagas (for debugging).
+    *
+    * This function performs a `GET` to the `/sagas` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `limit: u32` -- Maximum number of items returned by a single call.
+    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+    * * `sort_by: crate::types::IdSortMode` -- Supported set of sort modes for scanning by id only.
+    *  
+    *  Currently, we only support scanning in ascending order.
+    */
     pub async fn get_page(
         &self,
         limit: u32,
@@ -51,12 +51,12 @@ impl Sagas {
     }
 
     /**
-     * List all sagas (for debugging).
-     *
-     * This function performs a `GET` to the `/sagas` endpoint.
-     *
-     * As opposed to `get`, this function returns all the pages of the request at once.
-     */
+    * List all sagas (for debugging).
+    *
+    * This function performs a `GET` to the `/sagas` endpoint.
+    *
+    * As opposed to `get`, this function returns all the pages of the request at once.
+    */
     pub async fn get_all(
         &self,
         sort_by: crate::types::IdSortMode,
@@ -101,14 +101,14 @@ impl Sagas {
     }
 
     /**
-     * Fetch information about a single saga (for debugging).
-     *
-     * This function performs a `GET` to the `/sagas/{saga_id}` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `saga_id: &str`
-     */
+    * Fetch information about a single saga (for debugging).
+    *
+    * This function performs a `GET` to the `/sagas/{saga_id}` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `saga_id: &str`
+    */
     pub async fn get(&self, saga_id: &str) -> Result<crate::types::Saga> {
         let url = format!("/sagas/{}", crate::progenitor_support::encode_path(saga_id),);
 

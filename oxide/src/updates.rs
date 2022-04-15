@@ -13,10 +13,10 @@ impl Updates {
     }
 
     /**
-     * Refresh update metadata.
-     *
-     * This function performs a `POST` to the `/updates/refresh` endpoint.
-     */
+    * Refresh update metadata.
+    *
+    * This function performs a `POST` to the `/updates/refresh` endpoint.
+    */
     pub async fn refresh(&self) -> Result<()> {
         let url = "/updates/refresh".to_string();
         self.client.post(&url, None).await
