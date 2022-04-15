@@ -1,13 +1,14 @@
 //! The data types sent to and returned from the API client.
+use std::fmt;
+
 use parse_display::{Display, FromStr};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::fmt;
 use tabled::Tabled;
 
 /**
-* The type of an individual datum of a metric.
-*/
+ * The type of an individual datum of a metric.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum DatumType {
     #[serde(rename = "Bool")]
@@ -184,8 +185,8 @@ impl DiskState {
     }
 }
 /**
-* The types for DiskState.
-*/
+ * The types for DiskState.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum DiskStateType {
     #[serde(rename = "Attached")]
@@ -256,8 +257,8 @@ impl std::str::FromStr for DiskStateType {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct Disk {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -266,8 +267,8 @@ pub struct Disk {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -276,14 +277,22 @@ pub struct Disk {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
+
+    /**
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
+    #[serde(default)]
+    pub block_size: u64,
 
     #[serde(
         default,
@@ -297,13 +306,20 @@ pub struct Disk {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
+    pub image_id: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
     pub project_id: String,
 
     /**
-    * A count of bytes, typically used either for memory or storage capacity
-    *  
-    *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-    */
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
     #[serde(default)]
     pub size: u64,
 
@@ -318,14 +334,14 @@ pub struct Disk {
     pub state: DiskState,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
@@ -334,8 +350,8 @@ pub struct Disk {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct DiskCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -350,17 +366,34 @@ pub struct DiskCreate {
     )]
     pub description: String,
 
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub block_size: i64,
+
     /**
-    * A count of bytes, typically used either for memory or storage capacity
-    *  
-    *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-    */
+     * id for image from which the Disk should be created, if any
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub image_id: String,
+
+    /**
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
     #[serde(default)]
     pub size: u64,
 
     /**
-    * id for snapshot from which the Disk should be created, if any
-    */
+     * id for snapshot from which the Disk should be created, if any
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -373,22 +406,22 @@ pub struct DiskCreate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct DiskIdentifier {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub disk: String,
+    pub name: String,
 }
 
 /// A single page of results
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct DiskResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -398,8 +431,8 @@ pub struct DiskResultsPage {
     pub items: Vec<Disk>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -562,8 +595,8 @@ pub enum ResourceType {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct ErrorResponse {
     /**
-    * Error information from a response.
-    */
+     * Error information from a response.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -587,8 +620,8 @@ pub struct ErrorResponse {
 }
 
 /**
-* The source from which a field is derived, the target or metric.
-*/
+ * The source from which a field is derived, the target or metric.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum FieldSource {
     #[serde(rename = "Metric")]
@@ -637,8 +670,8 @@ impl FieldSource {
 }
 
 /**
-* The `FieldType` identifies the data type of a target or metric field.
-*/
+ * The `FieldType` identifies the data type of a target or metric field.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum FieldType {
     #[serde(rename = "Bool")]
@@ -715,23 +748,23 @@ pub struct FieldSchema {
     pub name: String,
 
     /**
-    * The source from which a field is derived, the target or metric.
-    */
+     * The source from which a field is derived, the target or metric.
+     */
     #[serde(default, skip_serializing_if = "FieldSource::is_noop")]
     pub source: FieldSource,
 
     /**
-    * The `FieldType` identifies the data type of a target or metric field.
-    */
+     * The `FieldType` identifies the data type of a target or metric field.
+     */
     #[serde(default, skip_serializing_if = "FieldType::is_noop")]
     pub ty: FieldType,
 }
 
 /**
-* Supported set of sort modes for scanning by id only.
-*   
-*   Currently, we only support scanning in ascending order.
-*/
+ * Supported set of sort modes for scanning by id only.
+ *   
+ *   Currently, we only support scanning in ascending order.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum IdSortMode {
     #[serde(rename = "id-ascending")]
@@ -777,8 +810,8 @@ impl IdSortMode {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Image {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -787,8 +820,8 @@ pub struct Image {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -797,8 +830,8 @@ pub struct Image {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -814,22 +847,22 @@ pub struct Image {
     pub project_id: String,
 
     /**
-    * A count of bytes, typically used either for memory or storage capacity
-    *  
-    *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-    */
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
     #[serde(default)]
     pub size: u64,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 
@@ -864,8 +897,8 @@ impl std::str::FromStr for ImageSource {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct ImageCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -888,8 +921,8 @@ pub struct ImageCreate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct ImageResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -899,8 +932,8 @@ pub struct ImageResultsPage {
     pub items: Vec<Image>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -910,10 +943,10 @@ pub struct ImageResultsPage {
 }
 
 /**
-* Running state of an Instance (primarily: booted or stopped)
-*   
-*   This typically reflects whether it's starting, running, stopping, or stopped, but also includes states related to the Instance's lifecycle
-*/
+ * Running state of an Instance (primarily: booted or stopped)
+ *   
+ *   This typically reflects whether it's starting, running, stopping, or stopped, but also includes states related to the Instance's lifecycle
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum InstanceState {
     #[serde(rename = "creating")]
@@ -1013,8 +1046,8 @@ impl InstanceState {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Instance {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1023,8 +1056,8 @@ pub struct Instance {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1033,8 +1066,8 @@ pub struct Instance {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1043,8 +1076,8 @@ pub struct Instance {
     pub description: String,
 
     /**
-    * RFC1035-compliant hostname for the Instance.
-    */
+     * RFC1035-compliant hostname for the Instance.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1053,22 +1086,22 @@ pub struct Instance {
     pub hostname: String,
 
     /**
-    * A count of bytes, typically used either for memory or storage capacity
-    *  
-    *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-    */
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
     #[serde(default)]
     pub memory: u64,
 
     /**
-    * The number of CPUs in an Instance
-    */
+     * The number of CPUs in an Instance
+     */
     #[serde()]
     pub ncpus: u16,
 
     /**
-    * id for the project containing this Instance
-    */
+     * id for the project containing this Instance
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1077,22 +1110,22 @@ pub struct Instance {
     pub project_id: String,
 
     /**
-    * Running state of an Instance (primarily: booted or stopped)
-    *  
-    *  This typically reflects whether it's starting, running, stopping, or stopped, but also includes states related to the Instance's lifecycle
-    */
+     * Running state of an Instance (primarily: booted or stopped)
+     *  
+     *  This typically reflects whether it's starting, running, stopping, or stopped, but also includes states related to the Instance's lifecycle
+     */
     #[serde(default, skip_serializing_if = "InstanceState::is_noop")]
     pub run_state: InstanceState,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 
@@ -1102,10 +1135,12 @@ pub struct Instance {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-#[serde(tag = "type", content = "disk")]
+#[serde(tag = "type", content = "name")]
 pub enum InstanceDiskAttachment {
     Create {
+        block_size: i64,
         description: String,
+        image_id: String,
         name: String,
         size: u64,
         snapshot_id: String,
@@ -1117,10 +1152,10 @@ impl fmt::Display for InstanceDiskAttachment {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let j = serde_json::json!(self);
         let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
-        let mut content: String = serde_json::from_value(j["disk"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["name"].clone()).unwrap_or_default();
         if content.is_empty() {
             let map: std::collections::HashMap<String, String> =
-                serde_json::from_value(j["disk"].clone()).unwrap_or_default();
+                serde_json::from_value(j["name"].clone()).unwrap_or_default();
             if let Some((_, v)) = map.iter().next() {
                 content = v.to_string();
             }
@@ -1146,7 +1181,16 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "create",
-"disk": "{}"
+"name": {}
+        }}"#,
+                serde_json::json!(i64::from_str(&content).unwrap())
+            );
+        }
+        if tag == "create" {
+            j = format!(
+                r#"{{
+"type": "create",
+"name": "{}"
         }}"#,
                 content
             );
@@ -1155,7 +1199,7 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "create",
-"disk": "{}"
+"name": "{}"
         }}"#,
                 content
             );
@@ -1164,7 +1208,16 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "create",
-"disk": {}
+"name": "{}"
+        }}"#,
+                content
+            );
+        }
+        if tag == "create" {
+            j = format!(
+                r#"{{
+"type": "create",
+"name": {}
         }}"#,
                 serde_json::json!(u64::from_str(&content).unwrap())
             );
@@ -1173,7 +1226,7 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "create",
-"disk": "{}"
+"name": "{}"
         }}"#,
                 content
             );
@@ -1182,7 +1235,7 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "attach",
-"disk": "{}"
+"name": "{}"
         }}"#,
                 content
             );
@@ -1197,8 +1250,8 @@ impl InstanceDiskAttachment {
     }
 }
 /**
-* The types for InstanceDiskAttachment.
-*/
+ * The types for InstanceDiskAttachment.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum InstanceDiskAttachmentType {
     #[serde(rename = "Attach")]
@@ -1299,8 +1352,8 @@ impl InstanceNetworkInterfaceAttachment {
     }
 }
 /**
-* The types for InstanceNetworkInterfaceAttachment.
-*/
+ * The types for InstanceNetworkInterfaceAttachment.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum InstanceNetworkInterfaceAttachmentType {
     #[serde(rename = "Create")]
@@ -1347,8 +1400,8 @@ impl std::str::FromStr for InstanceNetworkInterfaceAttachmentType {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct InstanceCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1364,8 +1417,8 @@ pub struct InstanceCreate {
     pub description: String,
 
     /**
-    * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
-    */
+     * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -1382,22 +1435,22 @@ pub struct InstanceCreate {
     pub hostname: String,
 
     /**
-    * A count of bytes, typically used either for memory or storage capacity
-    *  
-    *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-    */
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
     #[serde(default)]
     pub memory: u64,
 
     /**
-    * The number of CPUs in an Instance
-    */
+     * The number of CPUs in an Instance
+     */
     #[serde()]
     pub ncpus: u16,
 
     /**
-    * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
-    */
+     * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
+     */
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[header(hidden = true)]
     pub network_interfaces: Option<InstanceNetworkInterfaceAttachment>,
@@ -1418,8 +1471,8 @@ pub struct InstanceMigrate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct InstanceResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -1429,8 +1482,8 @@ pub struct InstanceResultsPage {
     pub items: Vec<Instance>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1673,8 +1726,8 @@ pub struct LoginParams {
 }
 
 /**
-* Supported set of sort modes for scanning by name or id
-*/
+ * Supported set of sort modes for scanning by name or id
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum NameOrIdSortMode {
     #[serde(rename = "id-ascending")]
@@ -1729,10 +1782,10 @@ impl NameOrIdSortMode {
 }
 
 /**
-* Supported set of sort modes for scanning by name only
-*   
-*   Currently, we only support scanning in ascending order.
-*/
+ * Supported set of sort modes for scanning by name only
+ *   
+ *   Currently, we only support scanning in ascending order.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum NameSortMode {
     #[serde(rename = "name-ascending")]
@@ -1778,8 +1831,8 @@ impl NameSortMode {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct NetworkInterface {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1788,8 +1841,8 @@ pub struct NetworkInterface {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1798,8 +1851,8 @@ pub struct NetworkInterface {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1808,8 +1861,8 @@ pub struct NetworkInterface {
     pub description: String,
 
     /**
-    * The Instance to which the interface belongs.
-    */
+     * The Instance to which the interface belongs.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1818,8 +1871,8 @@ pub struct NetworkInterface {
     pub instance_id: String,
 
     /**
-    * The IP address assigned to this interface.
-    */
+     * The IP address assigned to this interface.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1828,8 +1881,8 @@ pub struct NetworkInterface {
     pub ip: String,
 
     /**
-    * A Media Access Control address, in EUI-48 format
-    */
+     * A Media Access Control address, in EUI-48 format
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1838,8 +1891,8 @@ pub struct NetworkInterface {
     pub mac: String,
 
     /**
-    * The subnet to which the interface belongs.
-    */
+     * The subnet to which the interface belongs.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1848,20 +1901,20 @@ pub struct NetworkInterface {
     pub subnet_id: String,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 
     /**
-    * The VPC to which the interface belongs.
-    */
+     * The VPC to which the interface belongs.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1874,8 +1927,8 @@ pub struct NetworkInterface {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct NetworkInterfaceCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1891,8 +1944,8 @@ pub struct NetworkInterfaceCreate {
     pub description: String,
 
     /**
-    * The IP address for the interface. One will be auto-assigned if not provided.
-    */
+     * The IP address for the interface. One will be auto-assigned if not provided.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1901,8 +1954,8 @@ pub struct NetworkInterfaceCreate {
     pub ip: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1911,8 +1964,8 @@ pub struct NetworkInterfaceCreate {
     pub subnet_name: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1925,8 +1978,8 @@ pub struct NetworkInterfaceCreate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct NetworkInterfaceResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -1936,8 +1989,8 @@ pub struct NetworkInterfaceResultsPage {
     pub items: Vec<NetworkInterface>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1950,8 +2003,8 @@ pub struct NetworkInterfaceResultsPage {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Organization {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1960,8 +2013,8 @@ pub struct Organization {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1970,8 +2023,8 @@ pub struct Organization {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1980,14 +2033,14 @@ pub struct Organization {
     pub description: String,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
@@ -1996,8 +2049,8 @@ pub struct Organization {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct OrganizationCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2017,8 +2070,8 @@ pub struct OrganizationCreate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct OrganizationResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -2028,8 +2081,8 @@ pub struct OrganizationResultsPage {
     pub items: Vec<Organization>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2060,8 +2113,8 @@ pub struct OrganizationUpdate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Project {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2070,8 +2123,8 @@ pub struct Project {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2080,8 +2133,8 @@ pub struct Project {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2097,14 +2150,14 @@ pub struct Project {
     pub organization_id: String,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
@@ -2113,8 +2166,8 @@ pub struct Project {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct ProjectCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2134,8 +2187,8 @@ pub struct ProjectCreate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct ProjectResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -2145,8 +2198,8 @@ pub struct ProjectResultsPage {
     pub items: Vec<Project>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2177,8 +2230,8 @@ pub struct ProjectUpdate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Rack {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2187,8 +2240,8 @@ pub struct Rack {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2197,8 +2250,8 @@ pub struct Rack {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2207,14 +2260,14 @@ pub struct Rack {
     pub description: String,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
@@ -2223,8 +2276,8 @@ pub struct Rack {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct RackResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -2234,8 +2287,8 @@ pub struct RackResultsPage {
     pub items: Vec<Rack>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2248,8 +2301,8 @@ pub struct RackResultsPage {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Role {
     /**
-    * Role names consist of two string components separated by dot (".").
-    */
+     * Role names consist of two string components separated by dot (".").
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2269,8 +2322,8 @@ pub struct Role {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct RoleResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -2280,8 +2333,8 @@ pub struct RoleResultsPage {
     pub items: Vec<Role>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2380,8 +2433,8 @@ impl RouteDestination {
     }
 }
 /**
-* The types for RouteDestination.
-*/
+ * The types for RouteDestination.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum RouteDestinationType {
     #[serde(rename = "Ip")]
@@ -2531,8 +2584,8 @@ impl RouteTarget {
     }
 }
 /**
-* The types for RouteTarget.
-*/
+ * The types for RouteTarget.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum RouteTargetType {
     #[serde(rename = "Instance")]
@@ -2588,10 +2641,10 @@ impl std::str::FromStr for RouteTargetType {
 }
 
 /**
-* The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
-*   
-*   See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
-*/
+ * The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
+ *   
+ *   See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum RouterRouteKind {
     #[serde(rename = "custom")]
@@ -2655,8 +2708,8 @@ impl RouterRouteKind {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct RouterRoute {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2665,8 +2718,8 @@ pub struct RouterRoute {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2675,8 +2728,8 @@ pub struct RouterRoute {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2688,10 +2741,10 @@ pub struct RouterRoute {
     pub destination: RouteDestination,
 
     /**
-    * The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
-    *  
-    *  See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
-    */
+     * The classification of a [`RouterRoute`] as defined by the system. The kind determines certain attributes such as if the route is modifiable and describes how or where the route was created.
+     *  
+     *  See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
+     */
     #[serde(default, skip_serializing_if = "RouterRouteKind::is_noop")]
     pub kind: RouterRouteKind,
 
@@ -2699,20 +2752,20 @@ pub struct RouterRoute {
     pub target: RouteTarget,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 
     /**
-    * The VPC Router to which the route belongs.
-    */
+     * The VPC Router to which the route belongs.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2725,8 +2778,8 @@ pub struct RouterRoute {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct RouterRouteCreateParams {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2752,8 +2805,8 @@ pub struct RouterRouteCreateParams {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct RouterRouteResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -2763,8 +2816,8 @@ pub struct RouterRouteResultsPage {
     pub items: Vec<RouterRoute>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2831,8 +2884,8 @@ impl SagaState {
     }
 }
 /**
-* The types for SagaState.
-*/
+ * The types for SagaState.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum SagaStateType {
     #[serde(rename = "Failed")]
@@ -2980,8 +3033,8 @@ impl SagaErrorInfo {
     }
 }
 /**
-* The types for SagaErrorInfo.
-*/
+ * The types for SagaErrorInfo.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum SagaErrorInfoType {
     #[serde(rename = "ActionFailed")]
@@ -3040,8 +3093,8 @@ impl std::str::FromStr for SagaErrorInfoType {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SagaResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -3051,8 +3104,8 @@ pub struct SagaResultsPage {
     pub items: Vec<Saga>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3076,8 +3129,8 @@ pub struct SessionUser {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Silo {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3086,8 +3139,8 @@ pub struct Silo {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3096,8 +3149,8 @@ pub struct Silo {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3106,8 +3159,8 @@ pub struct Silo {
     pub description: String,
 
     /**
-    * A silo where discoverable is false can be retrieved only by its id - it will not be part of the "list all silos" output.
-    */
+     * A silo where discoverable is false can be retrieved only by its id - it will not be part of the "list all silos" output.
+     */
     #[serde(
         default,
         deserialize_with = "crate::utils::deserialize_null_boolean::deserialize"
@@ -3115,14 +3168,14 @@ pub struct Silo {
     pub discoverable: bool,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
@@ -3131,8 +3184,8 @@ pub struct Silo {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SiloCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3158,8 +3211,8 @@ pub struct SiloCreate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SiloResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -3169,8 +3222,8 @@ pub struct SiloResultsPage {
     pub items: Vec<Silo>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3183,8 +3236,8 @@ pub struct SiloResultsPage {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Sled {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3193,8 +3246,8 @@ pub struct Sled {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3203,8 +3256,8 @@ pub struct Sled {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3220,14 +3273,14 @@ pub struct Sled {
     pub service_address: String,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
@@ -3236,8 +3289,8 @@ pub struct Sled {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SledResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -3247,8 +3300,8 @@ pub struct SledResultsPage {
     pub items: Vec<Sled>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3261,8 +3314,8 @@ pub struct SledResultsPage {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Snapshot {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3271,8 +3324,8 @@ pub struct Snapshot {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3281,8 +3334,8 @@ pub struct Snapshot {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3305,22 +3358,22 @@ pub struct Snapshot {
     pub project_id: String,
 
     /**
-    * A count of bytes, typically used either for memory or storage capacity
-    *  
-    *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
-    */
+     * A count of bytes, typically used either for memory or storage capacity
+     *  
+     *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+     */
     #[serde(default)]
     pub size: u64,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
@@ -3329,8 +3382,8 @@ pub struct Snapshot {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SnapshotCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3346,8 +3399,8 @@ pub struct SnapshotCreate {
     pub description: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3360,8 +3413,8 @@ pub struct SnapshotCreate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SnapshotResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -3371,8 +3424,8 @@ pub struct SnapshotResultsPage {
     pub items: Vec<Snapshot>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3390,8 +3443,8 @@ pub struct TimeseriesSchema {
     pub created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * The type of an individual datum of a metric.
-    */
+     * The type of an individual datum of a metric.
+     */
     #[serde(default, skip_serializing_if = "DatumType::is_noop")]
     pub datum_type: DatumType,
 
@@ -3404,8 +3457,8 @@ pub struct TimeseriesSchema {
     pub field_schema: Vec<FieldSchema>,
 
     /**
-    * Names are constructed by concatenating the target and metric names with ':'. Target and metric names must be lowercase alphanumeric characters with '_' separating words.
-    */
+     * Names are constructed by concatenating the target and metric names with ':'. Target and metric names must be lowercase alphanumeric characters with '_' separating words.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3418,8 +3471,8 @@ pub struct TimeseriesSchema {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct TimeseriesSchemaResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -3429,8 +3482,8 @@ pub struct TimeseriesSchemaResultsPage {
     pub items: Vec<TimeseriesSchema>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3443,8 +3496,8 @@ pub struct TimeseriesSchemaResultsPage {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct User {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3453,8 +3506,8 @@ pub struct User {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3463,8 +3516,8 @@ pub struct User {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3473,14 +3526,14 @@ pub struct User {
     pub description: String,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
@@ -3489,8 +3542,8 @@ pub struct User {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct UserResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -3500,8 +3553,8 @@ pub struct UserResultsPage {
     pub items: Vec<User>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3514,8 +3567,8 @@ pub struct UserResultsPage {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Vpc {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3524,8 +3577,8 @@ pub struct Vpc {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3534,8 +3587,8 @@ pub struct Vpc {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3544,8 +3597,8 @@ pub struct Vpc {
     pub description: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3554,8 +3607,8 @@ pub struct Vpc {
     pub dns_name: String,
 
     /**
-    * An IPv6 subnet, including prefix and subnet mask
-    */
+     * An IPv6 subnet, including prefix and subnet mask
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3564,8 +3617,8 @@ pub struct Vpc {
     pub ipv6_prefix: String,
 
     /**
-    * id for the project containing this VPC
-    */
+     * id for the project containing this VPC
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3574,8 +3627,8 @@ pub struct Vpc {
     pub project_id: String,
 
     /**
-    * id for the system router where subnet default routes are registered
-    */
+     * id for the system router where subnet default routes are registered
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3584,14 +3637,14 @@ pub struct Vpc {
     pub system_router_id: String,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
@@ -3600,8 +3653,8 @@ pub struct Vpc {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3617,8 +3670,8 @@ pub struct VpcCreate {
     pub description: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3627,10 +3680,10 @@ pub struct VpcCreate {
     pub dns_name: String,
 
     /**
-    * The IPv6 prefix for this VPC.
-    *  
-    *  All IPv6 subnets created from this VPC must be taken from this range, which sould be a Unique Local Address in the range `fd00::/48`. The default VPC Subnet will have the first `/64` range from this prefix.
-    */
+     * The IPv6 prefix for this VPC.
+     *  
+     *  All IPv6 subnets created from this VPC must be taken from this range, which sould be a Unique Local Address in the range `fd00::/48`. The default VPC Subnet will have the first `/64` range from this prefix.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3737,8 +3790,8 @@ impl VpcFirewallRuleDirection {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default)]
 pub struct VpcFirewallRuleFilter {
     /**
-    * If present, the sources (if incoming) or destinations (if outgoing) this rule applies to.
-    */
+     * If present, the sources (if incoming) or destinations (if outgoing) this rule applies to.
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -3747,8 +3800,8 @@ pub struct VpcFirewallRuleFilter {
     pub hosts: Vec<VpcFirewallRuleHostFilter>,
 
     /**
-    * If present, the destination ports this rule applies to.
-    */
+     * If present, the destination ports this rule applies to.
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -3757,8 +3810,8 @@ pub struct VpcFirewallRuleFilter {
     pub ports: Vec<String>,
 
     /**
-    * If present, the networking protocols this rule applies to.
-    */
+     * If present, the networking protocols this rule applies to.
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -3915,8 +3968,8 @@ impl VpcFirewallRuleTarget {
     }
 }
 /**
-* The types for VpcFirewallRuleTarget.
-*/
+ * The types for VpcFirewallRuleTarget.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum VpcFirewallRuleTargetType {
     #[serde(rename = "Instance")]
@@ -3975,8 +4028,8 @@ impl std::str::FromStr for VpcFirewallRuleTargetType {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcFirewallRule {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3985,8 +4038,8 @@ pub struct VpcFirewallRule {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3995,8 +4048,8 @@ pub struct VpcFirewallRule {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4011,15 +4064,15 @@ pub struct VpcFirewallRule {
     pub direction: VpcFirewallRuleDirection,
 
     /**
-    * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
-    */
+     * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
+     */
     #[serde()]
     #[header(hidden = true)]
     pub filters: VpcFirewallRuleFilter,
 
     /**
-    * the relative priority of this rule
-    */
+     * the relative priority of this rule
+     */
     #[serde()]
     pub priority: u16,
 
@@ -4027,8 +4080,8 @@ pub struct VpcFirewallRule {
     pub status: VpcFirewallRuleStatus,
 
     /**
-    * list of sets of instances that the rule applies to
-    */
+     * list of sets of instances that the rule applies to
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -4038,20 +4091,20 @@ pub struct VpcFirewallRule {
     pub targets: Vec<VpcFirewallRuleTarget>,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 
     /**
-    * the VPC to which this rule belongs
-    */
+     * the VPC to which this rule belongs
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4161,8 +4214,8 @@ impl VpcFirewallRuleHostFilter {
     }
 }
 /**
-* The types for VpcFirewallRuleHostFilter.
-*/
+ * The types for VpcFirewallRuleHostFilter.
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum VpcFirewallRuleHostFilterType {
     #[serde(rename = "Instance")]
@@ -4218,8 +4271,8 @@ impl std::str::FromStr for VpcFirewallRuleHostFilterType {
 }
 
 /**
-* The protocols that may be specified in a firewall rule's filter
-*/
+ * The protocols that may be specified in a firewall rule's filter
+ */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub enum VpcFirewallRuleProtocol {
     #[serde(rename = "ICMP")]
@@ -4277,8 +4330,8 @@ impl VpcFirewallRuleProtocol {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcFirewallRuleUpdate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4287,8 +4340,8 @@ pub struct VpcFirewallRuleUpdate {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4303,15 +4356,15 @@ pub struct VpcFirewallRuleUpdate {
     pub direction: VpcFirewallRuleDirection,
 
     /**
-    * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
-    */
+     * Filter for a firewall rule. A given packet must match every field that is present for the rule to apply to it. A packet matches a field if any entry in that field matches the packet.
+     */
     #[serde()]
     #[header(hidden = true)]
     pub filters: VpcFirewallRuleFilter,
 
     /**
-    * the relative priority of this rule
-    */
+     * the relative priority of this rule
+     */
     #[serde()]
     pub priority: u16,
 
@@ -4319,8 +4372,8 @@ pub struct VpcFirewallRuleUpdate {
     pub status: VpcFirewallRuleStatus,
 
     /**
-    * list of sets of instances that the rule applies to
-    */
+     * list of sets of instances that the rule applies to
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -4358,8 +4411,8 @@ pub struct VpcFirewallRules {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -4369,8 +4422,8 @@ pub struct VpcResultsPage {
     pub items: Vec<Vpc>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4430,8 +4483,8 @@ impl VpcRouterKind {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcRouter {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4440,8 +4493,8 @@ pub struct VpcRouter {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4450,8 +4503,8 @@ pub struct VpcRouter {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4463,20 +4516,20 @@ pub struct VpcRouter {
     pub kind: VpcRouterKind,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 
     /**
-    * The VPC to which the router belongs.
-    */
+     * The VPC to which the router belongs.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4489,8 +4542,8 @@ pub struct VpcRouter {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcRouterCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4510,8 +4563,8 @@ pub struct VpcRouterCreate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcRouterResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -4521,8 +4574,8 @@ pub struct VpcRouterResultsPage {
     pub items: Vec<VpcRouter>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4553,8 +4606,8 @@ pub struct VpcRouterUpdate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcSubnet {
     /**
-    * unique, immutable, system-controlled identifier for each resource
-    */
+     * unique, immutable, system-controlled identifier for each resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4563,8 +4616,8 @@ pub struct VpcSubnet {
     pub id: String,
 
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4573,8 +4626,8 @@ pub struct VpcSubnet {
     pub name: String,
 
     /**
-    * human-readable free-form text about a resource
-    */
+     * human-readable free-form text about a resource
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4583,8 +4636,8 @@ pub struct VpcSubnet {
     pub description: String,
 
     /**
-    * An IPv4 subnet, including prefix and subnet mask
-    */
+     * An IPv4 subnet, including prefix and subnet mask
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4593,8 +4646,8 @@ pub struct VpcSubnet {
     pub ipv4_block: String,
 
     /**
-    * An IPv6 subnet, including prefix and subnet mask
-    */
+     * An IPv6 subnet, including prefix and subnet mask
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4603,20 +4656,20 @@ pub struct VpcSubnet {
     pub ipv6_block: String,
 
     /**
-    * timestamp when this resource was created
-    */
+     * timestamp when this resource was created
+     */
     #[serde()]
     pub time_created: crate::utils::DisplayOptionDateTime,
 
     /**
-    * timestamp when this resource was last modified
-    */
+     * timestamp when this resource was last modified
+     */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 
     /**
-    * The VPC to which the subnet belongs.
-    */
+     * The VPC to which the subnet belongs.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4629,8 +4682,8 @@ pub struct VpcSubnet {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcSubnetCreate {
     /**
-    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4646,8 +4699,8 @@ pub struct VpcSubnetCreate {
     pub description: String,
 
     /**
-    * An IPv4 subnet, including prefix and subnet mask
-    */
+     * An IPv4 subnet, including prefix and subnet mask
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4656,10 +4709,10 @@ pub struct VpcSubnetCreate {
     pub ipv4_block: String,
 
     /**
-    * The IPv6 address range for this subnet.
-    *  
-    *  It must be allocated from the RFC 4193 Unique Local Address range, with the prefix equal to the parent VPC's prefix. A random `/64` block will be assigned if one is not provided. It must not overlap with any existing subnet in the VPC.
-    */
+     * The IPv6 address range for this subnet.
+     *  
+     *  It must be allocated from the RFC 4193 Unique Local Address range, with the prefix equal to the parent VPC's prefix. A random `/64` block will be assigned if one is not provided. It must not overlap with any existing subnet in the VPC.
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4672,8 +4725,8 @@ pub struct VpcSubnetCreate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcSubnetResultsPage {
     /**
-    * list of items on this page of results
-    */
+     * list of items on this page of results
+     */
     #[serde(
         default,
         skip_serializing_if = "Vec::is_empty",
@@ -4683,8 +4736,8 @@ pub struct VpcSubnetResultsPage {
     pub items: Vec<VpcSubnet>,
 
     /**
-    * token used to fetch the next page of results (if any)
-    */
+     * token used to fetch the next page of results (if any)
+     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4750,6 +4803,7 @@ pub struct VpcUpdate {
     pub dns_name: String,
 }
 
+pub type BlockSize = i64;
 /// A count of bytes, typically used either for memory or storage capacity
 ///
 /// The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
