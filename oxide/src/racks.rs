@@ -13,18 +13,18 @@ impl Racks {
     }
 
     /**
-    * List racks in the system.
-    *
-    * This function performs a `GET` to the `/hardware/racks` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `limit: u32` -- Maximum number of items returned by a single call.
-    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-    * * `sort_by: crate::types::IdSortMode` -- Supported set of sort modes for scanning by id only.
-    *  
-    *  Currently, we only support scanning in ascending order.
-    */
+     * List racks in the system.
+     *
+     * This function performs a `GET` to the `/hardware/racks` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `limit: u32` -- Maximum number of items returned by a single call.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `sort_by: crate::types::IdSortMode` -- Supported set of sort modes for scanning by id only.
+     *  
+     *  Currently, we only support scanning in ascending order.
+     */
     pub async fn get_page(
         &self,
         limit: u32,
@@ -51,12 +51,12 @@ impl Racks {
     }
 
     /**
-    * List racks in the system.
-    *
-    * This function performs a `GET` to the `/hardware/racks` endpoint.
-    *
-    * As opposed to `get`, this function returns all the pages of the request at once.
-    */
+     * List racks in the system.
+     *
+     * This function performs a `GET` to the `/hardware/racks` endpoint.
+     *
+     * As opposed to `get`, this function returns all the pages of the request at once.
+     */
     pub async fn get_all(
         &self,
         sort_by: crate::types::IdSortMode,
@@ -101,14 +101,14 @@ impl Racks {
     }
 
     /**
-    * Fetch information about a particular rack.
-    *
-    * This function performs a `GET` to the `/hardware/racks/{rack_id}` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `rack_id: &str` -- The rack's unique ID.
-    */
+     * Fetch information about a particular rack.
+     *
+     * This function performs a `GET` to the `/hardware/racks/{rack_id}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `rack_id: &str` -- The rack's unique ID.
+     */
     pub async fn get(&self, rack_id: &str) -> Result<crate::types::Rack> {
         let url = format!(
             "/hardware/racks/{}",

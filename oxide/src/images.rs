@@ -13,22 +13,22 @@ impl Images {
     }
 
     /**
-    * List images.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/images` endpoint.
-    *
-    * List images in a project. The images are returned sorted by creation date, with the most recent images appearing first.
-    *
-    * **Parameters:**
-    *
-    * * `limit: u32` -- Maximum number of items returned by a single call.
-    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-    * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
-    *  
-    *  Currently, we only support scanning in ascending order.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * List images.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/images` endpoint.
+     *
+     * List images in a project. The images are returned sorted by creation date, with the most recent images appearing first.
+     *
+     * **Parameters:**
+     *
+     * * `limit: u32` -- Maximum number of items returned by a single call.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
+     *  
+     *  Currently, we only support scanning in ascending order.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn get_page(
         &self,
         limit: u32,
@@ -62,14 +62,14 @@ impl Images {
     }
 
     /**
-    * List images.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/images` endpoint.
-    *
-    * As opposed to `get`, this function returns all the pages of the request at once.
-    *
-    * List images in a project. The images are returned sorted by creation date, with the most recent images appearing first.
-    */
+     * List images.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/images` endpoint.
+     *
+     * As opposed to `get`, this function returns all the pages of the request at once.
+     *
+     * List images in a project. The images are returned sorted by creation date, with the most recent images appearing first.
+     */
     pub async fn get_all(
         &self,
         organization_name: &str,
@@ -121,17 +121,17 @@ impl Images {
     }
 
     /**
-    * Create an image.
-    *
-    * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/images` endpoint.
-    *
-    * Create a new image in a project.
-    *
-    * **Parameters:**
-    *
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Create an image.
+     *
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/images` endpoint.
+     *
+     * Create a new image in a project.
+     *
+     * **Parameters:**
+     *
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn post(
         &self,
         organization_name: &str,
@@ -150,18 +150,18 @@ impl Images {
     }
 
     /**
-    * Get an image.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/images/{image_name}` endpoint.
-    *
-    * Get the details of a specific image in a project.
-    *
-    * **Parameters:**
-    *
-    * * `image_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Get an image.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/images/{image_name}` endpoint.
+     *
+     * Get the details of a specific image in a project.
+     *
+     * **Parameters:**
+     *
+     * * `image_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn get(
         &self,
         image_name: &str,
@@ -179,18 +179,18 @@ impl Images {
     }
 
     /**
-    * Delete an image.
-    *
-    * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/images/{image_name}` endpoint.
-    *
-    * Permanently delete an image from a project. This operation cannot be undone. Any instances in the project using the image will continue to run, however new instances can not be created with this image.
-    *
-    * **Parameters:**
-    *
-    * * `image_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Delete an image.
+     *
+     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/images/{image_name}` endpoint.
+     *
+     * Permanently delete an image from a project. This operation cannot be undone. Any instances in the project using the image will continue to run, however new instances can not be created with this image.
+     *
+     * **Parameters:**
+     *
+     * * `image_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn delete(
         &self,
         image_name: &str,
