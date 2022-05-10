@@ -203,4 +203,55 @@ impl Projects {
 
         self.client.delete(&url, None).await
     }
+
+    /**
+    * Fetch the IAM policy for this Project.
+    *
+    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/policy` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
+    pub async fn get_policy(
+        &self,
+        organization_name: &str,
+        project_name: &str,
+    ) -> Result<crate::types::ProjectRolesPolicy> {
+        let url = format!(
+            "/organizations/{}/projects/{}/policy",
+            crate::progenitor_support::encode_path(organization_name),
+            crate::progenitor_support::encode_path(project_name),
+        );
+
+        self.client.get(&url, None).await
+    }
+
+    /**
+    * Update the IAM policy for this Project.
+    *
+    * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/policy` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
+    pub async fn put_policy(
+        &self,
+        organization_name: &str,
+        project_name: &str,
+        body: &crate::types::ProjectRolesPolicy,
+    ) -> Result<crate::types::ProjectRolesPolicy> {
+        let url = format!(
+            "/organizations/{}/projects/{}/policy",
+            crate::progenitor_support::encode_path(organization_name),
+            crate::progenitor_support::encode_path(project_name),
+        );
+
+        self.client
+            .put(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))
+            .await
+    }
 }

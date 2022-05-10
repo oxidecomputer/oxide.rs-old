@@ -172,4 +172,49 @@ impl Organizations {
 
         self.client.delete(&url, None).await
     }
+
+    /**
+    * Fetch the IAM policy for this Organization.
+    *
+    * This function performs a `GET` to the `/organizations/{organization_name}/policy` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
+    pub async fn get_policy(
+        &self,
+        organization_name: &str,
+    ) -> Result<crate::types::OrganizationRolesPolicy> {
+        let url = format!(
+            "/organizations/{}/policy",
+            crate::progenitor_support::encode_path(organization_name),
+        );
+
+        self.client.get(&url, None).await
+    }
+
+    /**
+    * Update the IAM policy for this Organization.
+    *
+    * This function performs a `PUT` to the `/organizations/{organization_name}/policy` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
+    pub async fn put_policy(
+        &self,
+        organization_name: &str,
+        body: &crate::types::OrganizationRolesPolicy,
+    ) -> Result<crate::types::OrganizationRolesPolicy> {
+        let url = format!(
+            "/organizations/{}/policy",
+            crate::progenitor_support::encode_path(organization_name),
+        );
+
+        self.client
+            .put(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))
+            .await
+    }
 }

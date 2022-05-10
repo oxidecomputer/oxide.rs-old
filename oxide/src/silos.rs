@@ -141,4 +141,46 @@ impl Silos {
 
         self.client.delete(&url, None).await
     }
+
+    /**
+    * Fetch the IAM policy for this Silo.
+    *
+    * This function performs a `GET` to the `/silos/{silo_name}/policy` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
+    pub async fn get_policy(&self, silo_name: &str) -> Result<crate::types::SiloRolesPolicy> {
+        let url = format!(
+            "/silos/{}/policy",
+            crate::progenitor_support::encode_path(silo_name),
+        );
+
+        self.client.get(&url, None).await
+    }
+
+    /**
+    * Update the IAM policy for this Silo.
+    *
+    * This function performs a `PUT` to the `/silos/{silo_name}/policy` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
+    pub async fn put_policy(
+        &self,
+        silo_name: &str,
+        body: &crate::types::SiloRolesPolicy,
+    ) -> Result<crate::types::SiloRolesPolicy> {
+        let url = format!(
+            "/silos/{}/policy",
+            crate::progenitor_support::encode_path(silo_name),
+        );
+
+        self.client
+            .put(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))
+            .await
+    }
 }

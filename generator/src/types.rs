@@ -97,6 +97,7 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                         && sn != "RouterRouteUpdateParams"
                         && sn != "RouterRouteCreateParams"
                         && sn != "Disk"
+                        && sn != "DiskCreate"
                         && sn != "RouterRoute"
                         && sn != "ImageCreate"
                     {
@@ -338,7 +339,7 @@ fn render_property(
 
         // Hide things from the table that don't implement display.
         if (rt.starts_with("Vec<")
-            || rt.starts_with("Option<InstanceNetwork")
+            || rt.starts_with("Option<")
             || rt == "VpcFirewallRuleFilter")
             && sn != "VpcFirewallRuleFilter"
         {
