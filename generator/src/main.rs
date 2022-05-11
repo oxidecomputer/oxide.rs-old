@@ -2228,14 +2228,13 @@ pub fn render_param(
     }
 
     a("#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]");
-
+    a(r#"#[serde(rename_all = "snake_case")]"#);
     a(&format!("pub enum {} {{", sn));
     for e in &enums {
         if struct_name(e).is_empty() {
             // TODO: do something for empty(?)
             continue;
         }
-        a(&format!(r#"#[serde(rename = "{}")]"#, e));
         a(&format!("{},", struct_name(e)));
     }
     if !required && default.is_none() && do_fallthrough_etc {
@@ -2256,7 +2255,7 @@ pub fn render_param(
     a(r#"fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {"#);
     a(r#"match &*self {"#);
     for e in &enums {
-        a(&format!(r#"{}::{} => "{}","#, sn, struct_name(e), e));
+        a(&format!(r#"{}::{} => "{}","#, sn, struct_name(e), to_snake_case(e)));
     }
     if !required && default.is_none() && do_fallthrough_etc {
         a(&format!(r#"{}::Noop => "","#, sn));
@@ -2298,12 +2297,12 @@ pub fn render_param(
     for e in &enums {
         a(&format!(
             r#"if s == "{}" {{ return Ok({}::{}); }}"#,
-            e,
+            to_snake_case(e),
             sn,
             struct_name(e),
         ));
     }
-    a(r#"anyhow::bail!("invalid string: {}", s);"#);
+    a(&format!(r#"anyhow::bail!("invalid string for {}: {{}}", s);"#, sn));
     a("}");
     a("}");
 
