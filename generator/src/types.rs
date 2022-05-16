@@ -99,10 +99,11 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                         && sn != "Disk"
                         && sn != "RouterRoute"
                         && sn != "ImageCreate"
+                        && sn != "DiskCreate"
                     {
                         a("Default,");
                     }
-                    if sn != "VpcFirewallRuleFilter" {
+                    if sn != "VpcFirewallRuleFilter" || sn.ends_with("Create") {
                         a("Tabled,");
                     }
                     a(r#")]"#);
@@ -339,7 +340,8 @@ fn render_property(
         // Hide things from the table that don't implement display.
         if (rt.starts_with("Vec<")
             || rt.starts_with("Option<InstanceNetwork")
-            || rt == "VpcFirewallRuleFilter")
+            || rt == "VpcFirewallRuleFilter"
+            || rt == "Option<Digest>")
             && sn != "VpcFirewallRuleFilter"
         {
             a(r#"#[header(hidden = true)]"#);

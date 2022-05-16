@@ -135,6 +135,10 @@ pub mod sleds;
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod snapshots;
+/// Public SSH keys for an individual user.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod sshkeys;
 /// This tag should be moved into a generic network tag.
 ///
 ///FROM: http://oxide.computer/docs/#xxx
@@ -505,6 +509,13 @@ impl Client {
     ///FROM: http://oxide.computer/docs/#xxx
     pub fn snapshots(&self) -> snapshots::Snapshots {
         snapshots::Snapshots::new(self.clone())
+    }
+
+    /// Public SSH keys for an individual user.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn sshkeys(&self) -> sshkeys::Sshkeys {
+        sshkeys::Sshkeys::new(self.clone())
     }
 
     /// This tag should be moved into a generic network tag.

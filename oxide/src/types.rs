@@ -98,6 +98,24 @@ impl DatumType {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+pub enum Digest {
+    Sha256(String),
+}
+
+impl fmt::Display for Digest {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", serde_json::json!(self))
+    }
+}
+
+impl std::str::FromStr for Digest {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
+    }
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[serde(tag = "state", content = "instance")]
 pub enum DiskState {
@@ -345,8 +363,148 @@ pub struct Disk {
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[serde(tag = "type", content = "image_id")]
+pub enum DiskSource {
+    Blank(i64),
+    Snapshot(String),
+    Image(String),
+    GlobalImage(String),
+}
+
+impl fmt::Display for DiskSource {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let j = serde_json::json!(self);
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["image_id"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["image_id"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        if tag == "internet_gateway" {
+            tag = "inetgw".to_string();
+        }
+        write!(f, "{}={}", tag, content)
+    }
+}
+
+impl std::str::FromStr for DiskSource {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for DiskSource, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "blank" {
+            j = format!(
+                r#"{{
+"type": "blank",
+"image_id": {}
+        }}"#,
+                serde_json::json!(i64::from_str(&content).unwrap())
+            );
+        }
+        if tag == "snapshot" {
+            j = format!(
+                r#"{{
+"type": "snapshot",
+"image_id": "{}"
+        }}"#,
+                content
+            );
+        }
+        if tag == "image" {
+            j = format!(
+                r#"{{
+"type": "image",
+"image_id": "{}"
+        }}"#,
+                content
+            );
+        }
+        if tag == "global_image" {
+            j = format!(
+                r#"{{
+"type": "global_image",
+"image_id": "{}"
+        }}"#,
+                content
+            );
+        }
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl DiskSource {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "blank".to_string(),
+            "global_image".to_string(),
+            "image".to_string(),
+            "snapshot".to_string(),
+        ]
+    }
+}
+/**
+* The types for DiskSource.
+*/
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum DiskSourceType {
+    #[serde(rename = "Blank")]
+    Blank,
+    #[serde(rename = "GlobalImage")]
+    GlobalImage,
+    #[serde(rename = "Image")]
+    Image,
+    #[serde(rename = "Snapshot")]
+    Snapshot,
+}
+
+impl std::fmt::Display for DiskSourceType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            DiskSourceType::Blank => "Blank",
+            DiskSourceType::GlobalImage => "GlobalImage",
+            DiskSourceType::Image => "Image",
+            DiskSourceType::Snapshot => "Snapshot",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for DiskSourceType {
+    fn default() -> DiskSourceType {
+        DiskSourceType::Blank
+    }
+}
+impl std::str::FromStr for DiskSourceType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "Blank" {
+            return Ok(DiskSourceType::Blank);
+        }
+        if s == "GlobalImage" {
+            return Ok(DiskSourceType::GlobalImage);
+        }
+        if s == "Image" {
+            return Ok(DiskSourceType::Image);
+        }
+        if s == "Snapshot" {
+            return Ok(DiskSourceType::Snapshot);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
+
 /// Create-time parameters for a [`Disk`](omicron_common::api::external::Disk)
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct DiskCreate {
     /**
     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
@@ -365,22 +523,8 @@ pub struct DiskCreate {
     )]
     pub description: String,
 
-    #[serde(
-        default,
-        skip_serializing_if = "crate::utils::zero_i64",
-        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
-    )]
-    pub block_size: i64,
-
-    /**
-    * id for image from which the Disk should be created, if any
-    */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub image_id: String,
+    #[serde()]
+    pub disk_source: DiskSource,
 
     /**
     * A count of bytes, typically used either for memory or storage capacity
@@ -389,16 +533,6 @@ pub struct DiskCreate {
     */
     #[serde(default)]
     pub size: u64,
-
-    /**
-    * id for snapshot from which the Disk should be created, if any
-    */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub snapshot_id: String,
 }
 
 /// Parameters for the [`Disk`](omicron_common::api::external::Disk) to be attached or detached to an instance
@@ -759,6 +893,120 @@ pub struct FieldSchema {
     pub ty: FieldType,
 }
 
+/// Client view of global Images
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct GlobalImage {
+    /**
+    * unique, immutable, system-controlled identifier for each resource
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+    * human-readable free-form text about a resource
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+    * A count of bytes, typically used either for memory or storage capacity
+    *  
+    *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+    */
+    #[serde(default)]
+    pub block_size: u64,
+
+    /**
+    * Hash of the image contents, if applicable
+    */
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[header(hidden = true)]
+    pub digest: Option<Digest>,
+
+    /**
+    * A count of bytes, typically used either for memory or storage capacity
+    *  
+    *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+    */
+    #[serde(default)]
+    pub size: u64,
+
+    /**
+    * timestamp when this resource was created
+    */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+    * timestamp when this resource was last modified
+    */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+
+    /**
+    * URL source of this image, if any
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub url: String,
+
+    /**
+    * Version of this, if any
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub version: String,
+}
+
+/// A single page of results
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct GlobalImageResultsPage {
+    /**
+    * list of items on this page of results
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub items: Vec<GlobalImage>,
+
+    /**
+    * token used to fetch the next page of results (if any)
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub next_page: String,
+}
+
 /**
 * Supported set of sort modes for scanning by id only.
 *   
@@ -805,7 +1053,57 @@ impl IdSortMode {
     }
 }
 
-/// Client view of Images
+/**
+* Describes what kind of identity is described by an id
+*/
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum IdentityType {
+    #[serde(rename = "silo_user")]
+    SiloUser,
+    #[serde(rename = "user_builtin")]
+    UserBuiltin,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for IdentityType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            IdentityType::SiloUser => "silo_user",
+            IdentityType::UserBuiltin => "user_builtin",
+            IdentityType::Noop => "",
+            IdentityType::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for IdentityType {
+    fn default() -> IdentityType {
+        IdentityType::SiloUser
+    }
+}
+impl std::str::FromStr for IdentityType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "silo_user" {
+            return Ok(IdentityType::SiloUser);
+        }
+        if s == "user_builtin" {
+            return Ok(IdentityType::UserBuiltin);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
+impl IdentityType {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, IdentityType::Noop)
+    }
+}
+
+/// Client view of project Images
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Image {
     /**
@@ -838,6 +1136,24 @@ pub struct Image {
     )]
     pub description: String,
 
+    /**
+    * A count of bytes, typically used either for memory or storage capacity
+    *  
+    *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
+    */
+    #[serde(default)]
+    pub block_size: u64,
+
+    /**
+    * Hash of the image contents, if applicable
+    */
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[header(hidden = true)]
+    pub digest: Option<Digest>,
+
+    /**
+    * The project the disk belongs to
+    */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -865,12 +1181,25 @@ pub struct Image {
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
 
+    /**
+    * URL source of this image, if any
+    */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub url: String,
+
+    /**
+    * Version of this, if any
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub version: String,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
@@ -911,6 +1240,13 @@ pub struct ImageCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub block_size: i64,
 
     #[serde()]
     pub source: ImageSource,
@@ -1137,12 +1473,10 @@ pub struct Instance {
 #[serde(tag = "type", content = "name")]
 pub enum InstanceDiskAttachment {
     Create {
-        block_size: i64,
         description: String,
-        image_id: String,
+        disk_source: DiskSource,
         name: String,
         size: u64,
-        snapshot_id: String,
     },
     Attach(String),
 }
@@ -1180,27 +1514,18 @@ impl std::str::FromStr for InstanceDiskAttachment {
             j = format!(
                 r#"{{
 "type": "create",
+"name": "{}"
+        }}"#,
+                content
+            );
+        }
+        if tag == "create" {
+            j = format!(
+                r#"{{
+"type": "create",
 "name": {}
         }}"#,
-                serde_json::json!(i64::from_str(&content).unwrap())
-            );
-        }
-        if tag == "create" {
-            j = format!(
-                r#"{{
-"type": "create",
-"name": "{}"
-        }}"#,
-                content
-            );
-        }
-        if tag == "create" {
-            j = format!(
-                r#"{{
-"type": "create",
-"name": "{}"
-        }}"#,
-                content
+                serde_json::json!(DiskSource::from_str(&content).unwrap())
             );
         }
         if tag == "create" {
@@ -1219,15 +1544,6 @@ impl std::str::FromStr for InstanceDiskAttachment {
 "name": {}
         }}"#,
                 serde_json::json!(u64::from_str(&content).unwrap())
-            );
-        }
-        if tag == "create" {
-            j = format!(
-                r#"{{
-"type": "create",
-"name": "{}"
-        }}"#,
-                content
             );
         }
         if tag == "attach" {
@@ -1453,6 +1769,16 @@ pub struct InstanceCreate {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[header(hidden = true)]
     pub network_interfaces: Option<InstanceNetworkInterfaceAttachment>,
+
+    /**
+    * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub user_data: String,
 }
 
 /// Migration parameters for an [`Instance`](omicron_common::api::external::Instance)
@@ -2090,6 +2416,92 @@ pub struct OrganizationResultsPage {
     pub next_page: String,
 }
 
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum OrganizationRoles {
+    #[serde(rename = "Admin")]
+    Admin,
+    #[serde(rename = "Collaborator")]
+    Collaborator,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for OrganizationRoles {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            OrganizationRoles::Admin => "Admin",
+            OrganizationRoles::Collaborator => "Collaborator",
+            OrganizationRoles::Noop => "",
+            OrganizationRoles::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for OrganizationRoles {
+    fn default() -> OrganizationRoles {
+        OrganizationRoles::Admin
+    }
+}
+impl std::str::FromStr for OrganizationRoles {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "Admin" {
+            return Ok(OrganizationRoles::Admin);
+        }
+        if s == "Collaborator" {
+            return Ok(OrganizationRoles::Collaborator);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
+impl OrganizationRoles {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, OrganizationRoles::Noop)
+    }
+}
+
+/// Describes the assignment of a particular role on a particular resource to a particular identity (user, group, etc.)
+///
+/// The resource is not part of this structure.  Rather, [`RoleAssignment`]s are put into a [`Policy`] and that Policy is applied to a particular resource.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct OrganizationRolesRoleAssignment {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub identity_id: String,
+
+    /**
+    * Describes what kind of identity is described by an id
+    */
+    #[serde(default, skip_serializing_if = "IdentityType::is_noop")]
+    pub identity_type: IdentityType,
+
+    #[serde(default, skip_serializing_if = "OrganizationRoles::is_noop")]
+    pub role_name: OrganizationRoles,
+}
+
+/// Client view of a [`Policy`], which describes how this resource may be accessed
+///
+/// Note that the Policy only describes access granted explicitly for this resource.  The policies of parent resources can also cause a user to have access to this resource.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct OrganizationRolesPolicy {
+    /**
+    * Roles directly assigned on this resource
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub role_assignments: Vec<OrganizationRolesRoleAssignment>,
+}
+
 /// Updateable properties of an [`Organization`](crate::external_api::views::Organization)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct OrganizationUpdate {
@@ -2205,6 +2617,98 @@ pub struct ProjectResultsPage {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub next_page: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum ProjectRoles {
+    #[serde(rename = "Admin")]
+    Admin,
+    #[serde(rename = "Collaborator")]
+    Collaborator,
+    #[serde(rename = "Viewer")]
+    Viewer,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for ProjectRoles {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            ProjectRoles::Admin => "Admin",
+            ProjectRoles::Collaborator => "Collaborator",
+            ProjectRoles::Viewer => "Viewer",
+            ProjectRoles::Noop => "",
+            ProjectRoles::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for ProjectRoles {
+    fn default() -> ProjectRoles {
+        ProjectRoles::Admin
+    }
+}
+impl std::str::FromStr for ProjectRoles {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "Admin" {
+            return Ok(ProjectRoles::Admin);
+        }
+        if s == "Collaborator" {
+            return Ok(ProjectRoles::Collaborator);
+        }
+        if s == "Viewer" {
+            return Ok(ProjectRoles::Viewer);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
+impl ProjectRoles {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, ProjectRoles::Noop)
+    }
+}
+
+/// Describes the assignment of a particular role on a particular resource to a particular identity (user, group, etc.)
+///
+/// The resource is not part of this structure.  Rather, [`RoleAssignment`]s are put into a [`Policy`] and that Policy is applied to a particular resource.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct ProjectRolesRoleAssignment {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub identity_id: String,
+
+    /**
+    * Describes what kind of identity is described by an id
+    */
+    #[serde(default, skip_serializing_if = "IdentityType::is_noop")]
+    pub identity_type: IdentityType,
+
+    #[serde(default, skip_serializing_if = "ProjectRoles::is_noop")]
+    pub role_name: ProjectRoles,
+}
+
+/// Client view of a [`Policy`], which describes how this resource may be accessed
+///
+/// Note that the Policy only describes access granted explicitly for this resource.  The policies of parent resources can also cause a user to have access to this resource.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct ProjectRolesPolicy {
+    /**
+    * Roles directly assigned on this resource
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub role_assignments: Vec<ProjectRolesRoleAssignment>,
 }
 
 /// Updateable properties of a [`Project`](crate::external_api::views::Project)
@@ -3231,6 +3735,98 @@ pub struct SiloResultsPage {
     pub next_page: String,
 }
 
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub enum SiloRoles {
+    #[serde(rename = "Admin")]
+    Admin,
+    #[serde(rename = "Collaborator")]
+    Collaborator,
+    #[serde(rename = "Viewer")]
+    Viewer,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for SiloRoles {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            SiloRoles::Admin => "Admin",
+            SiloRoles::Collaborator => "Collaborator",
+            SiloRoles::Viewer => "Viewer",
+            SiloRoles::Noop => "",
+            SiloRoles::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for SiloRoles {
+    fn default() -> SiloRoles {
+        SiloRoles::Admin
+    }
+}
+impl std::str::FromStr for SiloRoles {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "Admin" {
+            return Ok(SiloRoles::Admin);
+        }
+        if s == "Collaborator" {
+            return Ok(SiloRoles::Collaborator);
+        }
+        if s == "Viewer" {
+            return Ok(SiloRoles::Viewer);
+        }
+        anyhow::bail!("invalid string: {}", s);
+    }
+}
+impl SiloRoles {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, SiloRoles::Noop)
+    }
+}
+
+/// Describes the assignment of a particular role on a particular resource to a particular identity (user, group, etc.)
+///
+/// The resource is not part of this structure.  Rather, [`RoleAssignment`]s are put into a [`Policy`] and that Policy is applied to a particular resource.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct SiloRolesRoleAssignment {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub identity_id: String,
+
+    /**
+    * Describes what kind of identity is described by an id
+    */
+    #[serde(default, skip_serializing_if = "IdentityType::is_noop")]
+    pub identity_type: IdentityType,
+
+    #[serde(default, skip_serializing_if = "SiloRoles::is_noop")]
+    pub role_name: SiloRoles,
+}
+
+/// Client view of a [`Policy`], which describes how this resource may be accessed
+///
+/// Note that the Policy only describes access granted explicitly for this resource.  The policies of parent resources can also cause a user to have access to this resource.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct SiloRolesPolicy {
+    /**
+    * Roles directly assigned on this resource
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub role_assignments: Vec<SiloRolesRoleAssignment>,
+}
+
 /// Client view of an [`Sled`]
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Sled {
@@ -3421,6 +4017,128 @@ pub struct SnapshotResultsPage {
     )]
     #[header(hidden = true)]
     pub items: Vec<Snapshot>,
+
+    /**
+    * token used to fetch the next page of results (if any)
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub next_page: String,
+}
+
+/// Client view of a [`SshKey`]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct SshKey {
+    /**
+    * unique, immutable, system-controlled identifier for each resource
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+    * human-readable free-form text about a resource
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+    * SSH public key, e.g., `"ssh-ed25519 AAAAC3NzaC..."`
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub public_key: String,
+
+    /**
+    * The user to whom this key belongs
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub silo_user_id: String,
+
+    /**
+    * timestamp when this resource was created
+    */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+    * timestamp when this resource was last modified
+    */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+}
+
+/// Create-time parameters for an [`SshKey`](crate::external_api::views::SshKey)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct SshKeyCreate {
+    /**
+    * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+    * SSH public key, e.g., `"ssh-ed25519 AAAAC3NzaC..."`
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub public_key: String,
+}
+
+/// A single page of results
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct SshKeyResultsPage {
+    /**
+    * list of items on this page of results
+    */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub items: Vec<SshKey>,
 
     /**
     * token used to fetch the next page of results (if any)
@@ -4761,20 +5479,6 @@ pub struct VpcSubnetUpdate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
-
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub ipv4_block: String,
-
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub ipv6_block: String,
 }
 
 /// Updateable properties of a [`Vpc`](crate::external_api::views::Vpc)
