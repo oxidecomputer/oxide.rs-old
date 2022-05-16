@@ -13,20 +13,20 @@ impl Instances {
     }
 
     /**
-    * List instances in a project.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `limit: u32` -- Maximum number of items returned by a single call.
-    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-    * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
-    *  
-    *  Currently, we only support scanning in ascending order.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * List instances in a project.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `limit: u32` -- Maximum number of items returned by a single call.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
+     *  
+     *  Currently, we only support scanning in ascending order.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn get_page(
         &self,
         limit: u32,
@@ -60,12 +60,12 @@ impl Instances {
     }
 
     /**
-    * List instances in a project.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances` endpoint.
-    *
-    * As opposed to `get`, this function returns all the pages of the request at once.
-    */
+     * List instances in a project.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances` endpoint.
+     *
+     * As opposed to `get`, this function returns all the pages of the request at once.
+     */
     pub async fn get_all(
         &self,
         organization_name: &str,
@@ -117,15 +117,15 @@ impl Instances {
     }
 
     /**
-    * Create an instance in a project.
-    *
-    * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Create an instance in a project.
+     *
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn post(
         &self,
         organization_name: &str,
@@ -144,16 +144,16 @@ impl Instances {
     }
 
     /**
-    * Get an instance in a project.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Get an instance in a project.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn get(
         &self,
         instance_name: &str,
@@ -171,16 +171,16 @@ impl Instances {
     }
 
     /**
-    * Delete an instance from a project.
-    *
-    * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Delete an instance from a project.
+     *
+     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn delete(
         &self,
         instance_name: &str,
@@ -198,21 +198,21 @@ impl Instances {
     }
 
     /**
-    * List disks attached to this instance.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `limit: u32` -- Maximum number of items returned by a single call.
-    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-    * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
-    *  
-    *  Currently, we only support scanning in ascending order.
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * List disks attached to this instance.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `limit: u32` -- Maximum number of items returned by a single call.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
+     *  
+     *  Currently, we only support scanning in ascending order.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn disks_get(
         &self,
         instance_name: &str,
@@ -248,12 +248,12 @@ impl Instances {
     }
 
     /**
-    * List disks attached to this instance.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks` endpoint.
-    *
-    * As opposed to `disks_get`, this function returns all the pages of the request at once.
-    */
+     * List disks attached to this instance.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks` endpoint.
+     *
+     * As opposed to `disks_get`, this function returns all the pages of the request at once.
+     */
     pub async fn disks_get_all(
         &self,
         instance_name: &str,
@@ -307,14 +307,14 @@ impl Instances {
     }
 
     /**
-    * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks/attach` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks/attach` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn disks_attach(
         &self,
         instance_name: &str,
@@ -335,14 +335,14 @@ impl Instances {
     }
 
     /**
-    * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks/detach` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/disks/detach` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn disks_detach(
         &self,
         instance_name: &str,
@@ -363,16 +363,16 @@ impl Instances {
     }
 
     /**
-    * Migrate an instance to a different propolis-server, possibly on a different sled.
-    *
-    * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/migrate` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Migrate an instance to a different propolis-server, possibly on a different sled.
+     *
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/migrate` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn migrate(
         &self,
         instance_name: &str,
@@ -393,21 +393,21 @@ impl Instances {
     }
 
     /**
-    * List network interfaces attached to this instance.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `limit: u32` -- Maximum number of items returned by a single call.
-    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-    * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
-    *  
-    *  Currently, we only support scanning in ascending order.
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * List network interfaces attached to this instance.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `limit: u32` -- Maximum number of items returned by a single call.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
+     *  
+     *  Currently, we only support scanning in ascending order.
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn network_interfaces_get(
         &self,
         instance_name: &str,
@@ -443,12 +443,12 @@ impl Instances {
     }
 
     /**
-    * List network interfaces attached to this instance.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces` endpoint.
-    *
-    * As opposed to `network_interfaces_get`, this function returns all the pages of the request at once.
-    */
+     * List network interfaces attached to this instance.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces` endpoint.
+     *
+     * As opposed to `network_interfaces_get`, this function returns all the pages of the request at once.
+     */
     pub async fn network_interfaces_get_all(
         &self,
         instance_name: &str,
@@ -503,16 +503,16 @@ impl Instances {
     }
 
     /**
-    * Create a network interface for an instance.
-    *
-    * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Create a network interface for an instance.
+     *
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn network_interfaces_post(
         &self,
         instance_name: &str,
@@ -533,17 +533,17 @@ impl Instances {
     }
 
     /**
-    * Get an interface attached to an instance.
-    *
-    * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces/{interface_name}` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `interface_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Get an interface attached to an instance.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces/{interface_name}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `interface_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn network_interfaces_get_interface(
         &self,
         instance_name: &str,
@@ -563,17 +563,17 @@ impl Instances {
     }
 
     /**
-    * Detach a network interface from an instance.
-    *
-    * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces/{interface_name}` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `interface_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Detach a network interface from an instance.
+     *
+     * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces/{interface_name}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `interface_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn network_interfaces_delete_interface(
         &self,
         instance_name: &str,
@@ -593,16 +593,16 @@ impl Instances {
     }
 
     /**
-    * Reboot an instance.
-    *
-    * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/reboot` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Reboot an instance.
+     *
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/reboot` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn reboot(
         &self,
         instance_name: &str,
@@ -620,16 +620,16 @@ impl Instances {
     }
 
     /**
-    * Boot an instance.
-    *
-    * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/start` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Boot an instance.
+     *
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/start` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn start(
         &self,
         instance_name: &str,
@@ -647,16 +647,16 @@ impl Instances {
     }
 
     /**
-    * Halt an instance.
-    *
-    * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/stop` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-    */
+     * Halt an instance.
+     *
+     * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/stop` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
     pub async fn stop(
         &self,
         instance_name: &str,
