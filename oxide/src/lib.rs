@@ -40,10 +40,7 @@
 //! ```
 //! use oxide_api::Client;
 //!
-//! let oxide = Client::new(
-//!     String::from("api-key"),
-//!     String::from("host"),
-//! );
+//! let oxide = Client::new(String::from("api-key"), String::from("host"));
 //! ```
 //!
 //! Alternatively, the library can search for most of the variables required for
@@ -59,7 +56,6 @@
 //!
 //! let oxide = Client::new_from_env();
 //! ```
-//!
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::nonstandard_macro_braces)]
 #![allow(clippy::large_enum_variant)]
@@ -135,6 +131,10 @@ pub mod sleds;
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod snapshots;
+/// Public SSH keys for an individual user.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod sshkeys;
 /// This tag should be moved into a generic network tag.
 ///
 ///FROM: http://oxide.computer/docs/#xxx
@@ -505,6 +505,13 @@ impl Client {
     ///FROM: http://oxide.computer/docs/#xxx
     pub fn snapshots(&self) -> snapshots::Snapshots {
         snapshots::Snapshots::new(self.clone())
+    }
+
+    /// Public SSH keys for an individual user.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn sshkeys(&self) -> sshkeys::Sshkeys {
+        sshkeys::Sshkeys::new(self.clone())
     }
 
     /// This tag should be moved into a generic network tag.
