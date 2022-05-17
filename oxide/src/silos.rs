@@ -13,14 +13,14 @@ impl Silos {
     }
 
     /**
-     * This function performs a `GET` to the `/silos` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `limit: u32` -- Maximum number of items returned by a single call.
-     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-     * * `sort_by: crate::types::NameOrIdSortMode` -- Supported set of sort modes for scanning by name or id.
-     */
+    * This function performs a `GET` to the `/silos` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `limit: u32` -- Maximum number of items returned by a single call.
+    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+    * * `sort_by: crate::types::NameOrIdSortMode` -- Supported set of sort modes for scanning by name or id.
+    */
     pub async fn get_page(
         &self,
         limit: u32,
@@ -47,10 +47,10 @@ impl Silos {
     }
 
     /**
-     * This function performs a `GET` to the `/silos` endpoint.
-     *
-     * As opposed to `get`, this function returns all the pages of the request at once.
-     */
+    * This function performs a `GET` to the `/silos` endpoint.
+    *
+    * As opposed to `get`, this function returns all the pages of the request at once.
+    */
     pub async fn get_all(
         &self,
         sort_by: crate::types::NameOrIdSortMode,
@@ -95,10 +95,10 @@ impl Silos {
     }
 
     /**
-     * Create a new silo.
-     *
-     * This function performs a `POST` to the `/silos` endpoint.
-     */
+    * Create a new silo.
+    *
+    * This function performs a `POST` to the `/silos` endpoint.
+    */
     pub async fn post(&self, body: &crate::types::SiloCreate) -> Result<crate::types::Silo> {
         let url = "/silos".to_string();
         self.client
@@ -107,14 +107,14 @@ impl Silos {
     }
 
     /**
-     * Fetch a specific silo.
-     *
-     * This function performs a `GET` to the `/silos/{silo_name}` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     */
+    * Fetch a specific silo.
+    *
+    * This function performs a `GET` to the `/silos/{silo_name}` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
     pub async fn get(&self, silo_name: &str) -> Result<crate::types::Silo> {
         let url = format!(
             "/silos/{}",
@@ -125,14 +125,14 @@ impl Silos {
     }
 
     /**
-     * Delete a specific silo.
-     *
-     * This function performs a `DELETE` to the `/silos/{silo_name}` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     */
+    * Delete a specific silo.
+    *
+    * This function performs a `DELETE` to the `/silos/{silo_name}` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
     pub async fn delete(&self, silo_name: &str) -> Result<()> {
         let url = format!(
             "/silos/{}",
@@ -143,14 +143,14 @@ impl Silos {
     }
 
     /**
-     * Fetch the IAM policy for this Silo.
-     *
-     * This function performs a `GET` to the `/silos/{silo_name}/policy` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     */
+    * Fetch the IAM policy for this Silo.
+    *
+    * This function performs a `GET` to the `/silos/{silo_name}/policy` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
     pub async fn get_policy(&self, silo_name: &str) -> Result<crate::types::SiloRolesPolicy> {
         let url = format!(
             "/silos/{}/policy",
@@ -161,14 +161,14 @@ impl Silos {
     }
 
     /**
-     * Update the IAM policy for this Silo.
-     *
-     * This function performs a `PUT` to the `/silos/{silo_name}/policy` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     */
+    * Update the IAM policy for this Silo.
+    *
+    * This function performs a `PUT` to the `/silos/{silo_name}/policy` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
     pub async fn put_policy(
         &self,
         silo_name: &str,

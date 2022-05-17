@@ -29,7 +29,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! oxide-api = "0.1.0-rc.33"
+//! oxide-api = "0.1.0-rc.34"
 //! ```
 //!
 //! ## Basic example
@@ -40,7 +40,10 @@
 //! ```
 //! use oxide_api::Client;
 //!
-//! let oxide = Client::new(String::from("api-key"), String::from("host"));
+//! let oxide = Client::new(
+//!     String::from("api-key"),
+//!     String::from("host"),
+//! );
 //! ```
 //!
 //! Alternatively, the library can search for most of the variables required for
@@ -56,6 +59,7 @@
 //!
 //! let oxide = Client::new_from_env();
 //! ```
+//!
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::nonstandard_macro_braces)]
 #![allow(clippy::large_enum_variant)]

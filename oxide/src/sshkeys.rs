@@ -13,18 +13,18 @@ impl Sshkeys {
     }
 
     /**
-     * List the current user's SSH public keys.
-     *
-     * This function performs a `GET` to the `/session/me/sshkeys` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `limit: u32` -- Maximum number of items returned by a single call.
-     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-     * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
-     *  
-     *  Currently, we only support scanning in ascending order.
-     */
+    * List the current user's SSH public keys.
+    *
+    * This function performs a `GET` to the `/session/me/sshkeys` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `limit: u32` -- Maximum number of items returned by a single call.
+    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+    * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
+    *  
+    *  Currently, we only support scanning in ascending order.
+    */
     pub async fn get_page(
         &self,
         limit: u32,
@@ -51,12 +51,12 @@ impl Sshkeys {
     }
 
     /**
-     * List the current user's SSH public keys.
-     *
-     * This function performs a `GET` to the `/session/me/sshkeys` endpoint.
-     *
-     * As opposed to `get`, this function returns all the pages of the request at once.
-     */
+    * List the current user's SSH public keys.
+    *
+    * This function performs a `GET` to the `/session/me/sshkeys` endpoint.
+    *
+    * As opposed to `get`, this function returns all the pages of the request at once.
+    */
     pub async fn get_all(
         &self,
         sort_by: crate::types::NameSortMode,
@@ -101,10 +101,10 @@ impl Sshkeys {
     }
 
     /**
-     * Create a new SSH public key for the current user.
-     *
-     * This function performs a `POST` to the `/session/me/sshkeys` endpoint.
-     */
+    * Create a new SSH public key for the current user.
+    *
+    * This function performs a `POST` to the `/session/me/sshkeys` endpoint.
+    */
     pub async fn post(&self, body: &crate::types::SshKeyCreate) -> Result<crate::types::SshKey> {
         let url = "/session/me/sshkeys".to_string();
         self.client
@@ -113,14 +113,14 @@ impl Sshkeys {
     }
 
     /**
-     * Get (by name) an SSH public key belonging to the current user.
-     *
-     * This function performs a `GET` to the `/session/me/sshkeys/{ssh_key_name}` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `ssh_key_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     */
+    * Get (by name) an SSH public key belonging to the current user.
+    *
+    * This function performs a `GET` to the `/session/me/sshkeys/{ssh_key_name}` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `ssh_key_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
     pub async fn get_key(&self, ssh_key_name: &str) -> Result<crate::types::SshKey> {
         let url = format!(
             "/session/me/sshkeys/{}",
@@ -131,14 +131,14 @@ impl Sshkeys {
     }
 
     /**
-     * Delete (by name) an SSH public key belonging to the current user.
-     *
-     * This function performs a `DELETE` to the `/session/me/sshkeys/{ssh_key_name}` endpoint.
-     *
-     * **Parameters:**
-     *
-     * * `ssh_key_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     */
+    * Delete (by name) an SSH public key belonging to the current user.
+    *
+    * This function performs a `DELETE` to the `/session/me/sshkeys/{ssh_key_name}` endpoint.
+    *
+    * **Parameters:**
+    *
+    * * `ssh_key_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+    */
     pub async fn delete_key(&self, ssh_key_name: &str) -> Result<()> {
         let url = format!(
             "/session/me/sshkeys/{}",
