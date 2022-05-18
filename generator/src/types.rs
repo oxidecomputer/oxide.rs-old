@@ -507,11 +507,25 @@ fn do_one_of_type(
              serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default();",
             tag
         ));
-        a(&format!(
-            "   let mut content: String = \
+        if sn == "DiskSource" {
+            a(&format!(
+                "   let mut content: String = \
+             match serde_json::from_value(j[\"{}\"].clone()) {{ \
+             Ok(v) => v, \
+                Err(_) => {{ \
+                let int : i64 = serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default(); \
+                format!(\"{{}}\", int) \
+                }} \
+                }};",
+                content, content
+            ));
+        } else {
+            a(&format!(
+                "   let mut content: String = \
              serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default();",
-            content
-        ));
+                content
+            ));
+        }
         a(" if content.is_empty() {");
         a(&format!(
             "let map: std::collections::HashMap<String, String> = \
