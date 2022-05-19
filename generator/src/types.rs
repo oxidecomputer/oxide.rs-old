@@ -97,13 +97,13 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                         && sn != "RouterRouteUpdateParams"
                         && sn != "RouterRouteCreateParams"
                         && sn != "Disk"
-                        && sn != "DiskCreate"
                         && sn != "RouterRoute"
                         && sn != "ImageCreate"
+                        && sn != "DiskCreate"
                     {
                         a("Default,");
                     }
-                    if sn != "VpcFirewallRuleFilter" {
+                    if sn != "VpcFirewallRuleFilter" || sn.ends_with("Create") {
                         a("Tabled,");
                     }
                     a(r#")]"#);
@@ -506,11 +506,25 @@ fn do_one_of_type(
              serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default();",
             tag
         ));
-        a(&format!(
-            "   let mut content: String = \
+        if sn == "DiskSource" {
+            a(&format!(
+                "   let mut content: String = \
+             match serde_json::from_value(j[\"{}\"].clone()) {{ \
+             Ok(v) => v, \
+                Err(_) => {{ \
+                let int : i64 = serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default(); \
+                format!(\"{{}}\", int) \
+                }} \
+                }};",
+                content, content
+            ));
+        } else {
+            a(&format!(
+                "   let mut content: String = \
              serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default();",
-            content
-        ));
+                content
+            ));
+        }
         a(" if content.is_empty() {");
         a(&format!(
             "let map: std::collections::HashMap<String, String> = \

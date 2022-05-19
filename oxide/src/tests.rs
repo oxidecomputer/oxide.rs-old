@@ -89,3 +89,57 @@ fn test_route_destination() {
         crate::types::RouteDestination::from_str("ip_net=172.30.0.0/22").unwrap();
     assert_eq!(route_destination_from_str, route_destination);
 }
+
+#[test]
+fn test_disk_source() {
+    let mut disk_source = crate::types::DiskSource::Snapshot("some-string-uuid".to_string());
+    let mut disk_source_str = format!("{}", disk_source);
+    assert_eq!(disk_source_str, "snapshot=some-string-uuid");
+
+    let mut disk_source_from_str =
+        crate::types::DiskSource::from_str("snapshot=some-string-uuid").unwrap();
+    assert_eq!(disk_source_from_str, disk_source);
+
+    disk_source = crate::types::DiskSource::Image("some-image-string".to_string());
+    disk_source_str = format!("{}", disk_source);
+    assert_eq!(disk_source_str, "image=some-image-string");
+
+    disk_source_from_str = crate::types::DiskSource::from_str("image=some-image-string").unwrap();
+    assert_eq!(disk_source_from_str, disk_source);
+
+    let variants = crate::types::DiskSource::variants();
+    assert_eq!(variants.len(), 4);
+    assert_eq!(variants, vec!["blank", "global_image", "image", "snapshot"]);
+
+    disk_source = crate::types::DiskSource::GlobalImage("some-image-string".to_string());
+    disk_source_str = format!("{}", disk_source);
+    assert_eq!(disk_source_str, "global_image=some-image-string");
+
+    disk_source_from_str =
+        crate::types::DiskSource::from_str("global_image=some-image-string").unwrap();
+    assert_eq!(disk_source_from_str, disk_source);
+
+    disk_source = crate::types::DiskSource::Blank(432);
+    disk_source_str = format!("{}", disk_source);
+    assert_eq!(disk_source_str, "blank=432");
+
+    disk_source_from_str = crate::types::DiskSource::from_str("blank=432").unwrap();
+    assert_eq!(disk_source_from_str, disk_source);
+}
+
+#[test]
+fn test_disk_source_type() {
+    let mut disk_source_type = crate::types::DiskSourceType::Snapshot;
+    let mut disk_source_type_str = format!("{}", disk_source_type);
+    assert_eq!(disk_source_type_str, "snapshot");
+
+    let mut disk_source_type_from_str = crate::types::DiskSourceType::from_str("snapshot").unwrap();
+    assert_eq!(disk_source_type_from_str, disk_source_type);
+
+    disk_source_type = crate::types::DiskSourceType::GlobalImage;
+    disk_source_type_str = format!("{}", disk_source_type);
+    assert_eq!(disk_source_type_str, "global_image");
+
+    disk_source_type_from_str = crate::types::DiskSourceType::from_str("global_image").unwrap();
+    assert_eq!(disk_source_type_from_str, disk_source_type);
+}
