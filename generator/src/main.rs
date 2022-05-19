@@ -3189,6 +3189,8 @@ let client = Client::new_from_env();"#
                             .to_string(),
                     );
 
+                    // TODO: Remove this code once we have restored examples. Leaving this here for now
+                    // will be useful to know how the examples were being generated
                     // Add in our version information
                     //  new_api
                     //      .info
@@ -3228,6 +3230,8 @@ impl {} {{
                         save(tagrs, output.as_str())?;
                     }
 
+                    // TODO: Remove this code once we have restored examples. Leaving this here for now
+                    // will be useful to know how the examples were being generated
                     // Write out the new API spec.
                     // save(input_spec, &serde_json::to_string_pretty(&new_api)?)?;
 

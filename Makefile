@@ -1,29 +1,34 @@
 SHELL := bash
 
+VERSION = $(shell cat VERSION.txt)
+OMICRON_VERSION = $(shell cat VERSION_OMICRON.txt)
+
 SPEC = $(CURDIR)/spec.json
 SPEC_REPO = oxidecomputer/omicron
-SPEC_REMOTE = https://raw.githubusercontent.com/oxidecomputer/omicron/main/openapi/nexus.json
+SPEC_REMOTE = https://raw.githubusercontent.com/oxidecomputer/omicron/$(OMICRON_VERSION)/openapi/nexus.json
 
-VERSION = $(shell cat VERSION.txt)
 
 generate: oxide
 	cargo test tests -- --nocapture
 	cargo clippy
+	$(MAKE) clean-spec
 
 target/debug/generator: generator/src/*.rs generator/Cargo.toml
 	cargo build --bin generator
 
+clean-spec:
+	$(RM) $(SPEC)
+
 update: update-specs
 
-update-specs:
-	$(RM) $(SPEC)
+update-specs: clean-spec
 	make $(SPEC)
 
 $(SPEC):
 	curl -sSL $(SPEC_REMOTE) -o $@
 
 .PHONY: oxide
-oxide: target/debug/generator
+oxide: update-specs target/debug/generator
 	./target/debug/generator -i $(SPEC) -v $(VERSION) \
 		-o oxide \
 		-n oxide-api \

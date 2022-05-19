@@ -29,7 +29,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! oxide-api = "0.1.0-rc.34"
+//! oxide-api = "0.1.0-rc.35"
 //! ```
 //!
 //! ## Basic example
