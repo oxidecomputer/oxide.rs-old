@@ -293,7 +293,7 @@ pub fn generate_files(
             );
 
             // Add the docs to our spec.
-            let mut new_operation = o.clone();
+            // let mut new_operation = o.clone();
 
             let mut docs_params: Vec<String> = Vec::new();
             for param in fn_params_str {
@@ -424,27 +424,27 @@ pub fn generate_files(
                 );
             }
 
-            new_operation
-                .extensions
-                .insert("x-rust".to_string(), serde_json::json!(example));
-            match m {
-                "GET" => {
-                    new_op.get = Some(new_operation);
-                }
-                "POST" => {
-                    new_op.post = Some(new_operation);
-                }
-                "PUT" => {
-                    new_op.put = Some(new_operation);
-                }
-                "PATCH" => {
-                    new_op.patch = Some(new_operation);
-                }
-                "DELETE" => {
-                    new_op.delete = Some(new_operation);
-                }
-                _ => {}
-            }
+            // new_operation
+            //     .extensions
+            //     .insert("x-rust".to_string(), serde_json::json!(example));
+            // match m {
+            //     "GET" => {
+            //         new_op.get = Some(new_operation);
+            //     }
+            //     "POST" => {
+            //         new_op.post = Some(new_operation);
+            //     }
+            //     "PUT" => {
+            //         new_op.put = Some(new_operation);
+            //     }
+            //     "PATCH" => {
+            //         new_op.patch = Some(new_operation);
+            //     }
+            //     "DELETE" => {
+            //         new_op.delete = Some(new_operation);
+            //     }
+            //     _ => {}
+            // }
             new_api
                 .paths
                 .insert(pn.to_string(), openapiv3::ReferenceOr::Item(new_op.clone()));
