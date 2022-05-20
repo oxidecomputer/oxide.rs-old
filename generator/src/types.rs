@@ -339,9 +339,8 @@ fn render_property(
 
         // Hide things from the table that don't implement display.
         if (rt.starts_with("Vec<")
-            || rt.starts_with("Option<InstanceNetwork")
-            || rt == "VpcFirewallRuleFilter"
-            || rt == "Option<Digest>")
+            || rt.starts_with("Option<")
+            || rt == "VpcFirewallRuleFilter")
             && sn != "VpcFirewallRuleFilter"
         {
             a(r#"#[header(hidden = true)]"#);

@@ -1,6 +1,5 @@
 use std::str::FromStr;
 
-use inflector::cases::pascalcase::to_pascal_case;
 use pretty_assertions::assert_eq;
 
 #[test]
@@ -132,18 +131,15 @@ fn test_disk_source() {
 fn test_disk_source_type() {
     let mut disk_source_type = crate::types::DiskSourceType::Snapshot;
     let mut disk_source_type_str = format!("{}", disk_source_type);
-    assert_eq!(disk_source_type_str, "Snapshot");
+    assert_eq!(disk_source_type_str, "snapshot");
 
-    let mut disk_source_type_from_str = crate::types::DiskSourceType::from_str("Snapshot").unwrap();
+    let mut disk_source_type_from_str = crate::types::DiskSourceType::from_str("snapshot").unwrap();
     assert_eq!(disk_source_type_from_str, disk_source_type);
 
     disk_source_type = crate::types::DiskSourceType::GlobalImage;
     disk_source_type_str = format!("{}", disk_source_type);
-    assert_eq!(disk_source_type_str, "GlobalImage");
+    assert_eq!(disk_source_type_str, "global_image");
 
-    let pascal = to_pascal_case("global_image");
-    assert_eq!(pascal, "GlobalImage");
-
-    disk_source_type_from_str = crate::types::DiskSourceType::from_str(&pascal).unwrap();
+    disk_source_type_from_str = crate::types::DiskSourceType::from_str("global_image").unwrap();
     assert_eq!(disk_source_type_from_str, disk_source_type);
 }
