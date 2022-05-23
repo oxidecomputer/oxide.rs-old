@@ -13,15 +13,15 @@ impl Roles {
     }
 
     /**
-    * List the built-in roles.
-    *
-    * This function performs a `GET` to the `/roles` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `limit: u32` -- Maximum number of items returned by a single call.
-    * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
-    */
+     * List the built-in roles.
+     *
+     * This function performs a `GET` to the `/roles` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `limit: u32` -- Maximum number of items returned by a single call.
+     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     */
     pub async fn get_page(&self, limit: u32, page_token: &str) -> Result<Vec<crate::types::Role>> {
         let mut query_args: Vec<(String, String)> = Default::default();
         if !limit.to_string().is_empty() {
@@ -40,12 +40,12 @@ impl Roles {
     }
 
     /**
-    * List the built-in roles.
-    *
-    * This function performs a `GET` to the `/roles` endpoint.
-    *
-    * As opposed to `get`, this function returns all the pages of the request at once.
-    */
+     * List the built-in roles.
+     *
+     * This function performs a `GET` to the `/roles` endpoint.
+     *
+     * As opposed to `get`, this function returns all the pages of the request at once.
+     */
     pub async fn get_all(&self) -> Result<Vec<crate::types::Role>> {
         let url = "/roles".to_string();
         let mut resp: crate::types::RoleResultsPage = self.client.get(&url, None).await?;
@@ -81,14 +81,14 @@ impl Roles {
     }
 
     /**
-    * Fetch a specific built-in role.
-    *
-    * This function performs a `GET` to the `/roles/{role_name}` endpoint.
-    *
-    * **Parameters:**
-    *
-    * * `role_name: &str` -- The built-in role's unique name.
-    */
+     * Fetch a specific built-in role.
+     *
+     * This function performs a `GET` to the `/roles/{role_name}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `role_name: &str` -- The built-in role's unique name.
+     */
     pub async fn get(&self, role_name: &str) -> Result<crate::types::Role> {
         let url = format!(
             "/roles/{}",

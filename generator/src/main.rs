@@ -3167,7 +3167,7 @@ rustdoc-args = ["--cfg", "docsrs"]
              * Create the Rust source files for each of the tags functions:
              */
             let fail = match functions::generate_files(&api, &mut ts, &parameters) {
-                Ok((files, mut new_api)) => {
+                Ok((files, _new_api)) => {
                     let mut extension: HashMap<String, String> = HashMap::new();
                     extension.insert(
                         "install".to_string(),
@@ -3188,11 +3188,13 @@ let client = Client::new_from_env();"#
                             .to_string(),
                     );
 
+                    // TODO: Remove this code once we have restored examples. Leaving this here for now
+                    // will be useful to know how the examples were being generated
                     // Add in our version information
-                    new_api
-                        .info
-                        .extensions
-                        .insert("x-rust".to_string(), serde_json::json!(extension));
+                    //  new_api
+                    //      .info
+                    //      .extensions
+                    //      .insert("x-rust".to_string(), serde_json::json!(extension));
 
                     // We have a map of our files, let's write to them.
                     for (f, content) in files {
@@ -3227,8 +3229,10 @@ impl {} {{
                         save(tagrs, output.as_str())?;
                     }
 
+                    // TODO: Remove this code once we have restored examples. Leaving this here for now
+                    // will be useful to know how the examples were being generated
                     // Write out the new API spec.
-                    save(input_spec, &serde_json::to_string_pretty(&new_api)?)?;
+                    // save(input_spec, &serde_json::to_string_pretty(&new_api)?)?;
 
                     false
                 }

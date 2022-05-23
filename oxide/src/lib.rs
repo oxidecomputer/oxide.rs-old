@@ -29,7 +29,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! oxide-api = "0.1.0-rc.34"
+//! oxide-api = "0.1.0-rc.35"
 //! ```
 //!
 //! ## Basic example
@@ -40,10 +40,7 @@
 //! ```
 //! use oxide_api::Client;
 //!
-//! let oxide = Client::new(
-//!     String::from("api-key"),
-//!     String::from("host"),
-//! );
+//! let oxide = Client::new(String::from("api-key"), String::from("host"));
 //! ```
 //!
 //! Alternatively, the library can search for most of the variables required for
@@ -59,7 +56,6 @@
 //!
 //! let oxide = Client::new_from_env();
 //! ```
-//!
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::nonstandard_macro_braces)]
 #![allow(clippy::large_enum_variant)]
@@ -99,6 +95,10 @@ pub mod metrics;
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod organizations;
+/// System-wide IAM policy.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod policy;
 /// Projects are a grouping of associated resources such as instances and disks within an organization for purposes of billing and access control.
 ///
 ///FROM: http://oxide.computer/docs/#xxx
@@ -446,6 +446,13 @@ impl Client {
     ///FROM: http://oxide.computer/docs/#xxx
     pub fn organizations(&self) -> organizations::Organizations {
         organizations::Organizations::new(self.clone())
+    }
+
+    /// System-wide IAM policy.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn policy(&self) -> policy::Policy {
+        policy::Policy::new(self.clone())
     }
 
     /// Projects are a grouping of associated resources such as instances and disks within an organization for purposes of billing and access control.

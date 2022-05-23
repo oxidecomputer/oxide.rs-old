@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 use anyhow::{bail, Result};
 use inflector::cases::snakecase::to_snake_case;
@@ -292,8 +292,10 @@ pub fn generate_files(
                 &fn_name,
             );
 
+            // TODO: Remove this code once we have restored examples. Leaving this here for now
+            // will be useful to know how the examples were being generated
             // Add the docs to our spec.
-            let mut new_operation = o.clone();
+            // let mut new_operation = o.clone();
 
             let mut docs_params: Vec<String> = Vec::new();
             for param in fn_params_str {
@@ -303,40 +305,43 @@ pub fn generate_files(
             if body_param.is_some() {
                 docs_params.push("body".to_string());
             }
-            let mut example: HashMap<String, String> = HashMap::new();
-            if frt == "()" {
-                example.insert(
-                    "example".to_string(),
-                    format!(
-                        "{}\nclient.{}().{}({}).await?;",
-                        docs,
-                        tag,
-                        fn_name,
-                        docs_params.join(", ")
-                    ),
-                );
-            } else {
-                example.insert(
-                    "example".to_string(),
-                    format!(
-                        "{}\nlet {} = client.{}().{}({}).await?;",
-                        docs,
-                        to_snake_case(&frt).trim_start_matches("crate_types_"),
-                        tag,
-                        fn_name,
-                        docs_params.join(", ")
-                    ),
-                );
-            }
-            example.insert(
-                "libDocsLink".to_string(),
-                format!(
-                    "https://docs.rs/oxide-api/latest/oxide_api/{}/struct.{}.html#method.{}",
-                    tag,
-                    struct_name(&tag),
-                    fn_name
-                ),
-            );
+
+            // TODO: Remove this code once we have restored examples. Leaving this here for now
+            // will be useful to know how the examples were being generated
+            // let mut example: HashMap<String, String> = HashMap::new();
+            // if frt == "()" {
+            //     example.insert(
+            //         "example".to_string(),
+            //         format!(
+            //             "{}\nclient.{}().{}({}).await?;",
+            //             docs,
+            //             tag,
+            //             fn_name,
+            //             docs_params.join(", ")
+            //         ),
+            //     );
+            // } else {
+            //     example.insert(
+            //         "example".to_string(),
+            //         format!(
+            //             "{}\nlet {} = client.{}().{}({}).await?;",
+            //             docs,
+            //             to_snake_case(&frt).trim_start_matches("crate_types_"),
+            //             tag,
+            //             fn_name,
+            //             docs_params.join(", ")
+            //         ),
+            //     );
+            // }
+            // example.insert(
+            //     "libDocsLink".to_string(),
+            //     format!(
+            //         "https://docs.rs/oxide-api/latest/oxide_api/{}/struct.{}.html#method.{}",
+            //         tag,
+            //         struct_name(&tag),
+            //         fn_name
+            //     ),
+            // );
 
             // If we are returning a list of things and we have page, etc as
             // params, let's get all the pages.
@@ -410,41 +415,45 @@ pub fn generate_files(
                 let index = docs_params.iter().position(|x| *x == "limit").unwrap();
                 docs_params.remove(index);
 
-                example.insert(
-                    "example".to_string(),
-                    format!(
-                        "{}\n\n// - OR -\n\n{}\nlet {} = client.{}().{}({}).await?;",
-                        example.get("example").unwrap(),
-                        docs,
-                        to_snake_case(&frt).trim_start_matches("crate_types_"),
-                        tag,
-                        fn_name,
-                        docs_params.join(", ")
-                    ),
-                );
+                // TODO: Remove this code once we have restored examples. Leaving this here for now
+                // will be useful to know how the examples were being generated
+                // example.insert(
+                //     "example".to_string(),
+                //     format!(
+                //         "{}\n\n// - OR -\n\n{}\nlet {} = client.{}().{}({}).await?;",
+                //         example.get("example").unwrap(),
+                //         docs,
+                //         to_snake_case(&frt).trim_start_matches("crate_types_"),
+                //         tag,
+                //         fn_name,
+                //         docs_params.join(", ")
+                //     ),
+                // );
             }
 
-            new_operation
-                .extensions
-                .insert("x-rust".to_string(), serde_json::json!(example));
-            match m {
-                "GET" => {
-                    new_op.get = Some(new_operation);
-                }
-                "POST" => {
-                    new_op.post = Some(new_operation);
-                }
-                "PUT" => {
-                    new_op.put = Some(new_operation);
-                }
-                "PATCH" => {
-                    new_op.patch = Some(new_operation);
-                }
-                "DELETE" => {
-                    new_op.delete = Some(new_operation);
-                }
-                _ => {}
-            }
+            // TODO: Remove this code once we have restored examples. Leaving this here for now
+            // will be useful to know how the examples were being generated
+            // new_operation
+            //     .extensions
+            //     .insert("x-rust".to_string(), serde_json::json!(example));
+            // match m {
+            //     "GET" => {
+            //         new_op.get = Some(new_operation);
+            //     }
+            //     "POST" => {
+            //         new_op.post = Some(new_operation);
+            //     }
+            //     "PUT" => {
+            //         new_op.put = Some(new_operation);
+            //     }
+            //     "PATCH" => {
+            //         new_op.patch = Some(new_operation);
+            //     }
+            //     "DELETE" => {
+            //         new_op.delete = Some(new_operation);
+            //     }
+            //     _ => {}
+            // }
             new_api
                 .paths
                 .insert(pn.to_string(), openapiv3::ReferenceOr::Item(new_op.clone()));
