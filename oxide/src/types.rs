@@ -10,24 +10,16 @@ use tabled::Tabled;
  * The type of an individual datum of a metric.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum DatumType {
-    #[serde(rename = "bool")]
     Bool,
-    #[serde(rename = "bytes")]
     Bytes,
-    #[serde(rename = "cumulative_f64")]
     CumulativeF64,
-    #[serde(rename = "cumulative_i64")]
     CumulativeI64,
-    #[serde(rename = "f64")]
     F64,
-    #[serde(rename = "histogram_f64")]
     HistogramF64,
-    #[serde(rename = "histogram_i64")]
     HistogramI64,
-    #[serde(rename = "i64")]
     I64,
-    #[serde(rename = "string")]
     String,
     #[serde(rename = "")]
     Noop,
@@ -40,12 +32,12 @@ impl std::fmt::Display for DatumType {
         match &*self {
             DatumType::Bool => "bool",
             DatumType::Bytes => "bytes",
-            DatumType::CumulativeF64 => "cumulative_f64",
-            DatumType::CumulativeI64 => "cumulative_i64",
-            DatumType::F64 => "f64",
-            DatumType::HistogramF64 => "histogram_f64",
-            DatumType::HistogramI64 => "histogram_i64",
-            DatumType::I64 => "i64",
+            DatumType::CumulativeF64 => "cumulative_f_64",
+            DatumType::CumulativeI64 => "cumulative_i_64",
+            DatumType::F64 => "f_64",
+            DatumType::HistogramF64 => "histogram_f_64",
+            DatumType::HistogramI64 => "histogram_i_64",
+            DatumType::I64 => "i_64",
             DatumType::String => "string",
             DatumType::Noop => "",
             DatumType::FallthroughString => "*",
@@ -68,28 +60,28 @@ impl std::str::FromStr for DatumType {
         if s == "bytes" {
             return Ok(DatumType::Bytes);
         }
-        if s == "cumulative_f64" {
+        if s == "cumulative_f_64" {
             return Ok(DatumType::CumulativeF64);
         }
-        if s == "cumulative_i64" {
+        if s == "cumulative_i_64" {
             return Ok(DatumType::CumulativeI64);
         }
-        if s == "f64" {
+        if s == "f_64" {
             return Ok(DatumType::F64);
         }
-        if s == "histogram_f64" {
+        if s == "histogram_f_64" {
             return Ok(DatumType::HistogramF64);
         }
-        if s == "histogram_i64" {
+        if s == "histogram_i_64" {
             return Ok(DatumType::HistogramI64);
         }
-        if s == "i64" {
+        if s == "i_64" {
             return Ok(DatumType::I64);
         }
         if s == "string" {
             return Ok(DatumType::String);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for DatumType: {}", s);
     }
 }
 impl DatumType {
@@ -156,15 +148,15 @@ impl Digest {
  * The types for Digest.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum DigestType {
-    #[serde(rename = "Sha256")]
     Sha256,
 }
 
 impl std::fmt::Display for DigestType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            DigestType::Sha256 => "Sha256",
+            DigestType::Sha256 => "sha_256",
         }
         .fmt(f)
     }
@@ -178,10 +170,10 @@ impl Default for DigestType {
 impl std::str::FromStr for DigestType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Sha256" {
+        if s == "sha_256" {
             return Ok(DigestType::Sha256);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for DigestType: {}", s);
     }
 }
 
@@ -275,33 +267,27 @@ impl DiskState {
  * The types for DiskState.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum DiskStateType {
-    #[serde(rename = "Attached")]
     Attached,
-    #[serde(rename = "Attaching")]
     Attaching,
-    #[serde(rename = "Creating")]
     Creating,
-    #[serde(rename = "Destroyed")]
     Destroyed,
-    #[serde(rename = "Detached")]
     Detached,
-    #[serde(rename = "Detaching")]
     Detaching,
-    #[serde(rename = "Faulted")]
     Faulted,
 }
 
 impl std::fmt::Display for DiskStateType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            DiskStateType::Attached => "Attached",
-            DiskStateType::Attaching => "Attaching",
-            DiskStateType::Creating => "Creating",
-            DiskStateType::Destroyed => "Destroyed",
-            DiskStateType::Detached => "Detached",
-            DiskStateType::Detaching => "Detaching",
-            DiskStateType::Faulted => "Faulted",
+            DiskStateType::Attached => "attached",
+            DiskStateType::Attaching => "attaching",
+            DiskStateType::Creating => "creating",
+            DiskStateType::Destroyed => "destroyed",
+            DiskStateType::Detached => "detached",
+            DiskStateType::Detaching => "detaching",
+            DiskStateType::Faulted => "faulted",
         }
         .fmt(f)
     }
@@ -315,28 +301,28 @@ impl Default for DiskStateType {
 impl std::str::FromStr for DiskStateType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Attached" {
+        if s == "attached" {
             return Ok(DiskStateType::Attached);
         }
-        if s == "Attaching" {
+        if s == "attaching" {
             return Ok(DiskStateType::Attaching);
         }
-        if s == "Creating" {
+        if s == "creating" {
             return Ok(DiskStateType::Creating);
         }
-        if s == "Destroyed" {
+        if s == "destroyed" {
             return Ok(DiskStateType::Destroyed);
         }
-        if s == "Detached" {
+        if s == "detached" {
             return Ok(DiskStateType::Detached);
         }
-        if s == "Detaching" {
+        if s == "detaching" {
             return Ok(DiskStateType::Detaching);
         }
-        if s == "Faulted" {
+        if s == "faulted" {
             return Ok(DiskStateType::Faulted);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for DiskStateType: {}", s);
     }
 }
 
@@ -532,24 +518,21 @@ impl DiskSource {
  * The types for DiskSource.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum DiskSourceType {
-    #[serde(rename = "Blank")]
     Blank,
-    #[serde(rename = "GlobalImage")]
     GlobalImage,
-    #[serde(rename = "Image")]
     Image,
-    #[serde(rename = "Snapshot")]
     Snapshot,
 }
 
 impl std::fmt::Display for DiskSourceType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            DiskSourceType::Blank => "Blank",
-            DiskSourceType::GlobalImage => "GlobalImage",
-            DiskSourceType::Image => "Image",
-            DiskSourceType::Snapshot => "Snapshot",
+            DiskSourceType::Blank => "blank",
+            DiskSourceType::GlobalImage => "global_image",
+            DiskSourceType::Image => "image",
+            DiskSourceType::Snapshot => "snapshot",
         }
         .fmt(f)
     }
@@ -563,19 +546,19 @@ impl Default for DiskSourceType {
 impl std::str::FromStr for DiskSourceType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Blank" {
+        if s == "blank" {
             return Ok(DiskSourceType::Blank);
         }
-        if s == "GlobalImage" {
+        if s == "global_image" {
             return Ok(DiskSourceType::GlobalImage);
         }
-        if s == "Image" {
+        if s == "image" {
             return Ok(DiskSourceType::Image);
         }
-        if s == "Snapshot" {
+        if s == "snapshot" {
             return Ok(DiskSourceType::Snapshot);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for DiskSourceType: {}", s);
     }
 }
 
@@ -832,10 +815,9 @@ pub struct ErrorResponse {
  * The source from which a field is derived, the target or metric.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum FieldSource {
-    #[serde(rename = "metric")]
     Metric,
-    #[serde(rename = "target")]
     Target,
     #[serde(rename = "")]
     Noop,
@@ -869,7 +851,7 @@ impl std::str::FromStr for FieldSource {
         if s == "target" {
             return Ok(FieldSource::Target);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for FieldSource: {}", s);
     }
 }
 impl FieldSource {
@@ -882,16 +864,12 @@ impl FieldSource {
  * The `FieldType` identifies the data type of a target or metric field.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum FieldType {
-    #[serde(rename = "bool")]
     Bool,
-    #[serde(rename = "i64")]
     I64,
-    #[serde(rename = "ip_addr")]
     IpAddr,
-    #[serde(rename = "string")]
     String,
-    #[serde(rename = "uuid")]
     Uuid,
     #[serde(rename = "")]
     Noop,
@@ -903,7 +881,7 @@ impl std::fmt::Display for FieldType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
             FieldType::Bool => "bool",
-            FieldType::I64 => "i64",
+            FieldType::I64 => "i_64",
             FieldType::IpAddr => "ip_addr",
             FieldType::String => "string",
             FieldType::Uuid => "uuid",
@@ -925,7 +903,7 @@ impl std::str::FromStr for FieldType {
         if s == "bool" {
             return Ok(FieldType::Bool);
         }
-        if s == "i64" {
+        if s == "i_64" {
             return Ok(FieldType::I64);
         }
         if s == "ip_addr" {
@@ -937,7 +915,7 @@ impl std::str::FromStr for FieldType {
         if s == "uuid" {
             return Ok(FieldType::Uuid);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for FieldType: {}", s);
     }
 }
 impl FieldType {
@@ -970,12 +948,10 @@ pub struct FieldSchema {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum FleetRoles {
-    #[serde(rename = "admin")]
     Admin,
-    #[serde(rename = "collaborator")]
     Collaborator,
-    #[serde(rename = "viewer")]
     Viewer,
     #[serde(rename = "")]
     Noop,
@@ -1013,7 +989,7 @@ impl std::str::FromStr for FleetRoles {
         if s == "viewer" {
             return Ok(FleetRoles::Viewer);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for FleetRoles: {}", s);
     }
 }
 impl FleetRoles {
@@ -1065,8 +1041,8 @@ pub struct FleetRolesPolicy {
  * Describes what kind of identity is described by an id
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum IdentityType {
-    #[serde(rename = "silo_user")]
     SiloUser,
     #[serde(rename = "")]
     Noop,
@@ -1096,7 +1072,7 @@ impl std::str::FromStr for IdentityType {
         if s == "silo_user" {
             return Ok(IdentityType::SiloUser);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for IdentityType: {}", s);
     }
 }
 impl IdentityType {
@@ -1223,8 +1199,8 @@ pub struct GlobalImageResultsPage {
  * Describes what kind of identity is described by an id
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum IdentityTypeSiloUser {
-    #[serde(rename = "silo_user")]
     SiloUser,
     #[serde(rename = "")]
     Noop,
@@ -1254,7 +1230,7 @@ impl std::str::FromStr for IdentityTypeSiloUser {
         if s == "silo_user" {
             return Ok(IdentityTypeSiloUser::SiloUser);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for IdentityTypeSiloUser: {}", s);
     }
 }
 impl IdentityTypeSiloUser {
@@ -1430,18 +1406,17 @@ impl ImageSource {
  * The types for ImageSource.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum ImageSourceType {
-    #[serde(rename = "Snapshot")]
     Snapshot,
-    #[serde(rename = "Url")]
     Url,
 }
 
 impl std::fmt::Display for ImageSourceType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            ImageSourceType::Snapshot => "Snapshot",
-            ImageSourceType::Url => "Url",
+            ImageSourceType::Snapshot => "snapshot",
+            ImageSourceType::Url => "url",
         }
         .fmt(f)
     }
@@ -1455,13 +1430,13 @@ impl Default for ImageSourceType {
 impl std::str::FromStr for ImageSourceType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Snapshot" {
+        if s == "snapshot" {
             return Ok(ImageSourceType::Snapshot);
         }
-        if s == "Url" {
+        if s == "url" {
             return Ok(ImageSourceType::Url);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for ImageSourceType: {}", s);
     }
 }
 
@@ -1527,26 +1502,17 @@ pub struct ImageResultsPage {
  *   This typically reflects whether it's starting, running, stopping, or stopped, but also includes states related to the Instance's lifecycle
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum InstanceState {
-    #[serde(rename = "creating")]
     Creating,
-    #[serde(rename = "destroyed")]
     Destroyed,
-    #[serde(rename = "failed")]
     Failed,
-    #[serde(rename = "migrating")]
     Migrating,
-    #[serde(rename = "rebooting")]
     Rebooting,
-    #[serde(rename = "repairing")]
     Repairing,
-    #[serde(rename = "running")]
     Running,
-    #[serde(rename = "starting")]
     Starting,
-    #[serde(rename = "stopped")]
     Stopped,
-    #[serde(rename = "stopping")]
     Stopping,
     #[serde(rename = "")]
     Noop,
@@ -1612,7 +1578,7 @@ impl std::str::FromStr for InstanceState {
         if s == "stopping" {
             return Ok(InstanceState::Stopping);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for InstanceState: {}", s);
     }
 }
 impl InstanceState {
@@ -1812,18 +1778,17 @@ impl InstanceDiskAttachment {
  * The types for InstanceDiskAttachment.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum InstanceDiskAttachmentType {
-    #[serde(rename = "Attach")]
     Attach,
-    #[serde(rename = "Create")]
     Create,
 }
 
 impl std::fmt::Display for InstanceDiskAttachmentType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            InstanceDiskAttachmentType::Attach => "Attach",
-            InstanceDiskAttachmentType::Create => "Create",
+            InstanceDiskAttachmentType::Attach => "attach",
+            InstanceDiskAttachmentType::Create => "create",
         }
         .fmt(f)
     }
@@ -1837,13 +1802,13 @@ impl Default for InstanceDiskAttachmentType {
 impl std::str::FromStr for InstanceDiskAttachmentType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Attach" {
+        if s == "attach" {
             return Ok(InstanceDiskAttachmentType::Attach);
         }
-        if s == "Create" {
+        if s == "create" {
             return Ok(InstanceDiskAttachmentType::Create);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for InstanceDiskAttachmentType: {}", s);
     }
 }
 
@@ -1914,21 +1879,19 @@ impl InstanceNetworkInterfaceAttachment {
  * The types for InstanceNetworkInterfaceAttachment.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum InstanceNetworkInterfaceAttachmentType {
-    #[serde(rename = "Create")]
     Create,
-    #[serde(rename = "Default")]
     Default,
-    #[serde(rename = "None")]
     None,
 }
 
 impl std::fmt::Display for InstanceNetworkInterfaceAttachmentType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            InstanceNetworkInterfaceAttachmentType::Create => "Create",
-            InstanceNetworkInterfaceAttachmentType::Default => "Default",
-            InstanceNetworkInterfaceAttachmentType::None => "None",
+            InstanceNetworkInterfaceAttachmentType::Create => "create",
+            InstanceNetworkInterfaceAttachmentType::Default => "default",
+            InstanceNetworkInterfaceAttachmentType::None => "none",
         }
         .fmt(f)
     }
@@ -1942,16 +1905,19 @@ impl Default for InstanceNetworkInterfaceAttachmentType {
 impl std::str::FromStr for InstanceNetworkInterfaceAttachmentType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Create" {
+        if s == "create" {
             return Ok(InstanceNetworkInterfaceAttachmentType::Create);
         }
-        if s == "Default" {
+        if s == "default" {
             return Ok(InstanceNetworkInterfaceAttachmentType::Default);
         }
-        if s == "None" {
+        if s == "none" {
             return Ok(InstanceNetworkInterfaceAttachmentType::None);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!(
+            "invalid string for InstanceNetworkInterfaceAttachmentType: {}",
+            s
+        );
     }
 }
 
@@ -2559,10 +2525,9 @@ pub struct OrganizationResultsPage {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum OrganizationRoles {
-    #[serde(rename = "admin")]
     Admin,
-    #[serde(rename = "collaborator")]
     Collaborator,
     #[serde(rename = "")]
     Noop,
@@ -2596,7 +2561,7 @@ impl std::str::FromStr for OrganizationRoles {
         if s == "collaborator" {
             return Ok(OrganizationRoles::Collaborator);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for OrganizationRoles: {}", s);
     }
 }
 impl OrganizationRoles {
@@ -2762,12 +2727,10 @@ pub struct ProjectResultsPage {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum ProjectRoles {
-    #[serde(rename = "admin")]
     Admin,
-    #[serde(rename = "collaborator")]
     Collaborator,
-    #[serde(rename = "viewer")]
     Viewer,
     #[serde(rename = "")]
     Noop,
@@ -2805,7 +2768,7 @@ impl std::str::FromStr for ProjectRoles {
         if s == "viewer" {
             return Ok(ProjectRoles::Viewer);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for ProjectRoles: {}", s);
     }
 }
 impl ProjectRoles {
@@ -3081,24 +3044,21 @@ impl RouteDestination {
  * The types for RouteDestination.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum RouteDestinationType {
-    #[serde(rename = "Ip")]
     Ip,
-    #[serde(rename = "IpNet")]
     IpNet,
-    #[serde(rename = "Subnet")]
     Subnet,
-    #[serde(rename = "Vpc")]
     Vpc,
 }
 
 impl std::fmt::Display for RouteDestinationType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            RouteDestinationType::Ip => "Ip",
-            RouteDestinationType::IpNet => "IpNet",
-            RouteDestinationType::Subnet => "Subnet",
-            RouteDestinationType::Vpc => "Vpc",
+            RouteDestinationType::Ip => "ip",
+            RouteDestinationType::IpNet => "ip_net",
+            RouteDestinationType::Subnet => "subnet",
+            RouteDestinationType::Vpc => "vpc",
         }
         .fmt(f)
     }
@@ -3112,19 +3072,19 @@ impl Default for RouteDestinationType {
 impl std::str::FromStr for RouteDestinationType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Ip" {
+        if s == "ip" {
             return Ok(RouteDestinationType::Ip);
         }
-        if s == "IpNet" {
+        if s == "ip_net" {
             return Ok(RouteDestinationType::IpNet);
         }
-        if s == "Subnet" {
+        if s == "subnet" {
             return Ok(RouteDestinationType::Subnet);
         }
-        if s == "Vpc" {
+        if s == "vpc" {
             return Ok(RouteDestinationType::Vpc);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for RouteDestinationType: {}", s);
     }
 }
 
@@ -3232,27 +3192,23 @@ impl RouteTarget {
  * The types for RouteTarget.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum RouteTargetType {
-    #[serde(rename = "Instance")]
     Instance,
-    #[serde(rename = "InternetGateway")]
     InternetGateway,
-    #[serde(rename = "Ip")]
     Ip,
-    #[serde(rename = "Subnet")]
     Subnet,
-    #[serde(rename = "Vpc")]
     Vpc,
 }
 
 impl std::fmt::Display for RouteTargetType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            RouteTargetType::Instance => "Instance",
-            RouteTargetType::InternetGateway => "InternetGateway",
-            RouteTargetType::Ip => "Ip",
-            RouteTargetType::Subnet => "Subnet",
-            RouteTargetType::Vpc => "Vpc",
+            RouteTargetType::Instance => "instance",
+            RouteTargetType::InternetGateway => "internet_gateway",
+            RouteTargetType::Ip => "ip",
+            RouteTargetType::Subnet => "subnet",
+            RouteTargetType::Vpc => "vpc",
         }
         .fmt(f)
     }
@@ -3266,22 +3222,22 @@ impl Default for RouteTargetType {
 impl std::str::FromStr for RouteTargetType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Instance" {
+        if s == "instance" {
             return Ok(RouteTargetType::Instance);
         }
-        if s == "InternetGateway" {
+        if s == "internet_gateway" {
             return Ok(RouteTargetType::InternetGateway);
         }
-        if s == "Ip" {
+        if s == "ip" {
             return Ok(RouteTargetType::Ip);
         }
-        if s == "Subnet" {
+        if s == "subnet" {
             return Ok(RouteTargetType::Subnet);
         }
-        if s == "Vpc" {
+        if s == "vpc" {
             return Ok(RouteTargetType::Vpc);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for RouteTargetType: {}", s);
     }
 }
 
@@ -3291,14 +3247,11 @@ impl std::str::FromStr for RouteTargetType {
  *   See [RFD-21](https://rfd.shared.oxide.computer/rfd/0021#concept-router) for more context
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum RouterRouteKind {
-    #[serde(rename = "custom")]
     Custom,
-    #[serde(rename = "default")]
     Default,
-    #[serde(rename = "vpc_peering")]
     VpcPeering,
-    #[serde(rename = "vpc_subnet")]
     VpcSubnet,
     #[serde(rename = "")]
     Noop,
@@ -3340,7 +3293,7 @@ impl std::str::FromStr for RouterRouteKind {
         if s == "vpc_subnet" {
             return Ok(RouterRouteKind::VpcSubnet);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for RouterRouteKind: {}", s);
     }
 }
 impl RouterRouteKind {
@@ -3532,21 +3485,19 @@ impl SagaState {
  * The types for SagaState.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum SagaStateType {
-    #[serde(rename = "Failed")]
     Failed,
-    #[serde(rename = "Running")]
     Running,
-    #[serde(rename = "Succeeded")]
     Succeeded,
 }
 
 impl std::fmt::Display for SagaStateType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            SagaStateType::Failed => "Failed",
-            SagaStateType::Running => "Running",
-            SagaStateType::Succeeded => "Succeeded",
+            SagaStateType::Failed => "failed",
+            SagaStateType::Running => "running",
+            SagaStateType::Succeeded => "succeeded",
         }
         .fmt(f)
     }
@@ -3560,16 +3511,16 @@ impl Default for SagaStateType {
 impl std::str::FromStr for SagaStateType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Failed" {
+        if s == "failed" {
             return Ok(SagaStateType::Failed);
         }
-        if s == "Running" {
+        if s == "running" {
             return Ok(SagaStateType::Running);
         }
-        if s == "Succeeded" {
+        if s == "succeeded" {
             return Ok(SagaStateType::Succeeded);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for SagaStateType: {}", s);
     }
 }
 
@@ -3681,27 +3632,23 @@ impl SagaErrorInfo {
  * The types for SagaErrorInfo.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum SagaErrorInfoType {
-    #[serde(rename = "ActionFailed")]
     ActionFailed,
-    #[serde(rename = "DeserializeFailed")]
     DeserializeFailed,
-    #[serde(rename = "InjectedError")]
     InjectedError,
-    #[serde(rename = "SerializeFailed")]
     SerializeFailed,
-    #[serde(rename = "SubsagaCreateFailed")]
     SubsagaCreateFailed,
 }
 
 impl std::fmt::Display for SagaErrorInfoType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            SagaErrorInfoType::ActionFailed => "ActionFailed",
-            SagaErrorInfoType::DeserializeFailed => "DeserializeFailed",
-            SagaErrorInfoType::InjectedError => "InjectedError",
-            SagaErrorInfoType::SerializeFailed => "SerializeFailed",
-            SagaErrorInfoType::SubsagaCreateFailed => "SubsagaCreateFailed",
+            SagaErrorInfoType::ActionFailed => "action_failed",
+            SagaErrorInfoType::DeserializeFailed => "deserialize_failed",
+            SagaErrorInfoType::InjectedError => "injected_error",
+            SagaErrorInfoType::SerializeFailed => "serialize_failed",
+            SagaErrorInfoType::SubsagaCreateFailed => "subsaga_create_failed",
         }
         .fmt(f)
     }
@@ -3715,22 +3662,22 @@ impl Default for SagaErrorInfoType {
 impl std::str::FromStr for SagaErrorInfoType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "ActionFailed" {
+        if s == "action_failed" {
             return Ok(SagaErrorInfoType::ActionFailed);
         }
-        if s == "DeserializeFailed" {
+        if s == "deserialize_failed" {
             return Ok(SagaErrorInfoType::DeserializeFailed);
         }
-        if s == "InjectedError" {
+        if s == "injected_error" {
             return Ok(SagaErrorInfoType::InjectedError);
         }
-        if s == "SerializeFailed" {
+        if s == "serialize_failed" {
             return Ok(SagaErrorInfoType::SerializeFailed);
         }
-        if s == "SubsagaCreateFailed" {
+        if s == "subsaga_create_failed" {
             return Ok(SagaErrorInfoType::SubsagaCreateFailed);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for SagaErrorInfoType: {}", s);
     }
 }
 
@@ -3878,12 +3825,10 @@ pub struct SiloResultsPage {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum SiloRoles {
-    #[serde(rename = "admin")]
     Admin,
-    #[serde(rename = "collaborator")]
     Collaborator,
-    #[serde(rename = "viewer")]
     Viewer,
     #[serde(rename = "")]
     Noop,
@@ -3921,7 +3866,7 @@ impl std::str::FromStr for SiloRoles {
         if s == "viewer" {
             return Ok(SiloRoles::Viewer);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for SiloRoles: {}", s);
     }
 }
 impl SiloRoles {
@@ -4552,10 +4497,9 @@ pub struct VpcCreate {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum VpcFirewallRuleAction {
-    #[serde(rename = "allow")]
     Allow,
-    #[serde(rename = "deny")]
     Deny,
     #[serde(rename = "")]
     Noop,
@@ -4589,7 +4533,7 @@ impl std::str::FromStr for VpcFirewallRuleAction {
         if s == "deny" {
             return Ok(VpcFirewallRuleAction::Deny);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for VpcFirewallRuleAction: {}", s);
     }
 }
 impl VpcFirewallRuleAction {
@@ -4599,10 +4543,9 @@ impl VpcFirewallRuleAction {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum VpcFirewallRuleDirection {
-    #[serde(rename = "inbound")]
     Inbound,
-    #[serde(rename = "outbound")]
     Outbound,
     #[serde(rename = "")]
     Noop,
@@ -4636,7 +4579,7 @@ impl std::str::FromStr for VpcFirewallRuleDirection {
         if s == "outbound" {
             return Ok(VpcFirewallRuleDirection::Outbound);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for VpcFirewallRuleDirection: {}", s);
     }
 }
 impl VpcFirewallRuleDirection {
@@ -4680,10 +4623,9 @@ pub struct VpcFirewallRuleFilter {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum VpcFirewallRuleStatus {
-    #[serde(rename = "disabled")]
     Disabled,
-    #[serde(rename = "enabled")]
     Enabled,
     #[serde(rename = "")]
     Noop,
@@ -4717,7 +4659,7 @@ impl std::str::FromStr for VpcFirewallRuleStatus {
         if s == "enabled" {
             return Ok(VpcFirewallRuleStatus::Enabled);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for VpcFirewallRuleStatus: {}", s);
     }
 }
 impl VpcFirewallRuleStatus {
@@ -4830,27 +4772,23 @@ impl VpcFirewallRuleTarget {
  * The types for VpcFirewallRuleTarget.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum VpcFirewallRuleTargetType {
-    #[serde(rename = "Instance")]
     Instance,
-    #[serde(rename = "Ip")]
     Ip,
-    #[serde(rename = "IpNet")]
     IpNet,
-    #[serde(rename = "Subnet")]
     Subnet,
-    #[serde(rename = "Vpc")]
     Vpc,
 }
 
 impl std::fmt::Display for VpcFirewallRuleTargetType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            VpcFirewallRuleTargetType::Instance => "Instance",
-            VpcFirewallRuleTargetType::Ip => "Ip",
-            VpcFirewallRuleTargetType::IpNet => "IpNet",
-            VpcFirewallRuleTargetType::Subnet => "Subnet",
-            VpcFirewallRuleTargetType::Vpc => "Vpc",
+            VpcFirewallRuleTargetType::Instance => "instance",
+            VpcFirewallRuleTargetType::Ip => "ip",
+            VpcFirewallRuleTargetType::IpNet => "ip_net",
+            VpcFirewallRuleTargetType::Subnet => "subnet",
+            VpcFirewallRuleTargetType::Vpc => "vpc",
         }
         .fmt(f)
     }
@@ -4864,22 +4802,22 @@ impl Default for VpcFirewallRuleTargetType {
 impl std::str::FromStr for VpcFirewallRuleTargetType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Instance" {
+        if s == "instance" {
             return Ok(VpcFirewallRuleTargetType::Instance);
         }
-        if s == "Ip" {
+        if s == "ip" {
             return Ok(VpcFirewallRuleTargetType::Ip);
         }
-        if s == "IpNet" {
+        if s == "ip_net" {
             return Ok(VpcFirewallRuleTargetType::IpNet);
         }
-        if s == "Subnet" {
+        if s == "subnet" {
             return Ok(VpcFirewallRuleTargetType::Subnet);
         }
-        if s == "Vpc" {
+        if s == "vpc" {
             return Ok(VpcFirewallRuleTargetType::Vpc);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for VpcFirewallRuleTargetType: {}", s);
     }
 }
 
@@ -5076,27 +5014,23 @@ impl VpcFirewallRuleHostFilter {
  * The types for VpcFirewallRuleHostFilter.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum VpcFirewallRuleHostFilterType {
-    #[serde(rename = "Instance")]
     Instance,
-    #[serde(rename = "Ip")]
     Ip,
-    #[serde(rename = "IpNet")]
     IpNet,
-    #[serde(rename = "Subnet")]
     Subnet,
-    #[serde(rename = "Vpc")]
     Vpc,
 }
 
 impl std::fmt::Display for VpcFirewallRuleHostFilterType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            VpcFirewallRuleHostFilterType::Instance => "Instance",
-            VpcFirewallRuleHostFilterType::Ip => "Ip",
-            VpcFirewallRuleHostFilterType::IpNet => "IpNet",
-            VpcFirewallRuleHostFilterType::Subnet => "Subnet",
-            VpcFirewallRuleHostFilterType::Vpc => "Vpc",
+            VpcFirewallRuleHostFilterType::Instance => "instance",
+            VpcFirewallRuleHostFilterType::Ip => "ip",
+            VpcFirewallRuleHostFilterType::IpNet => "ip_net",
+            VpcFirewallRuleHostFilterType::Subnet => "subnet",
+            VpcFirewallRuleHostFilterType::Vpc => "vpc",
         }
         .fmt(f)
     }
@@ -5110,22 +5044,22 @@ impl Default for VpcFirewallRuleHostFilterType {
 impl std::str::FromStr for VpcFirewallRuleHostFilterType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "Instance" {
+        if s == "instance" {
             return Ok(VpcFirewallRuleHostFilterType::Instance);
         }
-        if s == "Ip" {
+        if s == "ip" {
             return Ok(VpcFirewallRuleHostFilterType::Ip);
         }
-        if s == "IpNet" {
+        if s == "ip_net" {
             return Ok(VpcFirewallRuleHostFilterType::IpNet);
         }
-        if s == "Subnet" {
+        if s == "subnet" {
             return Ok(VpcFirewallRuleHostFilterType::Subnet);
         }
-        if s == "Vpc" {
+        if s == "vpc" {
             return Ok(VpcFirewallRuleHostFilterType::Vpc);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for VpcFirewallRuleHostFilterType: {}", s);
     }
 }
 
@@ -5133,12 +5067,10 @@ impl std::str::FromStr for VpcFirewallRuleHostFilterType {
  * The protocols that may be specified in a firewall rule's filter
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum VpcFirewallRuleProtocol {
-    #[serde(rename = "ICMP")]
     Icmp,
-    #[serde(rename = "TCP")]
     Tcp,
-    #[serde(rename = "UDP")]
     Udp,
     #[serde(rename = "")]
     Noop,
@@ -5149,9 +5081,9 @@ pub enum VpcFirewallRuleProtocol {
 impl std::fmt::Display for VpcFirewallRuleProtocol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            VpcFirewallRuleProtocol::Icmp => "ICMP",
-            VpcFirewallRuleProtocol::Tcp => "TCP",
-            VpcFirewallRuleProtocol::Udp => "UDP",
+            VpcFirewallRuleProtocol::Icmp => "icmp",
+            VpcFirewallRuleProtocol::Tcp => "tcp",
+            VpcFirewallRuleProtocol::Udp => "udp",
             VpcFirewallRuleProtocol::Noop => "",
             VpcFirewallRuleProtocol::FallthroughString => "*",
         }
@@ -5167,16 +5099,16 @@ impl Default for VpcFirewallRuleProtocol {
 impl std::str::FromStr for VpcFirewallRuleProtocol {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "ICMP" {
+        if s == "icmp" {
             return Ok(VpcFirewallRuleProtocol::Icmp);
         }
-        if s == "TCP" {
+        if s == "tcp" {
             return Ok(VpcFirewallRuleProtocol::Tcp);
         }
-        if s == "UDP" {
+        if s == "udp" {
             return Ok(VpcFirewallRuleProtocol::Udp);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for VpcFirewallRuleProtocol: {}", s);
     }
 }
 impl VpcFirewallRuleProtocol {
@@ -5292,10 +5224,9 @@ pub struct VpcResultsPage {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum VpcRouterKind {
-    #[serde(rename = "custom")]
     Custom,
-    #[serde(rename = "system")]
     System,
     #[serde(rename = "")]
     Noop,
@@ -5329,7 +5260,7 @@ impl std::str::FromStr for VpcRouterKind {
         if s == "system" {
             return Ok(VpcRouterKind::System);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for VpcRouterKind: {}", s);
     }
 }
 impl VpcRouterKind {
@@ -5654,8 +5585,8 @@ pub struct VpcUpdate {
  *   Currently, we only support scanning in ascending order.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum IdSortMode {
-    #[serde(rename = "id_ascending")]
     IdAscending,
     #[serde(rename = "")]
     Noop,
@@ -5685,7 +5616,7 @@ impl std::str::FromStr for IdSortMode {
         if s == "id_ascending" {
             return Ok(IdSortMode::IdAscending);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for IdSortMode: {}", s);
     }
 }
 impl IdSortMode {
@@ -5700,8 +5631,8 @@ impl IdSortMode {
  *   Currently, we only support scanning in ascending order.
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum NameSortMode {
-    #[serde(rename = "name_ascending")]
     NameAscending,
     #[serde(rename = "")]
     Noop,
@@ -5731,7 +5662,7 @@ impl std::str::FromStr for NameSortMode {
         if s == "name_ascending" {
             return Ok(NameSortMode::NameAscending);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for NameSortMode: {}", s);
     }
 }
 impl NameSortMode {
@@ -5744,12 +5675,10 @@ impl NameSortMode {
  * Supported set of sort modes for scanning by name or id
  */
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
 pub enum NameOrIdSortMode {
-    #[serde(rename = "id_ascending")]
     IdAscending,
-    #[serde(rename = "name_ascending")]
     NameAscending,
-    #[serde(rename = "name_descending")]
     NameDescending,
     #[serde(rename = "")]
     Noop,
@@ -5787,7 +5716,7 @@ impl std::str::FromStr for NameOrIdSortMode {
         if s == "name_descending" {
             return Ok(NameOrIdSortMode::NameDescending);
         }
-        anyhow::bail!("invalid string: {}", s);
+        anyhow::bail!("invalid string for NameOrIdSortMode: {}", s);
     }
 }
 impl NameOrIdSortMode {
