@@ -468,7 +468,7 @@ impl std::str::FromStr for DiskSource {
             j = format!(
                 r#"{{
 "type": "blank",
-"image_id": {}
+"block_size": {}
         }}"#,
                 serde_json::json!(i64::from_str(&content).unwrap())
             );
@@ -477,7 +477,7 @@ impl std::str::FromStr for DiskSource {
             j = format!(
                 r#"{{
 "type": "snapshot",
-"image_id": "{}"
+"snapshot_id": "{}"
         }}"#,
                 content
             );
