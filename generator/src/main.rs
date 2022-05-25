@@ -2255,7 +2255,12 @@ pub fn render_param(
     a(r#"fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {"#);
     a(r#"match &*self {"#);
     for e in &enums {
-        a(&format!(r#"{}::{} => "{}","#, sn, struct_name(e), to_snake_case(e)));
+        a(&format!(
+            r#"{}::{} => "{}","#,
+            sn,
+            struct_name(e),
+            to_snake_case(e)
+        ));
     }
     if !required && default.is_none() && do_fallthrough_etc {
         a(&format!(r#"{}::Noop => "","#, sn));
@@ -2302,7 +2307,10 @@ pub fn render_param(
             struct_name(e),
         ));
     }
-    a(&format!(r#"anyhow::bail!("invalid string for {}: {{}}", s);"#, sn));
+    a(&format!(
+        r#"anyhow::bail!("invalid string for {}: {{}}", s);"#,
+        sn
+    ));
     a("}");
     a("}");
 
@@ -3067,7 +3075,7 @@ name = "{}"
 description = "{}"
 version = "{}"
 documentation = "https://docs.rs/{}/"
-repository = "https://github.com/oxidecomputer/third-party-api-clients/tree/main/{}"
+repository = "https://github.com/oxidecomputer/oxide.rs/tree/main/{}"
 readme = "README.md"
 edition = "2018"
 license = "MIT"
