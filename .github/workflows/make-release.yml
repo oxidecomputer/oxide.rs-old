@@ -12,9 +12,9 @@ jobs:
       - name: Install latest nightly
         uses: actions-rs/toolchain@v1
         with:
-            toolchain: stable
-            override: true
-            components: rustfmt, clippy
+          toolchain: nightly
+          override: true
+          components: rustfmt, clippy
       - name: Cache cargo registry
         uses: actions/cache@v3.0.2
         with:
