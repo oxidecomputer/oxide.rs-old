@@ -372,6 +372,10 @@ fn do_one_of_type(
         return crate::types_templates::IP_NET.to_string();
     }
 
+    if sn == "DiskSource" {
+        return crate::types_templates::DISK_SOURCE.to_string();
+    }
+
     let mut tag = "";
     let mut content = "";
     let mut omap: Vec<crate::TypeId> = Default::default();

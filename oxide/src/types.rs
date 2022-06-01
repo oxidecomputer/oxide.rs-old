@@ -433,16 +433,25 @@ impl fmt::Display for DiskSource {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let j = serde_json::json!(self);
         let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
-        let mut content: String = match serde_json::from_value(j["image_id"].clone()) {
+
+        let mut value = "image_id";
+        if tag == *"blank" {
+            value = "block_size";
+        };
+        if tag == *"snapshot" {
+            value = "snapshot_id";
+        };
+
+        let mut content: String = match serde_json::from_value(j[value].clone()) {
             Ok(v) => v,
             Err(_) => {
-                let int: i64 = serde_json::from_value(j["image_id"].clone()).unwrap_or_default();
+                let int: i64 = serde_json::from_value(j[value].clone()).unwrap_or_default();
                 format!("{}", int)
             }
         };
         if content.is_empty() {
             let map: std::collections::HashMap<String, String> =
-                serde_json::from_value(j["image_id"].clone()).unwrap_or_default();
+                serde_json::from_value(j[value].clone()).unwrap_or_default();
             if let Some((_, v)) = map.iter().next() {
                 content = v.to_string();
             }
