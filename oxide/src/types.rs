@@ -421,12 +421,12 @@ pub struct Disk {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "snake_case")]
-#[serde(tag = "type", content = "image_id")]
+#[serde(tag = "type")]
 pub enum DiskSource {
-    Blank(i64),
-    Snapshot(String),
-    Image(String),
-    GlobalImage(String),
+    Blank { block_size: i64 },
+    Snapshot { snapshot_id: String },
+    Image { image_id: String },
+    GlobalImage { image_id: String },
 }
 
 impl fmt::Display for DiskSource {
@@ -468,7 +468,7 @@ impl std::str::FromStr for DiskSource {
             j = format!(
                 r#"{{
 "type": "blank",
-"image_id": {}
+"block_size": {}
         }}"#,
                 serde_json::json!(i64::from_str(&content).unwrap())
             );
@@ -477,7 +477,7 @@ impl std::str::FromStr for DiskSource {
             j = format!(
                 r#"{{
 "type": "snapshot",
-"image_id": "{}"
+"snapshot_id": "{}"
         }}"#,
                 content
             );
