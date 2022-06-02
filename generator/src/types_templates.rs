@@ -385,3 +385,156 @@ impl std::str::FromStr for IpNet {
     }
 }
 "#;
+
+pub const DISK_SOURCE: &str = r##"#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[serde(tag = "type")]
+pub enum DiskSource {
+    Blank { block_size: i64 },
+    Snapshot { snapshot_id: String },
+    Image { image_id: String },
+    GlobalImage { image_id: String },
+}
+
+impl fmt::Display for DiskSource {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let j = serde_json::json!(self);
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+
+        let mut value = "image_id";
+        if tag == *"blank" {
+            value = "block_size";
+        };
+        if tag == *"snapshot" {
+            value = "snapshot_id";
+        };
+
+        let mut content: String = match serde_json::from_value(j[value].clone()) {
+            Ok(v) => v,
+            Err(_) => {
+                let int: i64 = serde_json::from_value(j[value].clone()).unwrap_or_default();
+                format!("{}", int)
+            }
+        };
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j[value].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        if tag == "internet_gateway" {
+            tag = "inetgw".to_string();
+        }
+        write!(f, "{}={}", tag, content)
+    }
+}
+
+impl std::str::FromStr for DiskSource {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for DiskSource, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "blank" {
+            j = format!(
+                r#"{{
+"type": "blank",
+"block_size": {}
+        }}"#,
+                serde_json::json!(i64::from_str(&content).unwrap())
+            );
+        }
+        if tag == "snapshot" {
+            j = format!(
+                r#"{{
+"type": "snapshot",
+"snapshot_id": "{}"
+        }}"#,
+                content
+            );
+        }
+        if tag == "image" {
+            j = format!(
+                r#"{{
+"type": "image",
+"image_id": "{}"
+        }}"#,
+                content
+            );
+        }
+        if tag == "global_image" {
+            j = format!(
+                r#"{{
+"type": "global_image",
+"image_id": "{}"
+        }}"#,
+                content
+            );
+        }
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl DiskSource {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "blank".to_string(),
+            "global_image".to_string(),
+            "image".to_string(),
+            "snapshot".to_string(),
+        ]
+    }
+}
+/**
+ * The types for DiskSource.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum DiskSourceType {
+    Blank,
+    GlobalImage,
+    Image,
+    Snapshot,
+}
+
+impl std::fmt::Display for DiskSourceType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            DiskSourceType::Blank => "blank",
+            DiskSourceType::GlobalImage => "global_image",
+            DiskSourceType::Image => "image",
+            DiskSourceType::Snapshot => "snapshot",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for DiskSourceType {
+    fn default() -> DiskSourceType {
+        DiskSourceType::Blank
+    }
+}
+impl std::str::FromStr for DiskSourceType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "blank" {
+            return Ok(DiskSourceType::Blank);
+        }
+        if s == "global_image" {
+            return Ok(DiskSourceType::GlobalImage);
+        }
+        if s == "image" {
+            return Ok(DiskSourceType::Image);
+        }
+        if s == "snapshot" {
+            return Ok(DiskSourceType::Snapshot);
+        }
+        anyhow::bail!("invalid string for DiskSourceType: {}", s);
+    }
+}
+"##;

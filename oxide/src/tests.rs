@@ -92,7 +92,9 @@ fn test_route_destination() {
 
 #[test]
 fn test_disk_source() {
-    let mut disk_source = crate::types::DiskSource::Snapshot("some-string-uuid".to_string());
+    let mut disk_source = crate::types::DiskSource::Snapshot {
+        snapshot_id: String::from("some-string-uuid").to_string(),
+    };
     let mut disk_source_str = format!("{}", disk_source);
     assert_eq!(disk_source_str, "snapshot=some-string-uuid");
 
@@ -100,7 +102,9 @@ fn test_disk_source() {
         crate::types::DiskSource::from_str("snapshot=some-string-uuid").unwrap();
     assert_eq!(disk_source_from_str, disk_source);
 
-    disk_source = crate::types::DiskSource::Image("some-image-string".to_string());
+    disk_source = crate::types::DiskSource::Image {
+        image_id: "some-image-string".to_string(),
+    };
     disk_source_str = format!("{}", disk_source);
     assert_eq!(disk_source_str, "image=some-image-string");
 
@@ -111,7 +115,9 @@ fn test_disk_source() {
     assert_eq!(variants.len(), 4);
     assert_eq!(variants, vec!["blank", "global_image", "image", "snapshot"]);
 
-    disk_source = crate::types::DiskSource::GlobalImage("some-image-string".to_string());
+    disk_source = crate::types::DiskSource::GlobalImage {
+        image_id: "some-image-string".to_string(),
+    };
     disk_source_str = format!("{}", disk_source);
     assert_eq!(disk_source_str, "global_image=some-image-string");
 
@@ -119,7 +125,7 @@ fn test_disk_source() {
         crate::types::DiskSource::from_str("global_image=some-image-string").unwrap();
     assert_eq!(disk_source_from_str, disk_source);
 
-    disk_source = crate::types::DiskSource::Blank(432);
+    disk_source = crate::types::DiskSource::Blank { block_size: 432 };
     disk_source_str = format!("{}", disk_source);
     assert_eq!(disk_source_str, "blank=432");
 

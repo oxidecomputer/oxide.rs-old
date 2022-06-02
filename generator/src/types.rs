@@ -338,9 +338,7 @@ fn render_property(
         }
 
         // Hide things from the table that don't implement display.
-        if (rt.starts_with("Vec<")
-            || rt.starts_with("Option<")
-            || rt == "VpcFirewallRuleFilter")
+        if (rt.starts_with("Vec<") || rt.starts_with("Option<") || rt == "VpcFirewallRuleFilter")
             && sn != "VpcFirewallRuleFilter"
         {
             a(r#"#[header(hidden = true)]"#);
@@ -372,6 +370,10 @@ fn do_one_of_type(
 
     if sn == "IpNet" {
         return crate::types_templates::IP_NET.to_string();
+    }
+
+    if sn == "DiskSource" {
+        return crate::types_templates::DISK_SOURCE.to_string();
     }
 
     let mut tag = "";
@@ -508,20 +510,16 @@ fn do_one_of_type(
         ));
         if sn == "DiskSource" {
             a(&format!(
-                "   let mut content: String = \
-             match serde_json::from_value(j[\"{}\"].clone()) {{ \
-             Ok(v) => v, \
-                Err(_) => {{ \
-                let int : i64 = serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default(); \
-                format!(\"{{}}\", int) \
-                }} \
-                }};",
+                "   let mut content: String = match serde_json::from_value(j[\"{}\"].clone()) {{ \
+                 Ok(v) => v, Err(_) => {{ let int : i64 = \
+                 serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default(); format!(\"{{}}\", \
+                 int) }} }};",
                 content, content
             ));
         } else {
             a(&format!(
                 "   let mut content: String = \
-             serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default();",
+                 serde_json::from_value(j[\"{}\"].clone()).unwrap_or_default();",
                 content
             ));
         }
