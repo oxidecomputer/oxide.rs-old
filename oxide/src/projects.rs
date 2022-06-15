@@ -20,7 +20,7 @@ impl Projects {
      * **Parameters:**
      *
      * * `limit: u32` -- Maximum number of items returned by a single call.
-     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `page_token: &str` -- Token returned by previous call to retrieve the subsequent page.
      * * `sort_by: crate::types::NameOrIdSortMode` -- Supported set of sort modes for scanning by name or id.
      * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */

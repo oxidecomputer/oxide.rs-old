@@ -90,6 +90,29 @@ impl DatumType {
     }
 }
 
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct DerEncodedKeyPair {
+    /**
+     * request signing private key (base64 encoded der file)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub private_key: String,
+
+    /**
+     * request signing public certificate (base64 encoded der file)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub public_cert: String,
+}
+
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[serde(tag = "type", content = "value")]
@@ -326,7 +349,7 @@ impl std::str::FromStr for DiskStateType {
     }
 }
 
-/// Client view of an [`Disk`]
+/// Client view of a [`Disk`]
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct Disk {
     /**
@@ -640,6 +663,36 @@ pub struct DiskResultsPage {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub next_page: String,
+}
+
+/// OS image distribution
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct Distribution {
+    /**
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * The version of the distribution (e.g. "3.10" or "18.04")
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub version: String,
+}
+
+impl fmt::Display for Distribution {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}-{}", self.name, self.version)
+    }
 }
 
 #[derive(Debug, Deserialize, thiserror::Error, PartialEq, Serialize)]
@@ -1139,6 +1192,16 @@ pub struct GlobalImage {
     pub digest: Option<Digest>,
 
     /**
+     * Image distribution
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub distribution: String,
+
+    /**
      * A count of bytes, typically used either for memory or storage capacity
      *  
      *  The maximum supported byte count is [`i64::MAX`].  This makes it somewhat inconvenient to define constructors: a u32 constructor can be infallible, but an i64 constructor can fail (if the value is negative) and a u64 constructor can fail (if the value is larger than i64::MAX).  We provide all of these for consumers' convenience.
@@ -1169,7 +1232,7 @@ pub struct GlobalImage {
     pub url: String,
 
     /**
-     * Version of this, if any
+     * Image version
      */
     #[serde(
         default,
@@ -1177,6 +1240,157 @@ pub struct GlobalImage {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub version: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[serde(tag = "type", content = "id")]
+pub enum ImageSource {
+    Url(String),
+    Snapshot(String),
+    YouCanBootAnythingAsLongItsAlpine,
+}
+
+impl fmt::Display for ImageSource {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let j = serde_json::json!(self);
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["id"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["id"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        if tag == "internet_gateway" {
+            tag = "inetgw".to_string();
+        }
+        write!(f, "{}={}", tag, content)
+    }
+}
+
+impl std::str::FromStr for ImageSource {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for ImageSource, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "url" {
+            j = format!(
+                r#"{{
+"type": "url",
+"id": "{}"
+        }}"#,
+                content
+            );
+        }
+        if tag == "snapshot" {
+            j = format!(
+                r#"{{
+"type": "snapshot",
+"id": "{}"
+        }}"#,
+                content
+            );
+        }
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl ImageSource {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "snapshot".to_string(),
+            "url".to_string(),
+            "you_can_boot_anything_as_long_its_alpine".to_string(),
+        ]
+    }
+}
+/**
+ * The types for ImageSource.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum ImageSourceType {
+    Snapshot,
+    Url,
+    YouCanBootAnythingAsLongItsAlpine,
+}
+
+impl std::fmt::Display for ImageSourceType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            ImageSourceType::Snapshot => "snapshot",
+            ImageSourceType::Url => "url",
+            ImageSourceType::YouCanBootAnythingAsLongItsAlpine => {
+                "you_can_boot_anything_as_long_its_alpine"
+            }
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for ImageSourceType {
+    fn default() -> ImageSourceType {
+        ImageSourceType::Snapshot
+    }
+}
+impl std::str::FromStr for ImageSourceType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "snapshot" {
+            return Ok(ImageSourceType::Snapshot);
+        }
+        if s == "url" {
+            return Ok(ImageSourceType::Url);
+        }
+        if s == "you_can_boot_anything_as_long_its_alpine" {
+            return Ok(ImageSourceType::YouCanBootAnythingAsLongItsAlpine);
+        }
+        anyhow::bail!("invalid string for ImageSourceType: {}", s);
+    }
+}
+
+/// Create-time parameters for an [`GlobalImage`](omicron_common::api::external::GlobalImage)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub struct GlobalImageCreate {
+    /**
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub block_size: i64,
+
+    /**
+     * OS image distribution
+     */
+    #[serde()]
+    pub distribution: Distribution,
+
+    #[serde()]
+    pub source: ImageSource,
 }
 
 /// A single page of results
@@ -1202,6 +1416,162 @@ pub struct GlobalImageResultsPage {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub next_page: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum IdentityProviderType {
+    Saml,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for IdentityProviderType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            IdentityProviderType::Saml => "saml",
+            IdentityProviderType::Noop => "",
+            IdentityProviderType::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for IdentityProviderType {
+    fn default() -> IdentityProviderType {
+        IdentityProviderType::Saml
+    }
+}
+impl std::str::FromStr for IdentityProviderType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "saml" {
+            return Ok(IdentityProviderType::Saml);
+        }
+        anyhow::bail!("invalid string for IdentityProviderType: {}", s);
+    }
+}
+impl IdentityProviderType {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, IdentityProviderType::Noop)
+    }
+}
+
+/// Client view of an [`IdentityProvider`]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct IdentityProvider {
+    /**
+     * unique, immutable, system-controlled identifier for each resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    #[serde(default, skip_serializing_if = "IdentityProviderType::is_noop")]
+    pub provider_type: IdentityProviderType,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * timestamp when this resource was last modified
+     */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+}
+
+/// A single page of results
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct IdentityProviderResultsPage {
+    /**
+     * list of items on this page of results
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub items: Vec<IdentityProvider>,
+
+    /**
+     * token used to fetch the next page of results (if any)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub next_page: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum IdentityProviderTypeSaml {
+    Saml,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for IdentityProviderTypeSaml {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            IdentityProviderTypeSaml::Saml => "saml",
+            IdentityProviderTypeSaml::Noop => "",
+            IdentityProviderTypeSaml::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for IdentityProviderTypeSaml {
+    fn default() -> IdentityProviderTypeSaml {
+        IdentityProviderTypeSaml::Saml
+    }
+}
+impl std::str::FromStr for IdentityProviderTypeSaml {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "saml" {
+            return Ok(IdentityProviderTypeSaml::Saml);
+        }
+        anyhow::bail!("invalid string for IdentityProviderTypeSaml: {}", s);
+    }
+}
+impl IdentityProviderTypeSaml {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, IdentityProviderTypeSaml::Noop)
+    }
 }
 
 /**
@@ -1245,6 +1615,108 @@ impl std::str::FromStr for IdentityTypeSiloUser {
 impl IdentityTypeSiloUser {
     pub fn is_noop(&self) -> bool {
         matches!(self, IdentityTypeSiloUser::Noop)
+    }
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[serde(tag = "type", content = "data")]
+pub enum IdpMetadataSource {
+    Url(String),
+    Base64EncodedXml(String),
+}
+
+impl fmt::Display for IdpMetadataSource {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let j = serde_json::json!(self);
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["data"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["data"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        if tag == "internet_gateway" {
+            tag = "inetgw".to_string();
+        }
+        write!(f, "{}={}", tag, content)
+    }
+}
+
+impl std::str::FromStr for IdpMetadataSource {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for IdpMetadataSource, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "url" {
+            j = format!(
+                r#"{{
+"type": "url",
+"data": "{}"
+        }}"#,
+                content
+            );
+        }
+        if tag == "base_64_encoded_xml" {
+            j = format!(
+                r#"{{
+"type": "base_64_encoded_xml",
+"data": "{}"
+        }}"#,
+                content
+            );
+        }
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl IdpMetadataSource {
+    pub fn variants() -> Vec<String> {
+        vec!["base_64_encoded_xml".to_string(), "url".to_string()]
+    }
+}
+/**
+ * The types for IdpMetadataSource.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum IdpMetadataSourceType {
+    Base64EncodedXml,
+    Url,
+}
+
+impl std::fmt::Display for IdpMetadataSourceType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            IdpMetadataSourceType::Base64EncodedXml => "base_64_encoded_xml",
+            IdpMetadataSourceType::Url => "url",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for IdpMetadataSourceType {
+    fn default() -> IdpMetadataSourceType {
+        IdpMetadataSourceType::Base64EncodedXml
+    }
+}
+impl std::str::FromStr for IdpMetadataSourceType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "base_64_encoded_xml" {
+            return Ok(IdpMetadataSourceType::Base64EncodedXml);
+        }
+        if s == "url" {
+            return Ok(IdpMetadataSourceType::Url);
+        }
+        anyhow::bail!("invalid string for IdpMetadataSourceType: {}", s);
     }
 }
 
@@ -1345,108 +1817,6 @@ pub struct Image {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub version: String,
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
-#[serde(rename_all = "snake_case")]
-#[serde(tag = "type", content = "src")]
-pub enum ImageSource {
-    Url(String),
-    Snapshot(String),
-}
-
-impl fmt::Display for ImageSource {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let j = serde_json::json!(self);
-        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
-        let mut content: String = serde_json::from_value(j["src"].clone()).unwrap_or_default();
-        if content.is_empty() {
-            let map: std::collections::HashMap<String, String> =
-                serde_json::from_value(j["src"].clone()).unwrap_or_default();
-            if let Some((_, v)) = map.iter().next() {
-                content = v.to_string();
-            }
-        }
-        if tag == "internet_gateway" {
-            tag = "inetgw".to_string();
-        }
-        write!(f, "{}={}", tag, content)
-    }
-}
-
-impl std::str::FromStr for ImageSource {
-    type Err = anyhow::Error;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let parts = s.split('=').collect::<Vec<&str>>();
-        if parts.len() != 2 {
-            anyhow::bail!("invalid format for ImageSource, got {}", s);
-        }
-        let tag = parts[0].to_string();
-        let content = parts[1].to_string();
-        let mut j = String::new();
-        if tag == "url" {
-            j = format!(
-                r#"{{
-"type": "url",
-"src": "{}"
-        }}"#,
-                content
-            );
-        }
-        if tag == "snapshot" {
-            j = format!(
-                r#"{{
-"type": "snapshot",
-"src": "{}"
-        }}"#,
-                content
-            );
-        }
-        let result = serde_json::from_str(&j)?;
-        Ok(result)
-    }
-}
-impl ImageSource {
-    pub fn variants() -> Vec<String> {
-        vec!["snapshot".to_string(), "url".to_string()]
-    }
-}
-/**
- * The types for ImageSource.
- */
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-#[serde(rename_all = "snake_case")]
-pub enum ImageSourceType {
-    Snapshot,
-    Url,
-}
-
-impl std::fmt::Display for ImageSourceType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            ImageSourceType::Snapshot => "snapshot",
-            ImageSourceType::Url => "url",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for ImageSourceType {
-    fn default() -> ImageSourceType {
-        ImageSourceType::Snapshot
-    }
-}
-impl std::str::FromStr for ImageSourceType {
-    type Err = anyhow::Error;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "snapshot" {
-            return Ok(ImageSourceType::Snapshot);
-        }
-        if s == "url" {
-            return Ok(ImageSourceType::Url);
-        }
-        anyhow::bail!("invalid string for ImageSourceType: {}", s);
-    }
 }
 
 /// Create-time parameters for an [`Image`](omicron_common::api::external::Image)
@@ -2008,7 +2378,7 @@ pub struct InstanceMigrate {
         skip_serializing_if = "String::is_empty",
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
-    pub dst_sled_uuid: String,
+    pub dst_sled_id: String,
 }
 
 /// A single page of results
@@ -2034,6 +2404,27 @@ pub struct InstanceResultsPage {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub next_page: String,
+}
+
+/// Contents of an Instance's serial console buffer.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct InstanceSerialConsoleData {
+    /**
+     * The bytes starting from the requested offset up to either the end of the buffer or the request's `max_bytes`. Provided as a u8 array rather than a string, as it may not be UTF-8.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub data: Vec<u8>,
+
+    /**
+     * The absolute offset since boot (suitable for use as `byte_offset` in a subsequent request) of the last byte returned in `data`.
+     */
+    #[serde(default)]
+    pub last_byte_offset: u64,
 }
 
 /// An `IpNet` represents an IP network, either IPv4 or IPv6.
@@ -2259,16 +2650,6 @@ impl JsonSchema for Ipv6Net {
         )
     }
 }
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct LoginParams {
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub username: String,
-}
-
 /// A `NetworkInterface` represents a virtual network interface device.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct NetworkInterface {
@@ -2331,6 +2712,15 @@ pub struct NetworkInterface {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub mac: String,
+
+    /**
+     * True if this interface is the primary for the instance to which it's attached.
+     */
+    #[serde(
+        default,
+        deserialize_with = "crate::utils::deserialize_null_boolean::deserialize"
+    )]
+    pub primary: bool,
 
     /**
      * The subnet to which the interface belongs.
@@ -2441,6 +2831,37 @@ pub struct NetworkInterfaceResultsPage {
     pub next_page: String,
 }
 
+/// Parameters for updating a [`NetworkInterface`](omicron_common::api::external::NetworkInterface).
+///
+/// Note that modifying IP addresses for an interface is not yet supported, a new interface must be created instead.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct NetworkInterfaceUpdate {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * Parameters for updating a [`NetworkInterface`](omicron_common::api::external::NetworkInterface).
+     *  
+     *  Note that modifying IP addresses for an interface is not yet supported, a new interface must be created instead.
+     */
+    #[serde(
+        default,
+        deserialize_with = "crate::utils::deserialize_null_boolean::deserialize"
+    )]
+    pub make_primary: bool,
+}
+
 /// Client view of an [`Organization`]
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Organization {
@@ -2538,6 +2959,7 @@ pub struct OrganizationResultsPage {
 pub enum OrganizationRoles {
     Admin,
     Collaborator,
+    Viewer,
     #[serde(rename = "")]
     Noop,
     #[serde(other)]
@@ -2549,6 +2971,7 @@ impl std::fmt::Display for OrganizationRoles {
         match &*self {
             OrganizationRoles::Admin => "admin",
             OrganizationRoles::Collaborator => "collaborator",
+            OrganizationRoles::Viewer => "viewer",
             OrganizationRoles::Noop => "",
             OrganizationRoles::FallthroughString => "*",
         }
@@ -2569,6 +2992,9 @@ impl std::str::FromStr for OrganizationRoles {
         }
         if s == "collaborator" {
             return Ok(OrganizationRoles::Collaborator);
+        }
+        if s == "viewer" {
+            return Ok(OrganizationRoles::Viewer);
         }
         anyhow::bail!("invalid string for OrganizationRoles: {}", s);
     }
@@ -3715,6 +4141,193 @@ pub struct SagaResultsPage {
     pub next_page: String,
 }
 
+/// Identity-related metadata that's included in nearly all public API objects
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct SamlIdentityProvider {
+    /**
+     * unique, immutable, system-controlled identifier for each resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * service provider endpoint where the response will be sent
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub acs_url: String,
+
+    /**
+     * idp's entity id
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub idp_entity_id: String,
+
+    /**
+     * optional request signing public certificate (base64 encoded der file)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub public_cert: String,
+
+    /**
+     * service provider endpoint where the idp should send log out requests
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub slo_url: String,
+
+    /**
+     * sp's client id
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub sp_client_id: String,
+
+    /**
+     * customer's technical contact for saml configuration
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub technical_contact_email: String,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * timestamp when this resource was last modified
+     */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+}
+
+/// Create-time identity-related parameters
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub struct SamlIdentityProviderCreate {
+    /**
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * service provider endpoint where the response will be sent
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub acs_url: String,
+
+    /**
+     * idp's entity id
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub idp_entity_id: String,
+
+    #[serde()]
+    pub idp_metadata_source: IdpMetadataSource,
+
+    /**
+     * optional request signing key pair
+     */
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[header(hidden = true)]
+    pub signing_keypair: Option<DerEncodedKeyPair>,
+
+    /**
+     * service provider endpoint where the idp should send log out requests
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub slo_url: String,
+
+    /**
+     * sp's client id
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub sp_client_id: String,
+
+    /**
+     * customer's technical contact for saml configuration
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub technical_contact_email: String,
+}
+
 /// Client view of currently authed user.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SessionUser {
@@ -4123,6 +4736,16 @@ pub struct SnapshotResultsPage {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub next_page: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct SpoofLoginBody {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub username: String,
 }
 
 /// Client view of a [`SshKey`]

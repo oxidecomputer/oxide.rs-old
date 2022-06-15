@@ -29,7 +29,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! oxide-api = "0.1.0-rc.36"
+//! oxide-api = "0.1.0-rc.37"
 //! ```
 //!
 //! ## Basic example
@@ -87,6 +87,10 @@ pub mod images_global;
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod instances;
+/// Authentication endpoints.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod login;
 /// Metrics provide insight into the operation of the Oxide deployment. These include telemetry on hardware and software components that can be used to understand the current state as well as to diagnose issues.
 ///
 ///FROM: http://oxide.computer/docs/#xxx
@@ -432,6 +436,13 @@ impl Client {
     ///FROM: http://oxide.computer/docs/#xxx
     pub fn instances(&self) -> instances::Instances {
         instances::Instances::new(self.clone())
+    }
+
+    /// Authentication endpoints.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn login(&self) -> login::Login {
+        login::Login::new(self.clone())
     }
 
     /// Metrics provide insight into the operation of the Oxide deployment. These include telemetry on hardware and software components that can be used to understand the current state as well as to diagnose issues.
