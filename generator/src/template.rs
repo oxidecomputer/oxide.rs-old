@@ -33,7 +33,7 @@ impl Template {
                         r#"if let Some(date) = {} {{ query_args.push(("{}".to_string(), date.to_rfc3339())); }}"#,
                         nam, prop
                     ));
-                } else if value == "Option<uuid::Uuid>" {
+                } else if value == "Option<uuid::Uuid>" || value == "Option<u64>" {
                     a(&format!(
                         r#"if let Some(u) = {} {{ query_args.push(("{}".to_string(), u.to_string())); }}"#,
                         nam, prop
