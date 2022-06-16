@@ -22,7 +22,7 @@ clean-spec:
 update: update-specs
 
 update-specs: clean-spec
-	make $(SPEC)
+	$(MAKE) $(SPEC)
 
 $(SPEC):
 	curl -sSL $(SPEC_REMOTE) -o $@
