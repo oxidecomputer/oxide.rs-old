@@ -20,7 +20,7 @@ impl Instances {
      * **Parameters:**
      *
      * * `limit: u32` -- Maximum number of items returned by a single call.
-     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `page_token: &str` -- Token returned by previous call to retrieve the subsequent page.
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
@@ -205,7 +205,7 @@ impl Instances {
      * **Parameters:**
      *
      * * `limit: u32` -- Maximum number of items returned by a single call.
-     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `page_token: &str` -- Token returned by previous call to retrieve the subsequent page.
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
@@ -400,7 +400,7 @@ impl Instances {
      * **Parameters:**
      *
      * * `limit: u32` -- Maximum number of items returned by a single call.
-     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `page_token: &str` -- Token returned by previous call to retrieve the subsequent page.
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
@@ -563,9 +563,44 @@ impl Instances {
     }
 
     /**
+     * Update information about an instance's network interface.
+     *
+     * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces/{interface_name}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `interface_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
+    pub async fn network_interfaces_put_interface(
+        &self,
+        instance_name: &str,
+        interface_name: &str,
+        organization_name: &str,
+        project_name: &str,
+        body: &crate::types::NetworkInterfaceUpdate,
+    ) -> Result<crate::types::NetworkInterface> {
+        let url = format!(
+            "/organizations/{}/projects/{}/instances/{}/network-interfaces/{}",
+            crate::progenitor_support::encode_path(organization_name),
+            crate::progenitor_support::encode_path(project_name),
+            crate::progenitor_support::encode_path(instance_name),
+            crate::progenitor_support::encode_path(interface_name),
+        );
+
+        self.client
+            .put(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))
+            .await
+    }
+
+    /**
      * Detach a network interface from an instance.
      *
      * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/network-interfaces/{interface_name}` endpoint.
+     *
+     * Note that the primary interface for an instance cannot be deleted if there are any secondary interfaces. A new primary interface must be designated first. The primary interface can be deleted if there are no secondary interfaces.
      *
      * **Parameters:**
      *
@@ -617,6 +652,51 @@ impl Instances {
         );
 
         self.client.post(&url, None).await
+    }
+
+    /**
+     * Get contents of an instance's serial console.
+     *
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/serial` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `instance_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `from_start: u64` -- Character index in the serial buffer from which to read, counting the bytes output since instance start. If this is not provided, `most_recent` must be provided, and if this \*is\* provided, `most_recent` must \*not\* be provided.
+     * * `max_bytes: u64` -- Maximum number of bytes of buffered serial console contents to return. If the requested range runs to the end of the available buffer, the data returned will be shorter than `max_bytes`.
+     * * `most_recent: u64` -- Character index in the serial buffer from which to read, counting \*backward\* from the most recently buffered data retrieved from the instance. (See note on `from_start` about mutual exclusivity).
+     */
+    pub async fn serial_get(
+        &self,
+        from_start: Option<u64>,
+        instance_name: &str,
+        max_bytes: Option<u64>,
+        most_recent: Option<u64>,
+        organization_name: &str,
+        project_name: &str,
+    ) -> Result<crate::types::InstanceSerialConsoleData> {
+        let mut query_args: Vec<(String, String)> = Default::default();
+        if let Some(u) = from_start {
+            query_args.push(("from_start".to_string(), u.to_string()));
+        }
+        if let Some(u) = max_bytes {
+            query_args.push(("max_bytes".to_string(), u.to_string()));
+        }
+        if let Some(u) = most_recent {
+            query_args.push(("most_recent".to_string(), u.to_string()));
+        }
+        let query_ = serde_urlencoded::to_string(&query_args).unwrap();
+        let url = format!(
+            "/organizations/{}/projects/{}/instances/{}/serial?{}",
+            crate::progenitor_support::encode_path(organization_name),
+            crate::progenitor_support::encode_path(project_name),
+            crate::progenitor_support::encode_path(instance_name),
+            query_
+        );
+
+        self.client.get(&url, None).await
     }
 
     /**

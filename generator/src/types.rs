@@ -100,6 +100,8 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                         && sn != "RouterRoute"
                         && sn != "ImageCreate"
                         && sn != "DiskCreate"
+                        && sn != "GlobalImageCreate"
+                        && sn != "SamlIdentityProviderCreate"
                     {
                         a("Default,");
                     }
@@ -126,6 +128,13 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                     }
                     a("}");
                     a("");
+
+                    if sn == "Distribution" {
+                        a("impl fmt::Display for Distribution {");
+                        a("    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {");
+                        a(r#"        write!(f, "{}-{}", self.name, self.version)"#);
+                        a("}}");
+                    }
                 }
                 TypeDetails::Basic(..) => {}
                 TypeDetails::Unknown => {}

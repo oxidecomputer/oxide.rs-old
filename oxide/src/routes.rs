@@ -20,7 +20,7 @@ impl Routes {
      * **Parameters:**
      *
      * * `limit: u32` -- Maximum number of items returned by a single call.
-     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `page_token: &str` -- Token returned by previous call to retrieve the subsequent page.
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.

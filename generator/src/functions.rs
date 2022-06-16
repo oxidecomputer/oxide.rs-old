@@ -677,6 +677,10 @@ fn get_fn_params(
     let mut fn_params_str: Vec<String> = Default::default();
     let mut fn_params: Vec<String> = Default::default();
     let mut query_params: BTreeMap<String, (String, String)> = Default::default();
+    let op_id = o
+        .operation_id
+        .as_ref()
+        .expect("endpoint had no operation_id");
     let gp = sort_parameters(o)?;
     for (param_name, item) in gp.iter() {
         let parameter_data = get_parameter_data(item).unwrap();
@@ -700,7 +704,9 @@ fn get_fn_params(
                 && nam != "authorization"
                 && !nam.starts_with("authorization_bearer")
             {
-                if typ == "chrono::DateTime<chrono::Utc>" {
+                if typ == "chrono::DateTime<chrono::Utc>"
+                    || (op_id == "project_instances_instance_serial_get" && typ == "u64")
+                {
                     fn_params_str.push(format!("{}: Option<{}>,", nam, typ));
                     fn_params.push(nam.to_string());
                 } else {
@@ -744,7 +750,9 @@ fn get_fn_params(
                     && nam != "authorization"
                     && !nam.starts_with("authorization_bearer")
                 {
-                    if typ == "chrono::DateTime<chrono::Utc>" {
+                    if typ == "chrono::DateTime<chrono::Utc>"
+                        || (op_id == "project_instances_instance_serial_get" && typ == "u64")
+                    {
                         query_params.insert(
                             nam.to_string(),
                             (format!("Option<{}>", typ), parameter_data.name.to_string()),

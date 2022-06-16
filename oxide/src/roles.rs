@@ -20,7 +20,7 @@ impl Roles {
      * **Parameters:**
      *
      * * `limit: u32` -- Maximum number of items returned by a single call.
-     * * `page_token: &str` -- Token returned by previous call to retreive the subsequent page.
+     * * `page_token: &str` -- Token returned by previous call to retrieve the subsequent page.
      */
     pub async fn get_page(&self, limit: u32, page_token: &str) -> Result<Vec<crate::types::Role>> {
         let mut query_args: Vec<(String, String)> = Default::default();

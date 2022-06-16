@@ -15,7 +15,7 @@ impl Hidden {
     /**
      * This function performs a `POST` to the `/login` endpoint.
      */
-    pub async fn spoof_login(&self, body: &crate::types::LoginParams) -> Result<()> {
+    pub async fn spoof_login(&self, body: &crate::types::SpoofLoginBody) -> Result<()> {
         let url = "/login".to_string();
         self.client
             .post(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))

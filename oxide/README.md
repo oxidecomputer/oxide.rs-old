@@ -31,7 +31,7 @@ To install the library, add the following to your `Cargo.toml` file.
 
 ```toml
 [dependencies]
-oxide-api = "0.1.0-rc.36"
+oxide-api = "0.1.0-rc.37"
 ```
 
 ## Basic example
