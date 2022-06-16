@@ -57,7 +57,7 @@ jobs:
       - name: Publish release
         shell: bash
         run: |
-          cargo publish --token ${{secrets.CARGO_TOKEN}} -p oxide
+          cargo publish --token ${{secrets.CARGO_TOKEN}} -p oxide-api
       - name: Create a Release
         uses: softprops/action-gh-release@v1
         with:
