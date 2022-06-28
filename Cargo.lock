@@ -781,7 +781,7 @@ dependencies = [
 
 [[package]]
 name = "oxide-api"
-version = "0.1.0-rc.37"
+version = "0.1.0-rc.38"
 dependencies = [
  "Inflector",
  "anyhow",

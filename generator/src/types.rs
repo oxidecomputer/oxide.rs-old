@@ -102,6 +102,8 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                         && sn != "DiskCreate"
                         && sn != "GlobalImageCreate"
                         && sn != "SamlIdentityProviderCreate"
+                        && sn != "Ipv4Range"
+                        && sn != "Ipv6Range"
                     {
                         a("Default,");
                     }
@@ -379,6 +381,10 @@ fn do_one_of_type(
 
     if sn == "IpNet" {
         return crate::types_templates::IP_NET.to_string();
+    }
+
+    if sn == "IpRange" {
+        return crate::types_templates::IP_RANGE.to_string();
     }
 
     if sn == "DiskSource" {

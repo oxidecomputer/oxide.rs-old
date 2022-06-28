@@ -29,7 +29,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! oxide-api = "0.1.0-rc.37"
+//! oxide-api = "0.1.0-rc.38"
 //! ```
 //!
 //! ## Basic example
@@ -56,6 +56,7 @@
 //!
 //! let oxide = Client::new_from_env();
 //! ```
+#![feature(derive_default_enum)]
 #![allow(clippy::too_many_arguments)]
 #![allow(clippy::nonstandard_macro_braces)]
 #![allow(clippy::large_enum_variant)]
@@ -87,6 +88,10 @@ pub mod images_global;
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod instances;
+/// IP Pools contain external IP addresses that can be assigned to virtual machine Instances.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod ip_pools;
 /// Authentication endpoints.
 ///
 ///FROM: http://oxide.computer/docs/#xxx
@@ -147,6 +152,10 @@ pub mod sshkeys;
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod subnets;
+/// Internal system information.
+///
+///FROM: http://oxide.computer/docs/#xxx
+pub mod system;
 #[cfg(test)]
 mod tests;
 pub mod types;
@@ -154,10 +163,6 @@ pub mod types;
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod updates;
-/// This tag should be moved into an IAM tag.
-///
-///FROM: http://oxide.computer/docs/#xxx
-pub mod users;
 #[doc(hidden)]
 pub mod utils;
 /// A Virtual Private Cloud (VPC) is an isolated network environment that should probaby be moved into a more generic networking tag.
@@ -438,6 +443,13 @@ impl Client {
         instances::Instances::new(self.clone())
     }
 
+    /// IP Pools contain external IP addresses that can be assigned to virtual machine Instances.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn ip_pools(&self) -> ip_pools::IpPools {
+        ip_pools::IpPools::new(self.clone())
+    }
+
     /// Authentication endpoints.
     ///
     ///FROM: http://oxide.computer/docs/#xxx
@@ -543,18 +555,18 @@ impl Client {
         subnets::Subnets::new(self.clone())
     }
 
+    /// Internal system information.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn system(&self) -> system::System {
+        system::System::new(self.clone())
+    }
+
     /// This tag should be moved into a operations tag.
     ///
     ///FROM: http://oxide.computer/docs/#xxx
     pub fn updates(&self) -> updates::Updates {
         updates::Updates::new(self.clone())
-    }
-
-    /// This tag should be moved into an IAM tag.
-    ///
-    ///FROM: http://oxide.computer/docs/#xxx
-    pub fn users(&self) -> users::Users {
-        users::Users::new(self.clone())
     }
 
     /// A Virtual Private Cloud (VPC) is an isolated network environment that should probaby be moved into a more generic networking tag.

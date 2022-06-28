@@ -1011,7 +1011,7 @@ pub struct FieldSchema {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 #[serde(rename_all = "snake_case")]
-pub enum FleetRoles {
+pub enum FleetRole {
     Admin,
     Collaborator,
     Viewer,
@@ -1021,42 +1021,42 @@ pub enum FleetRoles {
     FallthroughString,
 }
 
-impl std::fmt::Display for FleetRoles {
+impl std::fmt::Display for FleetRole {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            FleetRoles::Admin => "admin",
-            FleetRoles::Collaborator => "collaborator",
-            FleetRoles::Viewer => "viewer",
-            FleetRoles::Noop => "",
-            FleetRoles::FallthroughString => "*",
+            FleetRole::Admin => "admin",
+            FleetRole::Collaborator => "collaborator",
+            FleetRole::Viewer => "viewer",
+            FleetRole::Noop => "",
+            FleetRole::FallthroughString => "*",
         }
         .fmt(f)
     }
 }
 
-impl Default for FleetRoles {
-    fn default() -> FleetRoles {
-        FleetRoles::Admin
+impl Default for FleetRole {
+    fn default() -> FleetRole {
+        FleetRole::Admin
     }
 }
-impl std::str::FromStr for FleetRoles {
+impl std::str::FromStr for FleetRole {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "admin" {
-            return Ok(FleetRoles::Admin);
+            return Ok(FleetRole::Admin);
         }
         if s == "collaborator" {
-            return Ok(FleetRoles::Collaborator);
+            return Ok(FleetRole::Collaborator);
         }
         if s == "viewer" {
-            return Ok(FleetRoles::Viewer);
+            return Ok(FleetRole::Viewer);
         }
-        anyhow::bail!("invalid string for FleetRoles: {}", s);
+        anyhow::bail!("invalid string for FleetRole: {}", s);
     }
 }
-impl FleetRoles {
+impl FleetRole {
     pub fn is_noop(&self) -> bool {
-        matches!(self, FleetRoles::Noop)
+        matches!(self, FleetRole::Noop)
     }
 }
 
@@ -1064,7 +1064,7 @@ impl FleetRoles {
 ///
 /// The resource is not part of this structure.  Rather, [`RoleAssignment`]s are put into a [`Policy`] and that Policy is applied to a particular resource.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct FleetRolesRoleAssignment {
+pub struct FleetRoleAssignment {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -1078,15 +1078,15 @@ pub struct FleetRolesRoleAssignment {
     #[serde(default, skip_serializing_if = "IdentityType::is_noop")]
     pub identity_type: IdentityType,
 
-    #[serde(default, skip_serializing_if = "FleetRoles::is_noop")]
-    pub role_name: FleetRoles,
+    #[serde(default, skip_serializing_if = "FleetRole::is_noop")]
+    pub role_name: FleetRole,
 }
 
 /// Client view of a [`Policy`], which describes how this resource may be accessed
 ///
 /// Note that the Policy only describes access granted explicitly for this resource.  The policies of parent resources can also cause a user to have access to this resource.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct FleetRolesPolicy {
+pub struct FleetRolePolicy {
     /**
      * Roles directly assigned on this resource
      */
@@ -1096,7 +1096,7 @@ pub struct FleetRolesPolicy {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub role_assignments: Vec<FleetRolesRoleAssignment>,
+    pub role_assignments: Vec<FleetRoleAssignment>,
 }
 
 /**
@@ -2481,6 +2481,178 @@ impl std::str::FromStr for IpNet {
     }
 }
 
+/// Identity-related metadata that's included in nearly all public API objects
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct IpPool {
+    /**
+     * unique, immutable, system-controlled identifier for each resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    /**
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    /**
+     * human-readable free-form text about a resource
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+
+    /**
+     * timestamp when this resource was created
+     */
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * timestamp when this resource was last modified
+     */
+    #[serde()]
+    pub time_modified: crate::utils::DisplayOptionDateTime,
+}
+
+/// Create-time parameters for an IP Pool.
+///
+/// See [`IpPool`](omicron_nexus::external_api::views::IpPool)
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct IpPoolCreate {
+    /**
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, Default, JsonSchema)]
+pub enum IpRange {
+    Ipv4Range,
+    #[default]
+    Ipv6Range,
+}
+
+impl fmt::Display for IpRange {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", serde_json::json!(self))
+    }
+}
+
+impl std::str::FromStr for IpRange {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(serde_json::from_str(s)?)
+    }
+}
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct IpPoolRange {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+
+    #[serde()]
+    pub range: IpRange,
+
+    #[serde()]
+    pub time_created: crate::utils::DisplayOptionDateTime,
+}
+
+/// A single page of results
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct IpPoolRangeResultsPage {
+    /**
+     * list of items on this page of results
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub items: Vec<IpPoolRange>,
+
+    /**
+     * token used to fetch the next page of results (if any)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub next_page: String,
+}
+
+/// A single page of results
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct IpPoolResultsPage {
+    /**
+     * list of items on this page of results
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub items: Vec<IpPool>,
+
+    /**
+     * token used to fetch the next page of results (if any)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub next_page: String,
+}
+
+/// Parameters for updating an IP Pool
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct IpPoolUpdate {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub name: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub description: String,
+}
+
 /// An `Ipv4Net` represents a IPv4 subnetwork, including the address and network mask.
 #[derive(Clone, Copy, Debug, Deserialize, Hash, PartialEq, Serialize)]
 pub struct Ipv4Net(pub ipnetwork::Ipv4Network);
@@ -2556,6 +2728,18 @@ impl JsonSchema for Ipv4Net {
         )
     }
 }
+/// A non-decreasing IPv4 address range, inclusive of both ends.
+///
+/// The first address must be less than or equal to the last address.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub struct Ipv4Range {
+    #[serde()]
+    pub first: std::net::Ipv4Addr,
+
+    #[serde()]
+    pub last: std::net::Ipv4Addr,
+}
+
 /// An `Ipv6Net` represents a IPv6 subnetwork, including the address and network mask.
 #[derive(Clone, Copy, Debug, Deserialize, Hash, PartialEq, Serialize)]
 pub struct Ipv6Net(pub ipnetwork::Ipv6Network);
@@ -2650,6 +2834,18 @@ impl JsonSchema for Ipv6Net {
         )
     }
 }
+/// A non-decreasing IPv6 address range, inclusive of both ends.
+///
+/// The first address must be less than or equal to the last address.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub struct Ipv6Range {
+    #[serde()]
+    pub first: std::net::Ipv6Addr,
+
+    #[serde()]
+    pub last: std::net::Ipv6Addr,
+}
+
 /// A `NetworkInterface` represents a virtual network interface device.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct NetworkInterface {
@@ -2956,7 +3152,7 @@ pub struct OrganizationResultsPage {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 #[serde(rename_all = "snake_case")]
-pub enum OrganizationRoles {
+pub enum OrganizationRole {
     Admin,
     Collaborator,
     Viewer,
@@ -2966,42 +3162,42 @@ pub enum OrganizationRoles {
     FallthroughString,
 }
 
-impl std::fmt::Display for OrganizationRoles {
+impl std::fmt::Display for OrganizationRole {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            OrganizationRoles::Admin => "admin",
-            OrganizationRoles::Collaborator => "collaborator",
-            OrganizationRoles::Viewer => "viewer",
-            OrganizationRoles::Noop => "",
-            OrganizationRoles::FallthroughString => "*",
+            OrganizationRole::Admin => "admin",
+            OrganizationRole::Collaborator => "collaborator",
+            OrganizationRole::Viewer => "viewer",
+            OrganizationRole::Noop => "",
+            OrganizationRole::FallthroughString => "*",
         }
         .fmt(f)
     }
 }
 
-impl Default for OrganizationRoles {
-    fn default() -> OrganizationRoles {
-        OrganizationRoles::Admin
+impl Default for OrganizationRole {
+    fn default() -> OrganizationRole {
+        OrganizationRole::Admin
     }
 }
-impl std::str::FromStr for OrganizationRoles {
+impl std::str::FromStr for OrganizationRole {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "admin" {
-            return Ok(OrganizationRoles::Admin);
+            return Ok(OrganizationRole::Admin);
         }
         if s == "collaborator" {
-            return Ok(OrganizationRoles::Collaborator);
+            return Ok(OrganizationRole::Collaborator);
         }
         if s == "viewer" {
-            return Ok(OrganizationRoles::Viewer);
+            return Ok(OrganizationRole::Viewer);
         }
-        anyhow::bail!("invalid string for OrganizationRoles: {}", s);
+        anyhow::bail!("invalid string for OrganizationRole: {}", s);
     }
 }
-impl OrganizationRoles {
+impl OrganizationRole {
     pub fn is_noop(&self) -> bool {
-        matches!(self, OrganizationRoles::Noop)
+        matches!(self, OrganizationRole::Noop)
     }
 }
 
@@ -3009,7 +3205,7 @@ impl OrganizationRoles {
 ///
 /// The resource is not part of this structure.  Rather, [`RoleAssignment`]s are put into a [`Policy`] and that Policy is applied to a particular resource.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct OrganizationRolesRoleAssignment {
+pub struct OrganizationRoleAssignment {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3023,15 +3219,15 @@ pub struct OrganizationRolesRoleAssignment {
     #[serde(default, skip_serializing_if = "IdentityType::is_noop")]
     pub identity_type: IdentityType,
 
-    #[serde(default, skip_serializing_if = "OrganizationRoles::is_noop")]
-    pub role_name: OrganizationRoles,
+    #[serde(default, skip_serializing_if = "OrganizationRole::is_noop")]
+    pub role_name: OrganizationRole,
 }
 
 /// Client view of a [`Policy`], which describes how this resource may be accessed
 ///
 /// Note that the Policy only describes access granted explicitly for this resource.  The policies of parent resources can also cause a user to have access to this resource.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct OrganizationRolesPolicy {
+pub struct OrganizationRolePolicy {
     /**
      * Roles directly assigned on this resource
      */
@@ -3041,7 +3237,7 @@ pub struct OrganizationRolesPolicy {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub role_assignments: Vec<OrganizationRolesRoleAssignment>,
+    pub role_assignments: Vec<OrganizationRoleAssignment>,
 }
 
 /// Updateable properties of an [`Organization`](crate::external_api::views::Organization)
@@ -3163,7 +3359,7 @@ pub struct ProjectResultsPage {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 #[serde(rename_all = "snake_case")]
-pub enum ProjectRoles {
+pub enum ProjectRole {
     Admin,
     Collaborator,
     Viewer,
@@ -3173,42 +3369,42 @@ pub enum ProjectRoles {
     FallthroughString,
 }
 
-impl std::fmt::Display for ProjectRoles {
+impl std::fmt::Display for ProjectRole {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            ProjectRoles::Admin => "admin",
-            ProjectRoles::Collaborator => "collaborator",
-            ProjectRoles::Viewer => "viewer",
-            ProjectRoles::Noop => "",
-            ProjectRoles::FallthroughString => "*",
+            ProjectRole::Admin => "admin",
+            ProjectRole::Collaborator => "collaborator",
+            ProjectRole::Viewer => "viewer",
+            ProjectRole::Noop => "",
+            ProjectRole::FallthroughString => "*",
         }
         .fmt(f)
     }
 }
 
-impl Default for ProjectRoles {
-    fn default() -> ProjectRoles {
-        ProjectRoles::Admin
+impl Default for ProjectRole {
+    fn default() -> ProjectRole {
+        ProjectRole::Admin
     }
 }
-impl std::str::FromStr for ProjectRoles {
+impl std::str::FromStr for ProjectRole {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "admin" {
-            return Ok(ProjectRoles::Admin);
+            return Ok(ProjectRole::Admin);
         }
         if s == "collaborator" {
-            return Ok(ProjectRoles::Collaborator);
+            return Ok(ProjectRole::Collaborator);
         }
         if s == "viewer" {
-            return Ok(ProjectRoles::Viewer);
+            return Ok(ProjectRole::Viewer);
         }
-        anyhow::bail!("invalid string for ProjectRoles: {}", s);
+        anyhow::bail!("invalid string for ProjectRole: {}", s);
     }
 }
-impl ProjectRoles {
+impl ProjectRole {
     pub fn is_noop(&self) -> bool {
-        matches!(self, ProjectRoles::Noop)
+        matches!(self, ProjectRole::Noop)
     }
 }
 
@@ -3216,7 +3412,7 @@ impl ProjectRoles {
 ///
 /// The resource is not part of this structure.  Rather, [`RoleAssignment`]s are put into a [`Policy`] and that Policy is applied to a particular resource.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct ProjectRolesRoleAssignment {
+pub struct ProjectRoleAssignment {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -3230,15 +3426,15 @@ pub struct ProjectRolesRoleAssignment {
     #[serde(default, skip_serializing_if = "IdentityType::is_noop")]
     pub identity_type: IdentityType,
 
-    #[serde(default, skip_serializing_if = "ProjectRoles::is_noop")]
-    pub role_name: ProjectRoles,
+    #[serde(default, skip_serializing_if = "ProjectRole::is_noop")]
+    pub role_name: ProjectRole,
 }
 
 /// Client view of a [`Policy`], which describes how this resource may be accessed
 ///
 /// Note that the Policy only describes access granted explicitly for this resource.  The policies of parent resources can also cause a user to have access to this resource.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct ProjectRolesPolicy {
+pub struct ProjectRolePolicy {
     /**
      * Roles directly assigned on this resource
      */
@@ -3248,7 +3444,7 @@ pub struct ProjectRolesPolicy {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub role_assignments: Vec<ProjectRolesRoleAssignment>,
+    pub role_assignments: Vec<ProjectRoleAssignment>,
 }
 
 /// Updateable properties of a [`Project`](crate::external_api::views::Project)
@@ -3281,26 +3477,6 @@ pub struct Rack {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub id: String,
-
-    /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
 
     /**
      * timestamp when this resource was created
@@ -4448,7 +4624,7 @@ pub struct SiloResultsPage {
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 #[serde(rename_all = "snake_case")]
-pub enum SiloRoles {
+pub enum SiloRole {
     Admin,
     Collaborator,
     Viewer,
@@ -4458,42 +4634,42 @@ pub enum SiloRoles {
     FallthroughString,
 }
 
-impl std::fmt::Display for SiloRoles {
+impl std::fmt::Display for SiloRole {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
-            SiloRoles::Admin => "admin",
-            SiloRoles::Collaborator => "collaborator",
-            SiloRoles::Viewer => "viewer",
-            SiloRoles::Noop => "",
-            SiloRoles::FallthroughString => "*",
+            SiloRole::Admin => "admin",
+            SiloRole::Collaborator => "collaborator",
+            SiloRole::Viewer => "viewer",
+            SiloRole::Noop => "",
+            SiloRole::FallthroughString => "*",
         }
         .fmt(f)
     }
 }
 
-impl Default for SiloRoles {
-    fn default() -> SiloRoles {
-        SiloRoles::Admin
+impl Default for SiloRole {
+    fn default() -> SiloRole {
+        SiloRole::Admin
     }
 }
-impl std::str::FromStr for SiloRoles {
+impl std::str::FromStr for SiloRole {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         if s == "admin" {
-            return Ok(SiloRoles::Admin);
+            return Ok(SiloRole::Admin);
         }
         if s == "collaborator" {
-            return Ok(SiloRoles::Collaborator);
+            return Ok(SiloRole::Collaborator);
         }
         if s == "viewer" {
-            return Ok(SiloRoles::Viewer);
+            return Ok(SiloRole::Viewer);
         }
-        anyhow::bail!("invalid string for SiloRoles: {}", s);
+        anyhow::bail!("invalid string for SiloRole: {}", s);
     }
 }
-impl SiloRoles {
+impl SiloRole {
     pub fn is_noop(&self) -> bool {
-        matches!(self, SiloRoles::Noop)
+        matches!(self, SiloRole::Noop)
     }
 }
 
@@ -4501,7 +4677,7 @@ impl SiloRoles {
 ///
 /// The resource is not part of this structure.  Rather, [`RoleAssignment`]s are put into a [`Policy`] and that Policy is applied to a particular resource.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct SiloRolesRoleAssignment {
+pub struct SiloRoleAssignment {
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -4515,15 +4691,15 @@ pub struct SiloRolesRoleAssignment {
     #[serde(default, skip_serializing_if = "IdentityType::is_noop")]
     pub identity_type: IdentityType,
 
-    #[serde(default, skip_serializing_if = "SiloRoles::is_noop")]
-    pub role_name: SiloRoles,
+    #[serde(default, skip_serializing_if = "SiloRole::is_noop")]
+    pub role_name: SiloRole,
 }
 
 /// Client view of a [`Policy`], which describes how this resource may be accessed
 ///
 /// Note that the Policy only describes access granted explicitly for this resource.  The policies of parent resources can also cause a user to have access to this resource.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct SiloRolesPolicy {
+pub struct SiloRolePolicy {
     /**
      * Roles directly assigned on this resource
      */
@@ -4533,7 +4709,7 @@ pub struct SiloRolesPolicy {
         deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
     )]
     #[header(hidden = true)]
-    pub role_assignments: Vec<SiloRolesRoleAssignment>,
+    pub role_assignments: Vec<SiloRoleAssignment>,
 }
 
 /// Client view of an [`Sled`]
@@ -4548,26 +4724,6 @@ pub struct Sled {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub id: String,
-
-    /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub name: String,
-
-    /**
-     * human-readable free-form text about a resource
-     */
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub description: String,
 
     #[serde(
         default,
@@ -4931,6 +5087,17 @@ pub struct TimeseriesSchemaResultsPage {
 /// Client view of a [`User`]
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct User {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub id: String,
+}
+
+/// Client view of a [`UserBuiltin`]
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct UserBuiltin {
     /**
      * unique, immutable, system-controlled identifier for each resource
      */
@@ -4972,6 +5139,31 @@ pub struct User {
      */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
+}
+
+/// A single page of results
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct UserBuiltinResultsPage {
+    /**
+     * list of items on this page of results
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub items: Vec<UserBuiltin>,
+
+    /**
+     * token used to fetch the next page of results (if any)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub next_page: String,
 }
 
 /// A single page of results

@@ -218,7 +218,7 @@ impl Projects {
         &self,
         organization_name: &str,
         project_name: &str,
-    ) -> Result<crate::types::ProjectRolesPolicy> {
+    ) -> Result<crate::types::ProjectRolePolicy> {
         let url = format!(
             "/organizations/{}/projects/{}/policy",
             crate::progenitor_support::encode_path(organization_name),
@@ -242,8 +242,8 @@ impl Projects {
         &self,
         organization_name: &str,
         project_name: &str,
-        body: &crate::types::ProjectRolesPolicy,
-    ) -> Result<crate::types::ProjectRolesPolicy> {
+        body: &crate::types::ProjectRolePolicy,
+    ) -> Result<crate::types::ProjectRolePolicy> {
         let url = format!(
             "/organizations/{}/projects/{}/policy",
             crate::progenitor_support::encode_path(organization_name),
