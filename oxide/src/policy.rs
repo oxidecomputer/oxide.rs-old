@@ -17,7 +17,7 @@ impl Policy {
      *
      * This function performs a `GET` to the `/policy` endpoint.
      */
-    pub async fn get(&self) -> Result<crate::types::FleetRolesPolicy> {
+    pub async fn get(&self) -> Result<crate::types::FleetRolePolicy> {
         let url = "/policy".to_string();
         self.client.get(&url, None).await
     }
@@ -29,8 +29,8 @@ impl Policy {
      */
     pub async fn put(
         &self,
-        body: &crate::types::FleetRolesPolicy,
-    ) -> Result<crate::types::FleetRolesPolicy> {
+        body: &crate::types::FleetRolePolicy,
+    ) -> Result<crate::types::FleetRolePolicy> {
         let url = "/policy".to_string();
         self.client
             .put(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))

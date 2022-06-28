@@ -185,7 +185,7 @@ impl Organizations {
     pub async fn get_policy(
         &self,
         organization_name: &str,
-    ) -> Result<crate::types::OrganizationRolesPolicy> {
+    ) -> Result<crate::types::OrganizationRolePolicy> {
         let url = format!(
             "/organizations/{}/policy",
             crate::progenitor_support::encode_path(organization_name),
@@ -206,8 +206,8 @@ impl Organizations {
     pub async fn put_policy(
         &self,
         organization_name: &str,
-        body: &crate::types::OrganizationRolesPolicy,
-    ) -> Result<crate::types::OrganizationRolesPolicy> {
+        body: &crate::types::OrganizationRolePolicy,
+    ) -> Result<crate::types::OrganizationRolePolicy> {
         let url = format!(
             "/organizations/{}/policy",
             crate::progenitor_support::encode_path(organization_name),

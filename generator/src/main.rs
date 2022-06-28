@@ -273,6 +273,7 @@ impl ParameterDataExt for openapiv3::ParameterData {
                                         }
                                         "dateTime" => "chrono::DateTime<chrono::Utc>".to_string(),
                                         "ipv4" => "std::net::Ipv4Addr".to_string(),
+                                        "ipv6" => "std::net::Ipv6Addr".to_string(),
                                         "ip" => "&str".to_string(),
                                         "uri" => "&url::Url".to_string(),
                                         "uri-template" => "&str".to_string(),
@@ -1777,6 +1778,13 @@ impl TypeSpace {
                                     s.schema_data.clone(),
                                 ),
                             )),
+                            "ipv6" => Ok((
+                                Some(uid.to_string()),
+                                TypeDetails::Basic(
+                                    "std::net::Ipv6Addr".to_string(),
+                                    s.schema_data.clone(),
+                                ),
+                            )),
                             "ip" => Ok((
                                 Some(uid.to_string()),
                                 TypeDetails::Basic("String".to_string(), s.schema_data.clone()),
@@ -2341,6 +2349,7 @@ fn gen(api: &OpenAPI, tags: Vec<String>) -> Result<String> {
     /*
      * Deal with any dependencies we require to produce this client.
      */
+    a("#![feature(derive_default_enum)]");
     a("#![allow(clippy::too_many_arguments)]");
     a("#![allow(clippy::nonstandard_macro_braces)]");
     a("#![allow(clippy::large_enum_variant)]");

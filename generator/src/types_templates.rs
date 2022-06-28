@@ -330,6 +330,26 @@ impl JsonSchema for Ipv6Net {
     }
 }"##;
 
+pub const IP_RANGE: &str = r#"#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, Default, JsonSchema)]
+pub enum IpRange {
+    Ipv4Range,
+    #[default]
+    Ipv6Range
+}
+
+impl fmt::Display for IpRange {
+fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+   write!(f, "{}", serde_json::json!(self))
+}
+}
+
+impl std::str::FromStr for IpRange {
+type Err = anyhow::Error;
+fn from_str(s: &str) -> Result<Self, Self::Err> {
+   Ok(serde_json::from_str(s)?)
+}
+}"#;
+
 pub const IP_NET: &str = r#"/// An `IpNet` represents an IP network, either IPv4 or IPv6.
 #[derive(
     Clone, Copy, Debug, Deserialize, PartialEq, Hash, JsonSchema, Serialize,
