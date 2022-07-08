@@ -15,7 +15,7 @@ impl System {
     /**
      * List the built-in system users.
      *
-     * This function performs a `GET` to the `/users_builtin` endpoint.
+     * This function performs a `GET` to the `/system/user` endpoint.
      *
      * **Parameters:**
      *
@@ -25,7 +25,7 @@ impl System {
      *  
      *  Currently, we only support scanning in ascending order.
      */
-    pub async fn builtin_users_get(
+    pub async fn user_list(
         &self,
         limit: u32,
         page_token: &str,
@@ -42,7 +42,7 @@ impl System {
             query_args.push(("sort_by".to_string(), sort_by.to_string()));
         }
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
-        let url = format!("/users_builtin?{}", query_);
+        let url = format!("/system/user?{}", query_);
 
         let resp: crate::types::UserBuiltinResultsPage = self.client.get(&url, None).await?;
 
@@ -53,11 +53,11 @@ impl System {
     /**
      * List the built-in system users.
      *
-     * This function performs a `GET` to the `/users_builtin` endpoint.
+     * This function performs a `GET` to the `/system/user` endpoint.
      *
-     * As opposed to `builtin_users_get`, this function returns all the pages of the request at once.
+     * As opposed to `user_list`, this function returns all the pages of the request at once.
      */
-    pub async fn builtin_users_get_all(
+    pub async fn user_list_all(
         &self,
         sort_by: crate::types::NameSortMode,
     ) -> Result<Vec<crate::types::UserBuiltin>> {
@@ -66,7 +66,7 @@ impl System {
             query_args.push(("sort_by".to_string(), sort_by.to_string()));
         }
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
-        let url = format!("/users_builtin?{}", query_);
+        let url = format!("/system/user?{}", query_);
 
         let mut resp: crate::types::UserBuiltinResultsPage = self.client.get(&url, None).await?;
 
@@ -103,18 +103,15 @@ impl System {
     /**
      * Fetch a specific built-in system user.
      *
-     * This function performs a `GET` to the `/users_builtin/{user_name}` endpoint.
+     * This function performs a `GET` to the `/system/user/{user_name}` endpoint.
      *
      * **Parameters:**
      *
      * * `user_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
-    pub async fn builtin_users_get_user(
-        &self,
-        user_name: &str,
-    ) -> Result<crate::types::UserBuiltin> {
+    pub async fn user_view(&self, user_name: &str) -> Result<crate::types::UserBuiltin> {
         let url = format!(
-            "/users_builtin/{}",
+            "/system/user/{}",
             crate::progenitor_support::encode_path(user_name),
         );
 

@@ -113,6 +113,50 @@ pub struct DerEncodedKeyPair {
     pub public_cert: String,
 }
 
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct DeviceAccessTokenRequest {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub client_id: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub device_code: String,
+
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub grant_type: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct DeviceAuthRequest {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub client_id: String,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct DeviceAuthVerify {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub user_code: String,
+}
+
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 #[serde(tag = "type", content = "value")]
@@ -4515,6 +4559,55 @@ pub struct SessionUser {
     pub id: String,
 }
 
+/**
+ * How users will be provisioned in a silo during authentication.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum UserProvisionType {
+    Fixed,
+    Jit,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for UserProvisionType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            UserProvisionType::Fixed => "fixed",
+            UserProvisionType::Jit => "jit",
+            UserProvisionType::Noop => "",
+            UserProvisionType::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for UserProvisionType {
+    fn default() -> UserProvisionType {
+        UserProvisionType::Fixed
+    }
+}
+impl std::str::FromStr for UserProvisionType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "fixed" {
+            return Ok(UserProvisionType::Fixed);
+        }
+        if s == "jit" {
+            return Ok(UserProvisionType::Jit);
+        }
+        anyhow::bail!("invalid string for UserProvisionType: {}", s);
+    }
+}
+impl UserProvisionType {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, UserProvisionType::Noop)
+    }
+}
+
 /// Client view of a ['Silo']
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Silo {
@@ -4568,6 +4661,12 @@ pub struct Silo {
      */
     #[serde()]
     pub time_modified: crate::utils::DisplayOptionDateTime,
+
+    /**
+     * How users will be provisioned in a silo during authentication.
+     */
+    #[serde(default, skip_serializing_if = "UserProvisionType::is_noop")]
+    pub user_provision_type: UserProvisionType,
 }
 
 /// Create-time parameters for a [`Silo`](crate::external_api::views::Silo)
@@ -4595,6 +4694,12 @@ pub struct SiloCreate {
         deserialize_with = "crate::utils::deserialize_null_boolean::deserialize"
     )]
     pub discoverable: bool,
+
+    /**
+     * How users will be provisioned in a silo during authentication.
+     */
+    #[serde(default, skip_serializing_if = "UserProvisionType::is_noop")]
+    pub user_provision_type: UserProvisionType,
 }
 
 /// A single page of results
@@ -5093,6 +5198,16 @@ pub struct User {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub id: String,
+
+    /**
+     * Human-readable name that can identify the user
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub display_name: String,
 }
 
 /// Client view of a [`UserBuiltin`]

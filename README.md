@@ -1,4 +1,4 @@
-# oxide.rs 
+# oxide.rs
 
 The Rust API client for Oxide.
 
@@ -17,11 +17,12 @@ Alternatively, if you wish to generate the client locally, run:
 $ make generate
 ```
 
+**Important: Currently the spec is being [modified](./scripts/tag-swap.sh) to use the old operation IDs as a lot of work needs to be done with the current generator.**
+
 ## Contributing
 
 Please do not change the code directly since it is generated. PRs that change
 the code directly will be automatically closed by a bot.
-
 
 ### Releasing a new version
 
