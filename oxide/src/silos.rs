@@ -293,7 +293,7 @@ impl Silos {
      *
      * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
-    pub async fn saml_idp_create(
+    pub async fn saml_idp_fetch(
         &self,
         silo_name: &str,
         body: &crate::types::SamlIdentityProviderCreate,
@@ -318,7 +318,7 @@ impl Silos {
      * * `provider_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
-    pub async fn saml_idp_fetch(
+    pub async fn saml_idp_create(
         &self,
         provider_name: &str,
         silo_name: &str,

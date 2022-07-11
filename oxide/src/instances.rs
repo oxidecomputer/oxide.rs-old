@@ -657,7 +657,7 @@ impl Instances {
     /**
      * Get contents of an instance's serial console.
      *
-     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/serial` endpoint.
+     * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/instances/{instance_name}/serial-console` endpoint.
      *
      * **Parameters:**
      *
@@ -689,7 +689,7 @@ impl Instances {
         }
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
-            "/organizations/{}/projects/{}/instances/{}/serial?{}",
+            "/organizations/{}/projects/{}/instances/{}/serial-console?{}",
             crate::progenitor_support::encode_path(organization_name),
             crate::progenitor_support::encode_path(project_name),
             crate::progenitor_support::encode_path(instance_name),

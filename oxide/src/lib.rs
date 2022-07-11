@@ -29,7 +29,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! oxide-api = "0.1.0-rc.38"
+//! oxide-api = "0.1.0-rc.39"
 //! ```
 //!
 //! ## Basic example
@@ -68,10 +68,6 @@
 ///
 ///FROM: http://oxide.computer/docs/#xxx
 pub mod disks;
-/// Firewall operation controls the flow of network data into a VPC.
-///
-///FROM: http://oxide.computer/docs/#xxx
-pub mod firewall;
 /// TODO operations that will not ship to customers.
 ///
 ///FROM: http://oxide.computer/docs/#xxx
@@ -408,13 +404,6 @@ impl Client {
         disks::Disks::new(self.clone())
     }
 
-    /// Firewall operation controls the flow of network data into a VPC.
-    ///
-    ///FROM: http://oxide.computer/docs/#xxx
-    pub fn firewall(&self) -> firewall::Firewall {
-        firewall::Firewall::new(self.clone())
-    }
-
     /// TODO operations that will not ship to customers.
     ///
     ///FROM: http://oxide.computer/docs/#xxx
@@ -520,18 +509,18 @@ impl Client {
         sagas::Sagas::new(self.clone())
     }
 
-    /// Silos represent a logical partition of users and resources.
-    ///
-    ///FROM: http://oxide.computer/docs/#xxx
-    pub fn silos(&self) -> silos::Silos {
-        silos::Silos::new(self.clone())
-    }
-
     /// This tag should be moved into hardware.
     ///
     ///FROM: http://oxide.computer/docs/#xxx
     pub fn sleds(&self) -> sleds::Sleds {
         sleds::Sleds::new(self.clone())
+    }
+
+    /// Silos represent a logical partition of users and resources.
+    ///
+    ///FROM: http://oxide.computer/docs/#xxx
+    pub fn silos(&self) -> silos::Silos {
+        silos::Silos::new(self.clone())
     }
 
     /// Snapshots of Virtual Disks at a particular point in time.

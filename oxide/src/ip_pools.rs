@@ -283,7 +283,7 @@ impl IpPools {
     /**
      * Remove a range from an existing IP Pool.
      *
-     * This function performs a `POST` to the `/ip-pools/{pool_name}/ranges/delete` endpoint.
+     * This function performs a `POST` to the `/ip-pools/{pool_name}/ranges/remove` endpoint.
      *
      * **Parameters:**
      *
@@ -291,7 +291,7 @@ impl IpPools {
      */
     pub async fn ranges_delete(&self, pool_name: &str, body: &crate::types::IpRange) -> Result<()> {
         let url = format!(
-            "/ip-pools/{}/ranges/delete",
+            "/ip-pools/{}/ranges/remove",
             crate::progenitor_support::encode_path(pool_name),
         );
 

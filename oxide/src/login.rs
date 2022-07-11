@@ -46,13 +46,18 @@ impl Login {
      * * `provider_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
      */
-    pub async fn consume_credentials(&self, provider_name: &str, silo_name: &str) -> Result<()> {
+    pub async fn consume_credentials<B: Into<reqwest::Body>>(
+        &self,
+        provider_name: &str,
+        silo_name: &str,
+        body: B,
+    ) -> Result<()> {
         let url = format!(
             "/login/{}/{}",
             crate::progenitor_support::encode_path(silo_name),
             crate::progenitor_support::encode_path(provider_name),
         );
 
-        self.client.post(&url, None).await
+        self.client.post(&url, Some(body.into())).await
     }
 }

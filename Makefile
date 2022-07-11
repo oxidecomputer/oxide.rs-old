@@ -17,12 +17,14 @@ target/debug/generator: generator/src/*.rs generator/Cargo.toml
 	cargo build --bin generator
 
 clean-spec:
-	$(RM) $(SPEC)
+	$(RM) $(SPEC)e
 
 update: update-specs
 
+# Add step to convert spec with old operation IDs
 update-specs: clean-spec
 	$(MAKE) $(SPEC)
+	./scripts/tag-swap.sh
 
 $(SPEC):
 	curl -sSL $(SPEC_REMOTE) -o $@
