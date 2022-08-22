@@ -13,7 +13,7 @@ impl Roles {
     }
 
     /**
-     * List the built-in roles.
+     * List built-in roles.
      *
      * This function performs a `GET` to the `/roles` endpoint.
      *
@@ -40,7 +40,7 @@ impl Roles {
     }
 
     /**
-     * List the built-in roles.
+     * List built-in roles.
      *
      * This function performs a `GET` to the `/roles` endpoint.
      *
@@ -81,7 +81,7 @@ impl Roles {
     }
 
     /**
-     * Fetch a specific built-in role.
+     * Fetch a built-in role.
      *
      * This function performs a `GET` to the `/roles/{role_name}` endpoint.
      *

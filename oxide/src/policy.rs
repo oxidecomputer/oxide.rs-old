@@ -15,23 +15,23 @@ impl Policy {
     /**
      * Fetch the top-level IAM policy.
      *
-     * This function performs a `GET` to the `/policy` endpoint.
+     * This function performs a `GET` to the `/global/policy` endpoint.
      */
-    pub async fn get(&self) -> Result<crate::types::FleetRolePolicy> {
-        let url = "/policy".to_string();
+    pub async fn global_view(&self) -> Result<crate::types::FleetRolePolicy> {
+        let url = "/global/policy".to_string();
         self.client.get(&url, None).await
     }
 
     /**
      * Update the top-level IAM policy.
      *
-     * This function performs a `PUT` to the `/policy` endpoint.
+     * This function performs a `PUT` to the `/global/policy` endpoint.
      */
-    pub async fn put(
+    pub async fn global_update(
         &self,
         body: &crate::types::FleetRolePolicy,
     ) -> Result<crate::types::FleetRolePolicy> {
-        let url = "/policy".to_string();
+        let url = "/global/policy".to_string();
         self.client
             .put(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))
             .await

@@ -13,7 +13,76 @@ impl Vpcs {
     }
 
     /**
-     * List VPCs in a project.
+     * Fetch a route by id.
+     *
+     * This function performs a `GET` to the `/by-id/vpc-router-routes/{id}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `id: &str`
+     */
+    pub async fn router_route_view(&self, id: &str) -> Result<crate::types::RouterRoute> {
+        let url = format!(
+            "/by-id/vpc-router-routes/{}",
+            crate::progenitor_support::encode_path(id),
+        );
+
+        self.client.get(&url, None).await
+    }
+
+    /**
+     * Get a router by id.
+     *
+     * This function performs a `GET` to the `/by-id/vpc-routers/{id}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `id: &str`
+     */
+    pub async fn router_view(&self, id: &str) -> Result<crate::types::VpcRouter> {
+        let url = format!(
+            "/by-id/vpc-routers/{}",
+            crate::progenitor_support::encode_path(id),
+        );
+
+        self.client.get(&url, None).await
+    }
+
+    /**
+     * Fetch a subnet by id.
+     *
+     * This function performs a `GET` to the `/by-id/vpc-subnets/{id}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `id: &str`
+     */
+    pub async fn subnet_view(&self, id: &str) -> Result<crate::types::VpcSubnet> {
+        let url = format!(
+            "/by-id/vpc-subnets/{}",
+            crate::progenitor_support::encode_path(id),
+        );
+
+        self.client.get(&url, None).await
+    }
+
+    /**
+     * Fetch a VPC.
+     *
+     * This function performs a `GET` to the `/by-id/vpcs/{id}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `id: &str`
+     */
+    pub async fn view(&self, id: &str) -> Result<crate::types::Vpc> {
+        let url = format!("/by-id/vpcs/{}", crate::progenitor_support::encode_path(id),);
+
+        self.client.get(&url, None).await
+    }
+
+    /**
+     * List VPCs.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs` endpoint.
      *
@@ -24,8 +93,8 @@ impl Vpcs {
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get_page(
         &self,
@@ -60,7 +129,7 @@ impl Vpcs {
     }
 
     /**
-     * List VPCs in a project.
+     * List VPCs.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs` endpoint.
      *
@@ -117,14 +186,14 @@ impl Vpcs {
     }
 
     /**
-     * Create a VPC in a project.
+     * Create a VPC.
      *
      * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/vpcs` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn post(
         &self,
@@ -144,15 +213,15 @@ impl Vpcs {
     }
 
     /**
-     * Get a VPC in a project.
+     * Fetch a VPC.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get(
         &self,
@@ -177,9 +246,9 @@ impl Vpcs {
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn put(
         &self,
@@ -201,15 +270,15 @@ impl Vpcs {
     }
 
     /**
-     * Delete a vpc from a project.
+     * Delete a VPC.
      *
      * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn delete(
         &self,
@@ -228,15 +297,15 @@ impl Vpcs {
     }
 
     /**
-     * List firewall rules for a VPC.
+     * List firewall rules.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/firewall/rules` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn firewall_rules_get(
         &self,
@@ -255,15 +324,15 @@ impl Vpcs {
     }
 
     /**
-     * Replace the firewall rules for a VPC.
+     * Replace firewall rules.
      *
      * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/vpcs/{vpc_name}/firewall/rules` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `vpc_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn firewall_rules_put(
         &self,

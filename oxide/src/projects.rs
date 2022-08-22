@@ -13,7 +13,25 @@ impl Projects {
     }
 
     /**
-     * List all projects.
+     * Fetch a project by id.
+     *
+     * This function performs a `GET` to the `/by-id/projects/{id}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `id: &str`
+     */
+    pub async fn view(&self, id: &str) -> Result<crate::types::Project> {
+        let url = format!(
+            "/by-id/projects/{}",
+            crate::progenitor_support::encode_path(id),
+        );
+
+        self.client.get(&url, None).await
+    }
+
+    /**
+     * List projects.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects` endpoint.
      *
@@ -22,7 +40,7 @@ impl Projects {
      * * `limit: u32` -- Maximum number of items returned by a single call.
      * * `page_token: &str` -- Token returned by previous call to retrieve the subsequent page.
      * * `sort_by: crate::types::NameOrIdSortMode` -- Supported set of sort modes for scanning by name or id.
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get_page(
         &self,
@@ -55,7 +73,7 @@ impl Projects {
     }
 
     /**
-     * List all projects.
+     * List projects.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects` endpoint.
      *
@@ -110,13 +128,13 @@ impl Projects {
     }
 
     /**
-     * Create a new project.
+     * Create a project.
      *
      * This function performs a `POST` to the `/organizations/{organization_name}/projects` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn post(
         &self,
@@ -134,14 +152,14 @@ impl Projects {
     }
 
     /**
-     * Fetch a specific project.
+     * Fetch a project.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get(
         &self,
@@ -158,14 +176,14 @@ impl Projects {
     }
 
     /**
-     * Update a specific project.
+     * Update a project.
      *
      * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn put(
         &self,
@@ -185,14 +203,14 @@ impl Projects {
     }
 
     /**
-     * Delete a specific project.
+     * Delete a project.
      *
      * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn delete(&self, organization_name: &str, project_name: &str) -> Result<()> {
         let url = format!(
@@ -205,14 +223,14 @@ impl Projects {
     }
 
     /**
-     * Fetch the IAM policy for this Project.
+     * Fetch a project's IAM policy.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/policy` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get_policy(
         &self,
@@ -229,14 +247,14 @@ impl Projects {
     }
 
     /**
-     * Update the IAM policy for this Project.
+     * Update a project's IAM policy.
      *
      * This function performs a `PUT` to the `/organizations/{organization_name}/projects/{project_name}/policy` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn put_policy(
         &self,

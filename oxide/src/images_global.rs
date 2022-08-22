@@ -13,6 +13,24 @@ impl ImagesGlobal {
     }
 
     /**
+     * Fetch a global image by id.
+     *
+     * This function performs a `GET` to the `/by-id/global-images/{id}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `id: &str`
+     */
+    pub async fn image_global_view(&self, id: &str) -> Result<crate::types::GlobalImage> {
+        let url = format!(
+            "/by-id/global-images/{}",
+            crate::progenitor_support::encode_path(id),
+        );
+
+        self.client.get(&url, None).await
+    }
+
+    /**
      * List global images.
      *
      * This function performs a `GET` to the `/images` endpoint.
@@ -122,7 +140,7 @@ impl ImagesGlobal {
     }
 
     /**
-     * Get a global image.
+     * Fetch a global image.
      *
      * This function performs a `GET` to the `/images/{image_name}` endpoint.
      *
@@ -130,7 +148,7 @@ impl ImagesGlobal {
      *
      * **Parameters:**
      *
-     * * `image_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `image_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn images_get_image(&self, image_name: &str) -> Result<crate::types::GlobalImage> {
         let url = format!(
@@ -150,7 +168,7 @@ impl ImagesGlobal {
      *
      * **Parameters:**
      *
-     * * `image_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `image_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn images_delete_image(&self, image_name: &str) -> Result<()> {
         let url = format!(

@@ -13,7 +13,7 @@ impl Sagas {
     }
 
     /**
-     * List all sagas (for debugging).
+     * List sagas.
      *
      * This function performs a `GET` to the `/sagas` endpoint.
      *
@@ -51,7 +51,7 @@ impl Sagas {
     }
 
     /**
-     * List all sagas (for debugging).
+     * List sagas.
      *
      * This function performs a `GET` to the `/sagas` endpoint.
      *
@@ -101,7 +101,7 @@ impl Sagas {
     }
 
     /**
-     * Fetch information about a single saga (for debugging).
+     * Fetch a saga.
      *
      * This function performs a `GET` to the `/sagas/{saga_id}` endpoint.
      *

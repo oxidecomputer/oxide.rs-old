@@ -409,51 +409,8 @@ pub fn generate_files(
                     &fn_inner,
                     &fn_name,
                 );
-
-                let index = docs_params.iter().position(|x| *x == "page_token").unwrap();
-                docs_params.remove(index);
-                let index = docs_params.iter().position(|x| *x == "limit").unwrap();
-                docs_params.remove(index);
-
-                // TODO: Remove this code once we have restored examples. Leaving this here for now
-                // will be useful to know how the examples were being generated
-                // example.insert(
-                //     "example".to_string(),
-                //     format!(
-                //         "{}\n\n// - OR -\n\n{}\nlet {} = client.{}().{}({}).await?;",
-                //         example.get("example").unwrap(),
-                //         docs,
-                //         to_snake_case(&frt).trim_start_matches("crate_types_"),
-                //         tag,
-                //         fn_name,
-                //         docs_params.join(", ")
-                //     ),
-                // );
             }
 
-            // TODO: Remove this code once we have restored examples. Leaving this here for now
-            // will be useful to know how the examples were being generated
-            // new_operation
-            //     .extensions
-            //     .insert("x-rust".to_string(), serde_json::json!(example));
-            // match m {
-            //     "GET" => {
-            //         new_op.get = Some(new_operation);
-            //     }
-            //     "POST" => {
-            //         new_op.post = Some(new_operation);
-            //     }
-            //     "PUT" => {
-            //         new_op.put = Some(new_operation);
-            //     }
-            //     "PATCH" => {
-            //         new_op.patch = Some(new_operation);
-            //     }
-            //     "DELETE" => {
-            //         new_op.delete = Some(new_operation);
-            //     }
-            //     _ => {}
-            // }
             new_api
                 .paths
                 .insert(pn.to_string(), openapiv3::ReferenceOr::Item(new_op.clone()));
@@ -708,6 +665,9 @@ fn get_fn_params(
                     || (op_id == "project_instances_instance_serial_get" && typ == "u64")
                 {
                     fn_params_str.push(format!("{}: Option<{}>,", nam, typ));
+                    fn_params.push(nam.to_string());
+                } else if typ == "crate::types::DiskMetricName" {
+                    fn_params_str.push(format!("{}: &str,", nam));
                     fn_params.push(nam.to_string());
                 } else {
                     let p = format!("{}: {},", nam, typ);

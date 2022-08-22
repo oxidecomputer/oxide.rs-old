@@ -558,3 +558,85 @@ impl std::str::FromStr for DiskSourceType {
     }
 }
 "##;
+
+pub const DATUM: &str = r##"#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum Datum {
+    Bool,
+    Bytes,
+    CumulativeF64,
+    CumulativeI64,
+    F64,
+    HistogramF64,
+    HistogramI64,
+    I64,
+    String,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for Datum {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            Datum::Bool => "bool",
+            Datum::Bytes => "bytes",
+            Datum::CumulativeF64 => "cumulative_f_64",
+            Datum::CumulativeI64 => "cumulative_i_64",
+            Datum::F64 => "f_64",
+            Datum::HistogramF64 => "histogram_f_64",
+            Datum::HistogramI64 => "histogram_i_64",
+            Datum::I64 => "i_64",
+            Datum::String => "string",
+            Datum::Noop => "",
+            Datum::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for Datum {
+    fn default() -> Datum {
+        Datum::Bool
+    }
+}
+impl std::str::FromStr for Datum {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "bool" {
+            return Ok(Datum::Bool);
+        }
+        if s == "bytes" {
+            return Ok(Datum::Bytes);
+        }
+        if s == "cumulative_f_64" {
+            return Ok(Datum::CumulativeF64);
+        }
+        if s == "cumulative_i_64" {
+            return Ok(Datum::CumulativeI64);
+        }
+        if s == "f_64" {
+            return Ok(Datum::F64);
+        }
+        if s == "histogram_f_64" {
+            return Ok(Datum::HistogramF64);
+        }
+        if s == "histogram_i_64" {
+            return Ok(Datum::HistogramI64);
+        }
+        if s == "i_64" {
+            return Ok(Datum::I64);
+        }
+        if s == "string" {
+            return Ok(Datum::String);
+        }
+        anyhow::bail!("invalid string for Datum: {}", s);
+    }
+}
+impl Datum {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, Datum::Noop)
+    }
+}
+"##;

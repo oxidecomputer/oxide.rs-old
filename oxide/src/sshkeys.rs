@@ -13,9 +13,11 @@ impl Sshkeys {
     }
 
     /**
-     * List the current user's SSH public keys.
+     * List SSH public keys.
      *
      * This function performs a `GET` to the `/session/me/sshkeys` endpoint.
+     *
+     * Lists SSH public keys for the currently authenticated user.
      *
      * **Parameters:**
      *
@@ -51,11 +53,13 @@ impl Sshkeys {
     }
 
     /**
-     * List the current user's SSH public keys.
+     * List SSH public keys.
      *
      * This function performs a `GET` to the `/session/me/sshkeys` endpoint.
      *
      * As opposed to `get`, this function returns all the pages of the request at once.
+     *
+     * Lists SSH public keys for the currently authenticated user.
      */
     pub async fn get_all(
         &self,
@@ -101,9 +105,11 @@ impl Sshkeys {
     }
 
     /**
-     * Create a new SSH public key for the current user.
+     * Create an SSH public key.
      *
      * This function performs a `POST` to the `/session/me/sshkeys` endpoint.
+     *
+     * Create an SSH public key for the currently authenticated user.
      */
     pub async fn post(&self, body: &crate::types::SshKeyCreate) -> Result<crate::types::SshKey> {
         let url = "/session/me/sshkeys".to_string();
@@ -113,13 +119,15 @@ impl Sshkeys {
     }
 
     /**
-     * Get (by name) an SSH public key belonging to the current user.
+     * Fetch an SSH public key.
      *
      * This function performs a `GET` to the `/session/me/sshkeys/{ssh_key_name}` endpoint.
      *
+     * Fetch an SSH public key associated with the currently authenticated user.
+     *
      * **Parameters:**
      *
-     * * `ssh_key_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `ssh_key_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get_key(&self, ssh_key_name: &str) -> Result<crate::types::SshKey> {
         let url = format!(
@@ -131,13 +139,15 @@ impl Sshkeys {
     }
 
     /**
-     * Delete (by name) an SSH public key belonging to the current user.
+     * Delete an SSH public key.
      *
      * This function performs a `DELETE` to the `/session/me/sshkeys/{ssh_key_name}` endpoint.
      *
+     * Delete an SSH public key associated with the currently authenticated user.
+     *
      * **Parameters:**
      *
-     * * `ssh_key_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `ssh_key_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn delete_key(&self, ssh_key_name: &str) -> Result<()> {
         let url = format!(

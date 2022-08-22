@@ -47,6 +47,10 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
             } else if sn == "Error" {
                 a(crate::types_templates::ERROR);
                 sn = "ErrorResponse".to_string();
+            } else if sn == "Datum" {
+                a(crate::types_templates::DATUM);
+
+                continue;
             }
 
             match &te.details {
@@ -104,6 +108,8 @@ pub fn generate_types(api: &openapiv3::OpenAPI, ts: &mut TypeSpace) -> Result<St
                         && sn != "SamlIdentityProviderCreate"
                         && sn != "Ipv4Range"
                         && sn != "Ipv6Range"
+                        && sn != "Binint64"
+                        && sn != "Bindouble"
                     {
                         a("Default,");
                     }
@@ -389,6 +395,10 @@ fn do_one_of_type(
 
     if sn == "DiskSource" {
         return crate::types_templates::DISK_SOURCE.to_string();
+    }
+
+    if sn == "Datum" {
+        return crate::types_templates::DATUM.to_string();
     }
 
     let mut tag = "";

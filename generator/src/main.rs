@@ -1262,6 +1262,24 @@ impl TypeSpace {
                             "",
                             is_reference,
                         );
+                    } else if !name.contains("one") {
+                        // Let's try to append "one" onto the end and see if that helps.
+                        let new_name = format!("{} one", name);
+                        return self.add_if_not_exists(
+                            Some(clean_name(&new_name)),
+                            details,
+                            "",
+                            is_reference,
+                        );
+                    } else if !name.contains("two") {
+                        // Let's try to append "two" onto the end and see if that helps.
+                        let new_name = format!("{} two", name);
+                        return self.add_if_not_exists(
+                            Some(clean_name(&new_name)),
+                            details,
+                            "",
+                            is_reference,
+                        );
                     }
 
                     // If we don't have anything to append, let's bail.

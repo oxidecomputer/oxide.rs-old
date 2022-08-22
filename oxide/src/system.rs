@@ -13,7 +13,7 @@ impl System {
     }
 
     /**
-     * List the built-in system users.
+     * List built-in users.
      *
      * This function performs a `GET` to the `/system/user` endpoint.
      *
@@ -51,7 +51,7 @@ impl System {
     }
 
     /**
-     * List the built-in system users.
+     * List built-in users.
      *
      * This function performs a `GET` to the `/system/user` endpoint.
      *
@@ -101,13 +101,13 @@ impl System {
     }
 
     /**
-     * Fetch a specific built-in system user.
+     * Fetch a built-in user.
      *
      * This function performs a `GET` to the `/system/user/{user_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `user_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `user_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn user_view(&self, user_name: &str) -> Result<crate::types::UserBuiltin> {
         let url = format!(
