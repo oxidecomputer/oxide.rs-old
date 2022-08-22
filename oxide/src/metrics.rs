@@ -13,7 +13,7 @@ impl Metrics {
     }
 
     /**
-     * List all timeseries schema.
+     * List timeseries schema.
      *
      * This function performs a `GET` to the `/timeseries/schema` endpoint.
      *
@@ -44,7 +44,7 @@ impl Metrics {
     }
 
     /**
-     * List all timeseries schema.
+     * List timeseries schema.
      *
      * This function performs a `GET` to the `/timeseries/schema` endpoint.
      *

@@ -13,7 +13,7 @@ impl Updates {
     }
 
     /**
-     * Refresh update metadata.
+     * Refresh update data.
      *
      * This function performs a `POST` to the `/updates/refresh` endpoint.
      */

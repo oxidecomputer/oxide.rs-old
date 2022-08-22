@@ -13,7 +13,25 @@ impl Snapshots {
     }
 
     /**
-     * List snapshots in a project.
+     * Fetch a snapshot by id.
+     *
+     * This function performs a `GET` to the `/by-id/snapshots/{id}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `id: &str`
+     */
+    pub async fn view(&self, id: &str) -> Result<crate::types::Snapshot> {
+        let url = format!(
+            "/by-id/snapshots/{}",
+            crate::progenitor_support::encode_path(id),
+        );
+
+        self.client.get(&url, None).await
+    }
+
+    /**
+     * List snapshots.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/snapshots` endpoint.
      *
@@ -24,8 +42,8 @@ impl Snapshots {
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
      *  
      *  Currently, we only support scanning in ascending order.
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get_page(
         &self,
@@ -60,7 +78,7 @@ impl Snapshots {
     }
 
     /**
-     * List snapshots in a project.
+     * List snapshots.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/snapshots` endpoint.
      *
@@ -117,14 +135,16 @@ impl Snapshots {
     }
 
     /**
-     * Create a snapshot of a disk.
+     * Create a snapshot.
      *
      * This function performs a `POST` to the `/organizations/{organization_name}/projects/{project_name}/snapshots` endpoint.
      *
+     * Creates a point-in-time snapshot from a disk.
+     *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn post(
         &self,
@@ -144,15 +164,15 @@ impl Snapshots {
     }
 
     /**
-     * Get a snapshot in a project.
+     * Fetch a snapshot.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/projects/{project_name}/snapshots/{snapshot_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `snapshot_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `snapshot_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get(
         &self,
@@ -171,15 +191,15 @@ impl Snapshots {
     }
 
     /**
-     * Delete a snapshot from a project.
+     * Delete a snapshot.
      *
      * This function performs a `DELETE` to the `/organizations/{organization_name}/projects/{project_name}/snapshots/{snapshot_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `snapshot_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `project_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `snapshot_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn delete(
         &self,

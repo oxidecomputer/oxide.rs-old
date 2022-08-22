@@ -13,7 +13,25 @@ impl Organizations {
     }
 
     /**
-     * List all organizations.
+     * Fetch an organization by id.
+     *
+     * This function performs a `GET` to the `/by-id/organizations/{id}` endpoint.
+     *
+     * **Parameters:**
+     *
+     * * `id: &str`
+     */
+    pub async fn view(&self, id: &str) -> Result<crate::types::Organization> {
+        let url = format!(
+            "/by-id/organizations/{}",
+            crate::progenitor_support::encode_path(id),
+        );
+
+        self.client.get(&url, None).await
+    }
+
+    /**
+     * List organizations.
      *
      * This function performs a `GET` to the `/organizations` endpoint.
      *
@@ -49,7 +67,7 @@ impl Organizations {
     }
 
     /**
-     * List all organizations.
+     * List organizations.
      *
      * This function performs a `GET` to the `/organizations` endpoint.
      *
@@ -99,7 +117,7 @@ impl Organizations {
     }
 
     /**
-     * Create a new organization.
+     * Create an organization.
      *
      * This function performs a `POST` to the `/organizations` endpoint.
      */
@@ -114,13 +132,13 @@ impl Organizations {
     }
 
     /**
-     * Fetch a specific organization.
+     * Fetch an organization.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get(&self, organization_name: &str) -> Result<crate::types::Organization> {
         let url = format!(
@@ -132,13 +150,13 @@ impl Organizations {
     }
 
     /**
-     * Update a specific organization.
+     * Update an organization.
      *
      * This function performs a `PUT` to the `/organizations/{organization_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn put(
         &self,
@@ -156,13 +174,13 @@ impl Organizations {
     }
 
     /**
-     * Delete a specific organization.
+     * Delete an organization.
      *
      * This function performs a `DELETE` to the `/organizations/{organization_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn delete(&self, organization_name: &str) -> Result<()> {
         let url = format!(
@@ -174,13 +192,13 @@ impl Organizations {
     }
 
     /**
-     * Fetch the IAM policy for this Organization.
+     * Fetch an organization's IAM policy.
      *
      * This function performs a `GET` to the `/organizations/{organization_name}/policy` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get_policy(
         &self,
@@ -195,13 +213,13 @@ impl Organizations {
     }
 
     /**
-     * Update the IAM policy for this Organization.
+     * Update an organization's IAM policy.
      *
      * This function performs a `PUT` to the `/organizations/{organization_name}/policy` endpoint.
      *
      * **Parameters:**
      *
-     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `organization_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn put_policy(
         &self,

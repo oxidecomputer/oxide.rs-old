@@ -6,6 +6,401 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use tabled::Tabled;
 
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[serde(tag = "type", content = "start")]
+pub enum BinRangedouble {
+    RangeTo(f64),
+    Range { end: f64, start: f64 },
+    RangeFrom(f64),
+}
+
+impl fmt::Display for BinRangedouble {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let j = serde_json::json!(self);
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["start"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["start"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        if tag == "internet_gateway" {
+            tag = "inetgw".to_string();
+        }
+        write!(f, "{}={}", tag, content)
+    }
+}
+
+impl std::str::FromStr for BinRangedouble {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for BinRangedouble, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "range_to" {
+            j = format!(
+                r#"{{
+"type": "range_to",
+"start": {}
+        }}"#,
+                serde_json::json!(f64::from_str(&content).unwrap())
+            );
+        }
+        if tag == "range" {
+            j = format!(
+                r#"{{
+"type": "range",
+"start": {}
+        }}"#,
+                serde_json::json!(f64::from_str(&content).unwrap())
+            );
+        }
+        if tag == "range" {
+            j = format!(
+                r#"{{
+"type": "range",
+"start": {}
+        }}"#,
+                serde_json::json!(f64::from_str(&content).unwrap())
+            );
+        }
+        if tag == "range_from" {
+            j = format!(
+                r#"{{
+"type": "range_from",
+"start": {}
+        }}"#,
+                serde_json::json!(f64::from_str(&content).unwrap())
+            );
+        }
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl BinRangedouble {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "range".to_string(),
+            "range_from".to_string(),
+            "range_to".to_string(),
+        ]
+    }
+}
+/**
+ * The types for BinRangedouble.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum BinRangedoubleType {
+    Range,
+    RangeFrom,
+    RangeTo,
+}
+
+impl std::fmt::Display for BinRangedoubleType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            BinRangedoubleType::Range => "range",
+            BinRangedoubleType::RangeFrom => "range_from",
+            BinRangedoubleType::RangeTo => "range_to",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for BinRangedoubleType {
+    fn default() -> BinRangedoubleType {
+        BinRangedoubleType::Range
+    }
+}
+impl std::str::FromStr for BinRangedoubleType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "range" {
+            return Ok(BinRangedoubleType::Range);
+        }
+        if s == "range_from" {
+            return Ok(BinRangedoubleType::RangeFrom);
+        }
+        if s == "range_to" {
+            return Ok(BinRangedoubleType::RangeTo);
+        }
+        anyhow::bail!("invalid string for BinRangedoubleType: {}", s);
+    }
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[serde(tag = "type", content = "start")]
+pub enum BinRangeint64 {
+    RangeTo(i64),
+    Range { end: i64, start: i64 },
+    RangeFrom(i64),
+}
+
+impl fmt::Display for BinRangeint64 {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let j = serde_json::json!(self);
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String = serde_json::from_value(j["start"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["start"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        if tag == "internet_gateway" {
+            tag = "inetgw".to_string();
+        }
+        write!(f, "{}={}", tag, content)
+    }
+}
+
+impl std::str::FromStr for BinRangeint64 {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for BinRangeint64, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "range_to" {
+            j = format!(
+                r#"{{
+"type": "range_to",
+"start": {}
+        }}"#,
+                serde_json::json!(i64::from_str(&content).unwrap())
+            );
+        }
+        if tag == "range" {
+            j = format!(
+                r#"{{
+"type": "range",
+"start": {}
+        }}"#,
+                serde_json::json!(i64::from_str(&content).unwrap())
+            );
+        }
+        if tag == "range" {
+            j = format!(
+                r#"{{
+"type": "range",
+"start": {}
+        }}"#,
+                serde_json::json!(i64::from_str(&content).unwrap())
+            );
+        }
+        if tag == "range_from" {
+            j = format!(
+                r#"{{
+"type": "range_from",
+"start": {}
+        }}"#,
+                serde_json::json!(i64::from_str(&content).unwrap())
+            );
+        }
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl BinRangeint64 {
+    pub fn variants() -> Vec<String> {
+        vec![
+            "range".to_string(),
+            "range_from".to_string(),
+            "range_to".to_string(),
+        ]
+    }
+}
+/**
+ * The types for BinRangeint64.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum BinRangeint64Type {
+    Range,
+    RangeFrom,
+    RangeTo,
+}
+
+impl std::fmt::Display for BinRangeint64Type {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            BinRangeint64Type::Range => "range",
+            BinRangeint64Type::RangeFrom => "range_from",
+            BinRangeint64Type::RangeTo => "range_to",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for BinRangeint64Type {
+    fn default() -> BinRangeint64Type {
+        BinRangeint64Type::Range
+    }
+}
+impl std::str::FromStr for BinRangeint64Type {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "range" {
+            return Ok(BinRangeint64Type::Range);
+        }
+        if s == "range_from" {
+            return Ok(BinRangeint64Type::RangeFrom);
+        }
+        if s == "range_to" {
+            return Ok(BinRangeint64Type::RangeTo);
+        }
+        anyhow::bail!("invalid string for BinRangeint64Type: {}", s);
+    }
+}
+
+/// Type storing bin edges and a count of samples within it.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub struct Bindouble {
+    /**
+     * The total count of samples in this bin.
+     */
+    #[serde(default)]
+    pub count: u64,
+
+    #[serde()]
+    pub range: BinRangedouble,
+}
+
+/// Type storing bin edges and a count of samples within it.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+pub struct Binint64 {
+    /**
+     * The total count of samples in this bin.
+     */
+    #[serde(default)]
+    pub count: u64,
+
+    #[serde()]
+    pub range: BinRangeint64,
+}
+
+/// A cumulative or counter data type.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct Cumulativedouble {
+    #[serde()]
+    pub start_time: crate::utils::DisplayOptionDateTime,
+
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_f64",
+        deserialize_with = "crate::utils::deserialize_null_f64::deserialize"
+    )]
+    pub value: f64,
+}
+
+/// A cumulative or counter data type.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct Cumulativeint64 {
+    #[serde()]
+    pub start_time: crate::utils::DisplayOptionDateTime,
+
+    #[serde(
+        default,
+        skip_serializing_if = "crate::utils::zero_i64",
+        deserialize_with = "crate::utils::deserialize_null_i64::deserialize"
+    )]
+    pub value: i64,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum Datum {
+    Bool,
+    Bytes,
+    CumulativeF64,
+    CumulativeI64,
+    F64,
+    HistogramF64,
+    HistogramI64,
+    I64,
+    String,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for Datum {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            Datum::Bool => "bool",
+            Datum::Bytes => "bytes",
+            Datum::CumulativeF64 => "cumulative_f_64",
+            Datum::CumulativeI64 => "cumulative_i_64",
+            Datum::F64 => "f_64",
+            Datum::HistogramF64 => "histogram_f_64",
+            Datum::HistogramI64 => "histogram_i_64",
+            Datum::I64 => "i_64",
+            Datum::String => "string",
+            Datum::Noop => "",
+            Datum::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for Datum {
+    fn default() -> Datum {
+        Datum::Bool
+    }
+}
+impl std::str::FromStr for Datum {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "bool" {
+            return Ok(Datum::Bool);
+        }
+        if s == "bytes" {
+            return Ok(Datum::Bytes);
+        }
+        if s == "cumulative_f_64" {
+            return Ok(Datum::CumulativeF64);
+        }
+        if s == "cumulative_i_64" {
+            return Ok(Datum::CumulativeI64);
+        }
+        if s == "f_64" {
+            return Ok(Datum::F64);
+        }
+        if s == "histogram_f_64" {
+            return Ok(Datum::HistogramF64);
+        }
+        if s == "histogram_i_64" {
+            return Ok(Datum::HistogramI64);
+        }
+        if s == "i_64" {
+            return Ok(Datum::I64);
+        }
+        if s == "string" {
+            return Ok(Datum::String);
+        }
+        anyhow::bail!("invalid string for Datum: {}", s);
+    }
+}
+impl Datum {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, Datum::Noop)
+    }
+}
+
 /**
  * The type of an individual datum of a metric.
  */
@@ -407,7 +802,7 @@ pub struct Disk {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -642,7 +1037,7 @@ impl std::str::FromStr for DiskSourceType {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct DiskCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -674,7 +1069,7 @@ pub struct DiskCreate {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct DiskIdentifier {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -713,7 +1108,7 @@ pub struct DiskResultsPage {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct Distribution {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -915,6 +1310,184 @@ pub struct ErrorResponse {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub request_id: String,
+}
+
+/**
+ * The kind of an external IP address for an instance
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum IpKind {
+    Ephemeral,
+    Floating,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for IpKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            IpKind::Ephemeral => "ephemeral",
+            IpKind::Floating => "floating",
+            IpKind::Noop => "",
+            IpKind::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for IpKind {
+    fn default() -> IpKind {
+        IpKind::Ephemeral
+    }
+}
+impl std::str::FromStr for IpKind {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "ephemeral" {
+            return Ok(IpKind::Ephemeral);
+        }
+        if s == "floating" {
+            return Ok(IpKind::Floating);
+        }
+        anyhow::bail!("invalid string for IpKind: {}", s);
+    }
+}
+impl IpKind {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, IpKind::Noop)
+    }
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct ExternalIp {
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub ip: String,
+
+    /**
+     * The kind of an external IP address for an instance
+     */
+    #[serde(default, skip_serializing_if = "IpKind::is_noop")]
+    pub kind: IpKind,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+#[serde(tag = "type", content = "pool_name")]
+pub enum ExternalIpCreate {
+    Ephemeral(String),
+}
+
+impl fmt::Display for ExternalIpCreate {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let j = serde_json::json!(self);
+        let mut tag: String = serde_json::from_value(j["type"].clone()).unwrap_or_default();
+        let mut content: String =
+            serde_json::from_value(j["pool_name"].clone()).unwrap_or_default();
+        if content.is_empty() {
+            let map: std::collections::HashMap<String, String> =
+                serde_json::from_value(j["pool_name"].clone()).unwrap_or_default();
+            if let Some((_, v)) = map.iter().next() {
+                content = v.to_string();
+            }
+        }
+        if tag == "internet_gateway" {
+            tag = "inetgw".to_string();
+        }
+        write!(f, "{}={}", tag, content)
+    }
+}
+
+impl std::str::FromStr for ExternalIpCreate {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let parts = s.split('=').collect::<Vec<&str>>();
+        if parts.len() != 2 {
+            anyhow::bail!("invalid format for ExternalIpCreate, got {}", s);
+        }
+        let tag = parts[0].to_string();
+        let content = parts[1].to_string();
+        let mut j = String::new();
+        if tag == "ephemeral" {
+            j = format!(
+                r#"{{
+"type": "ephemeral",
+"pool_name": "{}"
+        }}"#,
+                content
+            );
+        }
+        let result = serde_json::from_str(&j)?;
+        Ok(result)
+    }
+}
+impl ExternalIpCreate {
+    pub fn variants() -> Vec<String> {
+        vec!["ephemeral".to_string()]
+    }
+}
+/**
+ * The types for ExternalIpCreate.
+ */
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum ExternalIpCreateType {
+    Ephemeral,
+}
+
+impl std::fmt::Display for ExternalIpCreateType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            ExternalIpCreateType::Ephemeral => "ephemeral",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for ExternalIpCreateType {
+    fn default() -> ExternalIpCreateType {
+        ExternalIpCreateType::Ephemeral
+    }
+}
+impl std::str::FromStr for ExternalIpCreateType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "ephemeral" {
+            return Ok(ExternalIpCreateType::Ephemeral);
+        }
+        anyhow::bail!("invalid string for ExternalIpCreateType: {}", s);
+    }
+}
+
+/// A single page of results
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct ExternalIpResultsPage {
+    /**
+     * list of items on this page of results
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub items: Vec<ExternalIp>,
+
+    /**
+     * token used to fetch the next page of results (if any)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub next_page: String,
 }
 
 /**
@@ -1149,6 +1722,7 @@ pub struct FleetRolePolicy {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 #[serde(rename_all = "snake_case")]
 pub enum IdentityType {
+    SiloGroup,
     SiloUser,
     #[serde(rename = "")]
     Noop,
@@ -1159,6 +1733,7 @@ pub enum IdentityType {
 impl std::fmt::Display for IdentityType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &*self {
+            IdentityType::SiloGroup => "silo_group",
             IdentityType::SiloUser => "silo_user",
             IdentityType::Noop => "",
             IdentityType::FallthroughString => "*",
@@ -1169,12 +1744,15 @@ impl std::fmt::Display for IdentityType {
 
 impl Default for IdentityType {
     fn default() -> IdentityType {
-        IdentityType::SiloUser
+        IdentityType::SiloGroup
     }
 }
 impl std::str::FromStr for IdentityType {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "silo_group" {
+            return Ok(IdentityType::SiloGroup);
+        }
         if s == "silo_user" {
             return Ok(IdentityType::SiloUser);
         }
@@ -1201,7 +1779,7 @@ pub struct GlobalImage {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -1400,11 +1978,11 @@ impl std::str::FromStr for ImageSourceType {
     }
 }
 
-/// Create-time parameters for an [`GlobalImage`](omicron_common::api::external::GlobalImage)
+/// Create-time parameters for an [`GlobalImage`](crate::external_api::views::GlobalImage)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct GlobalImageCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -1462,6 +2040,78 @@ pub struct GlobalImageResultsPage {
     pub next_page: String,
 }
 
+/// A simple type for managing a histogram metric.
+///
+/// A histogram maintains the count of any number of samples, over a set of bins. Bins are specified on construction via their _left_ edges, inclusive. There can't be any "gaps" in the bins, and an additional bin may be added to the left, right, or both so that the bins extend to the entire range of the support.
+///
+/// Note that any gaps, unsorted bins, or non-finite values will result in an error.
+///
+/// Example ------- ```rust use oximeter::histogram::{BinRange, Histogram};
+///
+/// let edges = [0i64, 10, 20]; let mut hist = Histogram::new(&edges).unwrap(); assert_eq!(hist.n_bins(), 4); // One additional bin for the range (20..) assert_eq!(hist.n_samples(), 0); hist.sample(4); hist.sample(100); assert_eq!(hist.n_samples(), 2);
+///
+/// let data = hist.iter().collect::<Vec<_>>(); assert_eq!(data[0].range, BinRange::range(i64::MIN, 0)); // An additional bin for `..0` assert_eq!(data[0].count, 0); // Nothing is in this bin
+///
+/// assert_eq!(data[1].range, BinRange::range(0, 10)); // The range `0..10` assert_eq!(data[1].count, 1); // 4 is sampled into this bin ```
+///
+/// Notes -----
+///
+/// Histograms may be constructed either from their left bin edges, or from a sequence of ranges. In either case, the left-most bin may be converted upon construction. In particular, if the left-most value is not equal to the minimum of the support, a new bin will be added from the minimum to that provided value. If the left-most value _is_ the support's minimum, because the provided bin was unbounded below, such as `(..0)`, then that bin will be converted into one bounded below, `(MIN..0)` in this case.
+///
+/// The short of this is that, most of the time, it shouldn't matter. If one specifies the extremes of the support as their bins, be aware that the left-most may be converted from a `BinRange::RangeTo` into a `BinRange::Range`. In other words, the first bin of a histogram is _always_ a `Bin::Range` or a `Bin::RangeFrom` after construction. In fact, every bin is one of those variants, the `BinRange::RangeTo` is only provided as a convenience during construction.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct Histogramdouble {
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub bins: Vec<Bindouble>,
+
+    #[serde(default)]
+    pub n_samples: u64,
+
+    #[serde()]
+    pub start_time: crate::utils::DisplayOptionDateTime,
+}
+
+/// A simple type for managing a histogram metric.
+///
+/// A histogram maintains the count of any number of samples, over a set of bins. Bins are specified on construction via their _left_ edges, inclusive. There can't be any "gaps" in the bins, and an additional bin may be added to the left, right, or both so that the bins extend to the entire range of the support.
+///
+/// Note that any gaps, unsorted bins, or non-finite values will result in an error.
+///
+/// Example ------- ```rust use oximeter::histogram::{BinRange, Histogram};
+///
+/// let edges = [0i64, 10, 20]; let mut hist = Histogram::new(&edges).unwrap(); assert_eq!(hist.n_bins(), 4); // One additional bin for the range (20..) assert_eq!(hist.n_samples(), 0); hist.sample(4); hist.sample(100); assert_eq!(hist.n_samples(), 2);
+///
+/// let data = hist.iter().collect::<Vec<_>>(); assert_eq!(data[0].range, BinRange::range(i64::MIN, 0)); // An additional bin for `..0` assert_eq!(data[0].count, 0); // Nothing is in this bin
+///
+/// assert_eq!(data[1].range, BinRange::range(0, 10)); // The range `0..10` assert_eq!(data[1].count, 1); // 4 is sampled into this bin ```
+///
+/// Notes -----
+///
+/// Histograms may be constructed either from their left bin edges, or from a sequence of ranges. In either case, the left-most bin may be converted upon construction. In particular, if the left-most value is not equal to the minimum of the support, a new bin will be added from the minimum to that provided value. If the left-most value _is_ the support's minimum, because the provided bin was unbounded below, such as `(..0)`, then that bin will be converted into one bounded below, `(MIN..0)` in this case.
+///
+/// The short of this is that, most of the time, it shouldn't matter. If one specifies the extremes of the support as their bins, be aware that the left-most may be converted from a `BinRange::RangeTo` into a `BinRange::Range`. In other words, the first bin of a histogram is _always_ a `Bin::Range` or a `Bin::RangeFrom` after construction. In fact, every bin is one of those variants, the `BinRange::RangeTo` is only provided as a convenience during construction.
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct Histogramint64 {
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub bins: Vec<Binint64>,
+
+    #[serde(default)]
+    pub n_samples: u64,
+
+    #[serde()]
+    pub start_time: crate::utils::DisplayOptionDateTime,
+}
+
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 #[serde(rename_all = "snake_case")]
 pub enum IdentityProviderType {
@@ -1517,7 +2167,7 @@ pub struct IdentityProvider {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -1615,50 +2265,6 @@ impl std::str::FromStr for IdentityProviderTypeSaml {
 impl IdentityProviderTypeSaml {
     pub fn is_noop(&self) -> bool {
         matches!(self, IdentityProviderTypeSaml::Noop)
-    }
-}
-
-/**
- * Describes what kind of identity is described by an id
- */
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
-#[serde(rename_all = "snake_case")]
-pub enum IdentityTypeSiloUser {
-    SiloUser,
-    #[serde(rename = "")]
-    Noop,
-    #[serde(other)]
-    FallthroughString,
-}
-
-impl std::fmt::Display for IdentityTypeSiloUser {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &*self {
-            IdentityTypeSiloUser::SiloUser => "silo_user",
-            IdentityTypeSiloUser::Noop => "",
-            IdentityTypeSiloUser::FallthroughString => "*",
-        }
-        .fmt(f)
-    }
-}
-
-impl Default for IdentityTypeSiloUser {
-    fn default() -> IdentityTypeSiloUser {
-        IdentityTypeSiloUser::SiloUser
-    }
-}
-impl std::str::FromStr for IdentityTypeSiloUser {
-    type Err = anyhow::Error;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s == "silo_user" {
-            return Ok(IdentityTypeSiloUser::SiloUser);
-        }
-        anyhow::bail!("invalid string for IdentityTypeSiloUser: {}", s);
-    }
-}
-impl IdentityTypeSiloUser {
-    pub fn is_noop(&self) -> bool {
-        matches!(self, IdentityTypeSiloUser::Noop)
     }
 }
 
@@ -1778,7 +2384,7 @@ pub struct Image {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -1863,11 +2469,11 @@ pub struct Image {
     pub version: String,
 }
 
-/// Create-time parameters for an [`Image`](omicron_common::api::external::Image)
+/// Create-time parameters for an [`Image`](crate::external_api::views::Image)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct ImageCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -2024,7 +2630,7 @@ pub struct Instance {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -2348,7 +2954,7 @@ impl std::str::FromStr for InstanceNetworkInterfaceAttachmentType {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct InstanceCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -2374,6 +2980,17 @@ pub struct InstanceCreate {
     )]
     #[header(hidden = true)]
     pub disks: Vec<InstanceDiskAttachment>,
+
+    /**
+     * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub external_ips: Vec<ExternalIpCreate>,
 
     #[serde(
         default,
@@ -2539,7 +3156,7 @@ pub struct IpPool {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -2558,6 +3175,13 @@ pub struct IpPool {
     )]
     pub description: String,
 
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub project_id: String,
+
     /**
      * timestamp when this resource was created
      */
@@ -2573,11 +3197,11 @@ pub struct IpPool {
 
 /// Create-time parameters for an IP Pool.
 ///
-/// See [`IpPool`](omicron_nexus::external_api::views::IpPool)
+/// See [`IpPool`](crate::external_api::views::IpPool)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct IpPoolCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -2592,6 +3216,30 @@ pub struct IpPoolCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
+
+    /**
+     * Create-time parameters for an IP Pool.
+     *  
+     *  See [`IpPool`](crate::external_api::views::IpPool)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub organization: String,
+
+    /**
+     * Create-time parameters for an IP Pool.
+     *  
+     *  See [`IpPool`](crate::external_api::views::IpPool)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub project: String,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, Default, JsonSchema)]
@@ -2890,6 +3538,41 @@ pub struct Ipv6Range {
     pub last: std::net::Ipv6Addr,
 }
 
+/// A `Measurement` is a timestamped datum from a single metric
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct Measurement {
+    #[serde()]
+    pub datum: Datum,
+
+    #[serde()]
+    pub timestamp: crate::utils::DisplayOptionDateTime,
+}
+
+/// A single page of results
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
+pub struct MeasurementResultsPage {
+    /**
+     * list of items on this page of results
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "Vec::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_vector::deserialize"
+    )]
+    #[header(hidden = true)]
+    pub items: Vec<Measurement>,
+
+    /**
+     * token used to fetch the next page of results (if any)
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub next_page: String,
+}
+
 /// A `NetworkInterface` represents a virtual network interface device.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct NetworkInterface {
@@ -2904,7 +3587,7 @@ pub struct NetworkInterface {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -2999,7 +3682,7 @@ pub struct NetworkInterface {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct NetworkInterfaceCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -3026,7 +3709,7 @@ pub struct NetworkInterfaceCreate {
     pub ip: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -3036,7 +3719,7 @@ pub struct NetworkInterfaceCreate {
     pub subnet_name: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -3099,7 +3782,7 @@ pub struct NetworkInterfaceUpdate {
         default,
         deserialize_with = "crate::utils::deserialize_null_boolean::deserialize"
     )]
-    pub make_primary: bool,
+    pub primary: bool,
 }
 
 /// Client view of an [`Organization`]
@@ -3116,7 +3799,7 @@ pub struct Organization {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -3152,7 +3835,7 @@ pub struct Organization {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct OrganizationCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -3316,7 +3999,7 @@ pub struct Project {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -3359,7 +4042,7 @@ pub struct Project {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct ProjectCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -3971,7 +4654,7 @@ pub struct RouterRoute {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -4031,7 +4714,7 @@ pub struct RouterRoute {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct RouterRouteCreateParams {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -4375,7 +5058,7 @@ pub struct SamlIdentityProvider {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -4471,7 +5154,7 @@ pub struct SamlIdentityProvider {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
 pub struct SamlIdentityProviderCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -4496,6 +5179,16 @@ pub struct SamlIdentityProviderCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub acs_url: String,
+
+    /**
+     * If set, SAML attributes with this name will be considered to denote a user's group membership, where the attribute value(s) should be a comma-separated list of group names.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub group_attribute_name: String,
 
     /**
      * idp's entity id
@@ -4546,17 +5239,6 @@ pub struct SamlIdentityProviderCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub technical_contact_email: String,
-}
-
-/// Client view of currently authed user.
-#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
-pub struct SessionUser {
-    #[serde(
-        default,
-        skip_serializing_if = "String::is_empty",
-        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
-    )]
-    pub id: String,
 }
 
 /**
@@ -4622,7 +5304,7 @@ pub struct Silo {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -4673,7 +5355,7 @@ pub struct Silo {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SiloCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -4688,6 +5370,18 @@ pub struct SiloCreate {
         deserialize_with = "crate::utils::deserialize_null_string::deserialize"
     )]
     pub description: String,
+
+    /**
+     * If set, this group will be created during Silo creation and granted the "Silo Admin" role. Identity providers can assert that users belong to this group and those users can log in and further initialize the Silo.
+     *  
+     *  Note that if configuring a SAML based identity provider, group_attribute_name must be set for users to be considered part of a group. See [`SamlIdentityProviderCreate`] for more information.
+     */
+    #[serde(
+        default,
+        skip_serializing_if = "String::is_empty",
+        deserialize_with = "crate::utils::deserialize_null_string::deserialize"
+    )]
+    pub admin_group_name: String,
 
     #[serde(
         default,
@@ -4889,7 +5583,7 @@ pub struct Snapshot {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -4943,11 +5637,11 @@ pub struct Snapshot {
     pub time_modified: crate::utils::DisplayOptionDateTime,
 }
 
-/// Create-time parameters for a [`Snapshot`](omicron_common::api::external::Snapshot)
+/// Create-time parameters for a [`Snapshot`](crate::external_api::views::Snapshot)
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SnapshotCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -4964,7 +5658,7 @@ pub struct SnapshotCreate {
     pub description: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -5023,7 +5717,7 @@ pub struct SshKey {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -5079,7 +5773,7 @@ pub struct SshKey {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct SshKeyCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -5224,7 +5918,7 @@ pub struct UserBuiltin {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -5320,7 +6014,7 @@ pub struct Vpc {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -5340,7 +6034,7 @@ pub struct Vpc {
     pub description: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -5396,7 +6090,7 @@ pub struct Vpc {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -5413,7 +6107,7 @@ pub struct VpcCreate {
     pub description: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -5774,7 +6468,7 @@ pub struct VpcFirewallRule {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -6060,7 +6754,7 @@ impl VpcFirewallRuleProtocol {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcFirewallRuleUpdate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -6125,7 +6819,7 @@ pub struct VpcFirewallRuleUpdateParams {
     pub rules: Vec<VpcFirewallRuleUpdate>,
 }
 
-/// Collection of a [`Vpc`]'s firewall rules
+/// Collection of a Vpc's firewall rules
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcFirewallRules {
     #[serde(
@@ -6222,7 +6916,7 @@ pub struct VpcRouter {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -6271,7 +6965,7 @@ pub struct VpcRouter {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcRouterCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -6345,7 +7039,7 @@ pub struct VpcSubnet {
     pub id: String,
 
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -6411,7 +7105,7 @@ pub struct VpcSubnet {
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct VpcSubnetCreate {
     /**
-     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     #[serde(
         default,
@@ -6664,6 +7358,72 @@ impl NameOrIdSortMode {
     }
 }
 
+#[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Tabled)]
+#[serde(rename_all = "snake_case")]
+pub enum DiskMetricName {
+    Activated,
+    Flush,
+    Read,
+    ReadBytes,
+    Write,
+    WriteBytes,
+    #[serde(rename = "")]
+    Noop,
+    #[serde(other)]
+    FallthroughString,
+}
+
+impl std::fmt::Display for DiskMetricName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &*self {
+            DiskMetricName::Activated => "activated",
+            DiskMetricName::Flush => "flush",
+            DiskMetricName::Read => "read",
+            DiskMetricName::ReadBytes => "read_bytes",
+            DiskMetricName::Write => "write",
+            DiskMetricName::WriteBytes => "write_bytes",
+            DiskMetricName::Noop => "",
+            DiskMetricName::FallthroughString => "*",
+        }
+        .fmt(f)
+    }
+}
+
+impl Default for DiskMetricName {
+    fn default() -> DiskMetricName {
+        DiskMetricName::Activated
+    }
+}
+impl std::str::FromStr for DiskMetricName {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s == "activated" {
+            return Ok(DiskMetricName::Activated);
+        }
+        if s == "flush" {
+            return Ok(DiskMetricName::Flush);
+        }
+        if s == "read" {
+            return Ok(DiskMetricName::Read);
+        }
+        if s == "read_bytes" {
+            return Ok(DiskMetricName::ReadBytes);
+        }
+        if s == "write" {
+            return Ok(DiskMetricName::Write);
+        }
+        if s == "write_bytes" {
+            return Ok(DiskMetricName::WriteBytes);
+        }
+        anyhow::bail!("invalid string for DiskMetricName: {}", s);
+    }
+}
+impl DiskMetricName {
+    pub fn is_noop(&self) -> bool {
+        matches!(self, DiskMetricName::Noop)
+    }
+}
+
 pub type BlockSize = i64;
 /// A count of bytes, typically used either for memory or storage capacity
 ///
@@ -6675,8 +7435,12 @@ pub type InstanceCpuCount = u16;
 pub type L4PortRange = String;
 /// A Media Access Control address, in EUI-48 format
 pub type MacAddr = String;
-/// Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+/// Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
 pub type Name = String;
+/// Unique name for a saga [`Node`]
+///
+/// Each node requires a string name that's unique within its DAG.  The name is used to identify its output.  Nodes that depend on a given node (either directly or indirectly) can access the node's output using its name.
+pub type NodeName = String;
 /// Role names consist of two string components separated by dot (".").
 pub type RoleName = String;
 /// Names are constructed by concatenating the target and metric names with ':'. Target and metric names must be lowercase alphanumeric characters with '_' separating words.

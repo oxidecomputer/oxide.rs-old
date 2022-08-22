@@ -13,7 +13,7 @@ impl Racks {
     }
 
     /**
-     * List racks in the system.
+     * List racks.
      *
      * This function performs a `GET` to the `/hardware/racks` endpoint.
      *
@@ -51,7 +51,7 @@ impl Racks {
     }
 
     /**
-     * List racks in the system.
+     * List racks.
      *
      * This function performs a `GET` to the `/hardware/racks` endpoint.
      *
@@ -101,7 +101,7 @@ impl Racks {
     }
 
     /**
-     * Fetch information about a particular rack.
+     * Fetch a rack.
      *
      * This function performs a `GET` to the `/hardware/racks/{rack_id}` endpoint.
      *

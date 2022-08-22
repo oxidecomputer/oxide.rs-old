@@ -13,7 +13,36 @@ impl Silos {
     }
 
     /**
+     * Fetch the current silo's IAM policy.
+     *
+     * This function performs a `GET` to the `/policy` endpoint.
+     */
+    pub async fn policy_get(&self) -> Result<crate::types::SiloRolePolicy> {
+        let url = "/policy".to_string();
+        self.client.get(&url, None).await
+    }
+
+    /**
+     * Update the current silo's IAM policy.
+     *
+     * This function performs a `PUT` to the `/policy` endpoint.
+     */
+    pub async fn policy_put(
+        &self,
+        body: &crate::types::SiloRolePolicy,
+    ) -> Result<crate::types::SiloRolePolicy> {
+        let url = "/policy".to_string();
+        self.client
+            .put(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))
+            .await
+    }
+
+    /**
+     * List silos.
+     *
      * This function performs a `GET` to the `/silos` endpoint.
+     *
+     * Lists silos that are discoverable based on the current permissions.
      *
      * **Parameters:**
      *
@@ -47,9 +76,13 @@ impl Silos {
     }
 
     /**
+     * List silos.
+     *
      * This function performs a `GET` to the `/silos` endpoint.
      *
      * As opposed to `get`, this function returns all the pages of the request at once.
+     *
+     * Lists silos that are discoverable based on the current permissions.
      */
     pub async fn get_all(
         &self,
@@ -95,7 +128,7 @@ impl Silos {
     }
 
     /**
-     * Create a new silo.
+     * Create a silo.
      *
      * This function performs a `POST` to the `/silos` endpoint.
      */
@@ -107,13 +140,15 @@ impl Silos {
     }
 
     /**
-     * Fetch a specific silo.
+     * Fetch a silo.
      *
      * This function performs a `GET` to the `/silos/{silo_name}` endpoint.
      *
+     * Fetch a silo by name.
+     *
      * **Parameters:**
      *
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get(&self, silo_name: &str) -> Result<crate::types::Silo> {
         let url = format!(
@@ -125,13 +160,15 @@ impl Silos {
     }
 
     /**
-     * Delete a specific silo.
+     * Delete a silo.
      *
      * This function performs a `DELETE` to the `/silos/{silo_name}` endpoint.
      *
+     * Delete a silo by name.
+     *
      * **Parameters:**
      *
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn delete(&self, silo_name: &str) -> Result<()> {
         let url = format!(
@@ -143,13 +180,13 @@ impl Silos {
     }
 
     /**
-     * List Silo identity providers.
+     * List a silo's IDPs.
      *
-     * This function performs a `GET` to the `/silos/{silo_name}/identity_providers` endpoint.
+     * This function performs a `GET` to the `/silos/{silo_name}/identity-providers` endpoint.
      *
      * **Parameters:**
      *
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      * * `limit: u32` -- Maximum number of items returned by a single call.
      * * `page_token: &str` -- Token returned by previous call to retrieve the subsequent page.
      * * `sort_by: crate::types::NameSortMode` -- Supported set of sort modes for scanning by name only
@@ -175,7 +212,7 @@ impl Silos {
         }
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
-            "/silos/{}/identity_providers?{}",
+            "/silos/{}/identity-providers?{}",
             crate::progenitor_support::encode_path(silo_name),
             query_
         );
@@ -187,9 +224,9 @@ impl Silos {
     }
 
     /**
-     * List Silo identity providers.
+     * List a silo's IDPs.
      *
-     * This function performs a `GET` to the `/silos/{silo_name}/identity_providers` endpoint.
+     * This function performs a `GET` to the `/silos/{silo_name}/identity-providers` endpoint.
      *
      * As opposed to `get_identity_providers`, this function returns all the pages of the request at once.
      */
@@ -204,7 +241,7 @@ impl Silos {
         }
         let query_ = serde_urlencoded::to_string(&query_args).unwrap();
         let url = format!(
-            "/silos/{}/identity_providers?{}",
+            "/silos/{}/identity-providers?{}",
             crate::progenitor_support::encode_path(silo_name),
             query_
         );
@@ -243,13 +280,13 @@ impl Silos {
     }
 
     /**
-     * Fetch the IAM policy for this Silo.
+     * Fetch a silo's IAM policy.
      *
      * This function performs a `GET` to the `/silos/{silo_name}/policy` endpoint.
      *
      * **Parameters:**
      *
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get_policy(&self, silo_name: &str) -> Result<crate::types::SiloRolePolicy> {
         let url = format!(
@@ -261,13 +298,13 @@ impl Silos {
     }
 
     /**
-     * Update the IAM policy for this Silo.
+     * Update a silo's IAM policy.
      *
      * This function performs a `PUT` to the `/silos/{silo_name}/policy` endpoint.
      *
      * **Parameters:**
      *
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn put_policy(
         &self,
@@ -285,13 +322,13 @@ impl Silos {
     }
 
     /**
-     * Create a new SAML identity provider for a silo.
+     * Create a SAML IDP.
      *
-     * This function performs a `POST` to the `/silos/{silo_name}/saml_identity_providers` endpoint.
+     * This function performs a `POST` to the `/silos/{silo_name}/saml-identity-providers` endpoint.
      *
      * **Parameters:**
      *
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn saml_idp_fetch(
         &self,
@@ -299,7 +336,7 @@ impl Silos {
         body: &crate::types::SamlIdentityProviderCreate,
     ) -> Result<crate::types::SamlIdentityProvider> {
         let url = format!(
-            "/silos/{}/saml_identity_providers",
+            "/silos/{}/saml-identity-providers",
             crate::progenitor_support::encode_path(silo_name),
         );
 
@@ -309,14 +346,14 @@ impl Silos {
     }
 
     /**
-     * GET a silo's SAML identity provider.
+     * Fetch a SAML IDP.
      *
-     * This function performs a `GET` to the `/silos/{silo_name}/saml_identity_providers/{provider_name}` endpoint.
+     * This function performs a `GET` to the `/silos/{silo_name}/saml-identity-providers/{provider_name}` endpoint.
      *
      * **Parameters:**
      *
-     * * `provider_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `provider_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn saml_idp_create(
         &self,
@@ -324,7 +361,7 @@ impl Silos {
         silo_name: &str,
     ) -> Result<crate::types::SamlIdentityProvider> {
         let url = format!(
-            "/silos/{}/saml_identity_providers/{}",
+            "/silos/{}/saml-identity-providers/{}",
             crate::progenitor_support::encode_path(silo_name),
             crate::progenitor_support::encode_path(provider_name),
         );

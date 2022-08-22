@@ -31,10 +31,7 @@ impl Hidden {
      *
      * This endpoint is designed to be accessed by the user agent (browser), not the client requesting the token. So we do not actually return the token here; it will be returned in response to the poll on `/device/token`.
      */
-    pub async fn device_auth_confirm(
-        &self,
-        body: &crate::types::DeviceAuthVerify,
-    ) -> Result<String> {
+    pub async fn device_auth_confirm(&self, body: &crate::types::DeviceAuthVerify) -> Result<()> {
         let url = "/device/confirm".to_string();
         self.client
             .post(&url, Some(reqwest::Body::from(serde_json::to_vec(body)?)))
@@ -76,7 +73,7 @@ impl Hidden {
      *
      * This function performs a `GET` to the `/session/me` endpoint.
      */
-    pub async fn session_me(&self) -> Result<crate::types::SessionUser> {
+    pub async fn session_me(&self) -> Result<crate::types::User> {
         let url = "/session/me".to_string();
         self.client.get(&url, None).await
     }

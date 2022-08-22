@@ -23,7 +23,8 @@ update: update-specs
 
 # Add step to convert spec with old operation IDs
 update-specs: clean-spec
-	$(MAKE) $(SPEC)
+	# do not download for now, spec requires editing tags
+	# $(MAKE) $(SPEC)
 	./scripts/tag-swap.sh
 
 $(SPEC):

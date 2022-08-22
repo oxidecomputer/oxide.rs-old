@@ -13,7 +13,7 @@ impl Sleds {
     }
 
     /**
-     * List sleds in the system.
+     * List sleds.
      *
      * This function performs a `GET` to the `/hardware/sleds` endpoint.
      *
@@ -51,7 +51,7 @@ impl Sleds {
     }
 
     /**
-     * List sleds in the system.
+     * List sleds.
      *
      * This function performs a `GET` to the `/hardware/sleds` endpoint.
      *
@@ -101,7 +101,7 @@ impl Sleds {
     }
 
     /**
-     * Fetch information about a sled in the system.
+     * Fetch a sled.
      *
      * This function performs a `GET` to the `/hardware/sleds/{sled_id}` endpoint.
      *

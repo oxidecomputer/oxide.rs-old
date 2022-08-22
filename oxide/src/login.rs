@@ -13,7 +13,7 @@ impl Login {
     }
 
     /**
-     * Ask the user to login to their identity provider.
+     * Prompt user login.
      *
      * This function performs a `GET` to the `/login/{silo_name}/{provider_name}` endpoint.
      *
@@ -21,8 +21,8 @@ impl Login {
      *
      * **Parameters:**
      *
-     * * `provider_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `provider_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn get(&self, provider_name: &str, silo_name: &str) -> Result<()> {
         let url = format!(
@@ -35,7 +35,7 @@ impl Login {
     }
 
     /**
-     * Consume some sort of credentials, and authenticate a user.
+     * Authenticate a user.
      *
      * This function performs a `POST` to the `/login/{silo_name}/{provider_name}` endpoint.
      *
@@ -43,8 +43,8 @@ impl Login {
      *
      * **Parameters:**
      *
-     * * `provider_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
-     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'.
+     * * `provider_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
+     * * `silo_name: &str` -- Names must begin with a lower case ASCII letter, be composed exclusively of lowercase ASCII, uppercase ASCII, numbers, and '-', and may not end with a '-'. Names cannot be a UUID though they may contain a UUID.
      */
     pub async fn consume_credentials<B: Into<reqwest::Body>>(
         &self,
