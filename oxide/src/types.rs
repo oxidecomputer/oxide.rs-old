@@ -3020,6 +3020,12 @@ pub struct InstanceCreate {
     pub network_interfaces: Option<InstanceNetworkInterfaceAttachment>,
 
     /**
+     * Should this instance be started upon creation; true by default.
+     */
+    #[serde(default = "crate::utils::bool_true")]
+    pub start: bool,
+
+    /**
      * User data for instance initialization systems (such as cloud-init). Must be a Base64-encoded string, as specified in RFC 4648 § 4 (+ and / characters with padding). Maximum 32 KiB unencoded data.
      */
     #[serde(
