@@ -17,7 +17,7 @@ use anyhow::{bail, Result};
 use inflector::cases::{
     pascalcase::to_pascal_case, snakecase::to_snake_case, titlecase::to_title_case,
 };
-use openapiv3::OpenAPI;
+use openapiv3::{OpenAPI, SchemaData};
 use serde::Deserialize;
 
 fn save<P>(p: P, data: &str) -> Result<()>
@@ -622,6 +622,23 @@ impl TypeDetails {
             "".to_string()
         }
     }
+
+    pub fn schema_data(&self) -> Option<SchemaData> {
+        match self {
+            TypeDetails::Basic(_, d)
+            | TypeDetails::NamedType(_, d)
+            | TypeDetails::ComponentSchema(_, d)
+            | TypeDetails::Enum(_, d)
+            | TypeDetails::Array(_, d)
+            | TypeDetails::Optional(_, d)
+            | TypeDetails::Object(_, d)
+            | TypeDetails::OneOf(_, d)
+            | TypeDetails::AnyOf(_, d)
+            | TypeDetails::AllOf(_, d) => Some(d.clone()),
+            TypeDetails::Unknown => None,
+            TypeDetails::Placeholder(..) => None,
+        }
+    }
 }
 
 impl PartialEq for TypeDetails {
@@ -1100,7 +1117,7 @@ impl TypeSpace {
         id
     }
 
-    fn id_for_optional(&mut self, tid: &TypeId, sd: openapiv3::SchemaData) -> TypeId {
+    fn id_for_optional(&mut self, tid: &TypeId, mut sd: openapiv3::SchemaData) -> TypeId {
         let mut want = tid.clone();
         for (oid, oent) in self.id_to_entry.iter() {
             match &oent.details {
@@ -1116,6 +1133,10 @@ impl TypeSpace {
         if let Some(te) = self.id_to_entry.get(tid) {
             if let TypeDetails::Optional(nid, _) = &te.details {
                 want = nid.clone();
+            }
+
+            if let Some(schema_data) = te.details.schema_data() {
+                sd = schema_data.clone();
             }
         }
 
@@ -2148,6 +2169,10 @@ impl TypeSpace {
                     Some(nam),
                     TypeDetails::Basic("serde_json::Value".to_string(), s.schema_data.clone()),
                 ))
+            }
+            openapiv3::SchemaKind::Not { not } => {
+                // TODO: Support this kind
+                anyhow::bail!("unsupported schema kind: {:?}", not);
             }
         }
     }

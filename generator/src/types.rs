@@ -276,14 +276,26 @@ fn render_property(
                 a(r#"skip_serializing_if = "Option::is_none","#);
             }
         } else if rt == "bool" {
+            let default =
+                if let TypeDetails::Optional(_, sd) | TypeDetails::Basic(_, sd) = &te.details {
+                    sd.default.as_ref().map(|v| v.as_bool().expect("bool default value not boolean"))
+                } else {
+                    None
+                };
             if sn.ends_with("Request") {
                 // We have a request, we want to make sure our bools are
                 // options so we don't have to always provide them.
                 a(r#"#[serde(default, skip_serializing_if = "Option::is_none","#);
                 rt = "Option<bool>".to_string();
             } else {
-                a(r#"#[serde(default,
-                                    deserialize_with = "crate::utils::deserialize_null_boolean::deserialize","#);
+                a(&format!(r#"#[serde(default{}"#,
+                    if default == Some(true) {
+                        r#" = "crate::utils::bool_true""#
+                    } else {
+                        r#",
+                                    deserialize_with = "crate::utils::deserialize_null_boolean::deserialize","#
+                    }
+                ));
             }
         } else if rt == "i32" {
             a(r#"#[serde(default,
