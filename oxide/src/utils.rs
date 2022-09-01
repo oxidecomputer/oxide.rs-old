@@ -238,6 +238,12 @@ pub mod deserialize_null_boolean {
     }
 }
 
+// Workaround for https://github.com/serde-rs/serde/issues/368
+#[inline]
+pub fn bool_true() -> bool {
+    true
+}
+
 struct I32Visitor;
 
 impl<'de> Visitor<'de> for I32Visitor {

@@ -1287,9 +1287,6 @@ pub enum ResourceType {
 /// Error information from a response.
 #[derive(Serialize, Deserialize, PartialEq, Debug, Clone, JsonSchema, Default, Tabled)]
 pub struct ErrorResponse {
-    /**
-     * Error information from a response.
-     */
     #[serde(
         default,
         skip_serializing_if = "String::is_empty",
@@ -2971,7 +2968,7 @@ pub struct InstanceCreate {
     pub description: String,
 
     /**
-     * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
+     * The disks to be created or attached for this instance.
      */
     #[serde(
         default,
@@ -2982,7 +2979,9 @@ pub struct InstanceCreate {
     pub disks: Vec<InstanceDiskAttachment>,
 
     /**
-     * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
+     * The external IP addresses provided to this instance.
+     *  
+     *  By default, all instances have outbound connectivity, but no inbound connectivity. These external addresses can be used to provide a fixed, known IP address for making inbound connections to the instance.
      */
     #[serde(
         default,
@@ -3021,7 +3020,7 @@ pub struct InstanceCreate {
     pub network_interfaces: Option<InstanceNetworkInterfaceAttachment>,
 
     /**
-     * Create-time parameters for an [`Instance`](omicron_common::api::external::Instance)
+     * User data for instance initialization systems (such as cloud-init). Must be a Base64-encoded string, as specified in RFC 4648 § 4 (+ and / characters with padding). Maximum 32 KiB unencoded data.
      */
     #[serde(
         default,
@@ -3774,9 +3773,11 @@ pub struct NetworkInterfaceUpdate {
     pub description: String,
 
     /**
-     * Parameters for updating a [`NetworkInterface`](omicron_common::api::external::NetworkInterface).
+     * Make a secondary interface the instance's primary interface.
      *  
-     *  Note that modifying IP addresses for an interface is not yet supported, a new interface must be created instead.
+     *  If applied to a secondary interface, that interface will become the primary on the next reboot of the instance. Note that this may have implications for routing between instances, as the new primary interface will be on a distinct subnet from the previous primary interface.
+     *  
+     *  Note that this can only be used to select a new primary interface for an instance. Requests to change the primary interface into a secondary will return an error.
      */
     #[serde(
         default,
