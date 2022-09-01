@@ -2170,6 +2170,10 @@ impl TypeSpace {
                     TypeDetails::Basic("serde_json::Value".to_string(), s.schema_data.clone()),
                 ))
             }
+            openapiv3::SchemaKind::Not { not } => {
+                // TODO: Support this kind
+                anyhow::bail!("unsupported schema kind: {:?}", not);
+            }
         }
     }
 
