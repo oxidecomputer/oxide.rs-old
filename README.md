@@ -1,3 +1,8 @@
+> **Warning**
+>
+> This API client is no longer supported and will not be maintained.
+> Refer to https://github.com/oxidecomputer/oxide-sdk-and-cli for the current CLI and Rust client
+
 # oxide.rs
 
 The Rust API client for Oxide.
